@@ -1,22 +1,17 @@
 package com.shencoder.srs_rtc_android_client.http
 
-import android.os.Build
 import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.http.BaseRetrofitClient
 import com.shencoder.srs_rtc_android_client.BuildConfig
-import com.shencoder.srs_rtc_android_client.constant.Constant
 import com.shencoder.srs_rtc_android_client.constant.SIGNAL
+import com.shencoder.srs_rtc_android_client.util.ignoreCertificate
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.net.Socket
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
-import javax.net.ssl.*
 
 /**
  *
@@ -33,81 +28,6 @@ class RetrofitClient : BaseRetrofitClient() {
     private lateinit var apiService: ApiService
 
     override fun generateOkHttpBuilder(builder: OkHttpClient.Builder): OkHttpClient.Builder {
-        val xtm: X509TrustManager =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                object : X509ExtendedTrustManager() {
-                    override fun checkClientTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?,
-                        socket: Socket?
-                    ) {
-                    }
-
-                    override fun checkClientTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?,
-                        engine: SSLEngine?
-                    ) {
-                    }
-
-                    override fun checkClientTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?
-                    ) {
-                    }
-
-                    override fun checkServerTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?,
-                        socket: Socket?
-                    ) {
-                    }
-
-                    override fun checkServerTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?,
-                        engine: SSLEngine?
-                    ) {
-                    }
-
-                    override fun checkServerTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?
-                    ) {
-                    }
-
-                    override fun getAcceptedIssuers(): Array<X509Certificate> {
-                        return arrayOf()
-                    }
-
-                }
-            } else {
-                object : X509TrustManager {
-
-                    override fun checkClientTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?
-                    ) {
-                    }
-
-                    override fun checkServerTrusted(
-                        chain: Array<out X509Certificate>?,
-                        authType: String?
-                    ) {
-                    }
-
-                    override fun getAcceptedIssuers(): Array<X509Certificate> {
-                        return arrayOf()
-                    }
-
-                }
-
-            }
-
-        val sslContext = SSLContext.getInstance("SSL")
-        sslContext.init(null, arrayOf<TrustManager>(xtm), SecureRandom())
-        val hostnameVerifier = HostnameVerifier { hostname, session -> true }
-
         val interceptor = HttpLoggingInterceptor { message -> XLog.i(message) }
         interceptor.level =
             if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BASIC
@@ -117,8 +37,7 @@ class RetrofitClient : BaseRetrofitClient() {
             .writeTimeout(DEFAULT_MILLISECONDS, TimeUnit.SECONDS)
             .connectTimeout(DEFAULT_MILLISECONDS, TimeUnit.SECONDS)
             .addInterceptor(interceptor)
-            .sslSocketFactory(sslContext.socketFactory)
-            .hostnameVerifier(hostnameVerifier)
+            .ignoreCertificate()
     }
 
     override fun generateRetrofitBuilder(builder: Retrofit.Builder): Retrofit.Builder {

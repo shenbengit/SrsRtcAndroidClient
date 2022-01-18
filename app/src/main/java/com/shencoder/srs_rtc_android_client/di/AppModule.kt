@@ -1,5 +1,6 @@
 package com.shencoder.srs_rtc_android_client.di
 
+import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
 import com.shencoder.srs_rtc_android_client.http.RetrofitClient
 import org.koin.dsl.module
 
@@ -12,6 +13,7 @@ import org.koin.dsl.module
 
 private val singleModule = module {
     single { RetrofitClient() }
+    single { CallSocketIoClient.getInstance() }
 }
 
 

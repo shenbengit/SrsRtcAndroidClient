@@ -25,7 +25,7 @@ object SIGNAL {
      * 信令服务地址
      * ip或域名
      */
-    const val SERVER_ADDRESS = "192.168.2.139"
+    const val SERVER_ADDRESS = "192.168.137.14"
 
     /**
      * api请求http端口
@@ -54,16 +54,16 @@ object SIGNAL {
     const val BASE_SOCKET_IO_WS_URL = "ws://${SERVER_ADDRESS}:${SOCKET_IO_IP_HTTP_PORT}"
     const val BASE_SOCKET_IO_WSS_URL = "wss://${SERVER_ADDRESS}:${SOCKET_IO_IP_HTTPS_PORT}"
 
-    const val SOCKET_IO_CLIENT_PATH = "/srs_rtc/signal/client"
-    const val SOCKET_IO_ADMINISTRATOR_PATH = "/srs_rtc/signal/administrator"
+    const val SOCKET_IO_CLIENT_NAMESPACE = "/srs_rtc/signal/client"
+    const val SOCKET_IO_ADMINISTRATOR_NAMESPACE = "/srs_rtc/signal/administrator"
 
-    const val SOCKET_IO_WS_CLIENT_URL = "${BASE_SOCKET_IO_WS_URL}${SOCKET_IO_CLIENT_PATH}"
-    const val SOCKET_IO_WSS_CLIENT_URL = "${BASE_SOCKET_IO_WSS_URL}${SOCKET_IO_CLIENT_PATH}"
+    const val SOCKET_IO_WS_CLIENT_URL = "${BASE_SOCKET_IO_WS_URL}${SOCKET_IO_CLIENT_NAMESPACE}"
+    const val SOCKET_IO_WSS_CLIENT_URL = "${BASE_SOCKET_IO_WSS_URL}${SOCKET_IO_CLIENT_NAMESPACE}"
 
     const val SOCKET_IO_WS_ADMINISTRATOR_URL =
-        "${BASE_SOCKET_IO_WS_URL}${SOCKET_IO_ADMINISTRATOR_PATH}"
+        "${BASE_SOCKET_IO_WS_URL}${SOCKET_IO_ADMINISTRATOR_NAMESPACE}"
     const val SOCKET_IO_WSS_ADMINISTRATOR_URL =
-        "${BASE_SOCKET_IO_WSS_URL}${SOCKET_IO_ADMINISTRATOR_PATH}"
+        "${BASE_SOCKET_IO_WSS_URL}${SOCKET_IO_ADMINISTRATOR_NAMESPACE}"
 
 }
 
