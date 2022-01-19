@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">SrsRtcAndroidClient</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="loading">加载中…</string>
+    <string name="prompt_user_id">用户ID</string>
+    <string name="prompt_username">用户名</string>
+    <string name="prompt_password">密码</string>
+    <string name="prompt_confirm_password">确认密码</string>
+    <string name="action_sign_in">登录</string>
+    <string name="action_register">注册</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="empty_user_id">用户id为空</string>
+    <string name="empty_password">密码为空</string>
+    <string name="login_failed">"登录失败"</string>
+    <string name="register_user">注册用户？</string>
+    <string name="user_info_not_obtained">未获取到用户信息！</string>
+    <string name="login_succeeded">登录成功</string>
+    <string name="user_login">用户登录</string>
+    <string name="user_register">用户注册</string>
+    <string name="inconsistent_passwords">两次密码不一致。</string>
+    <string name="registration_success">注册成功！</string>
+    <string name="select_call_user">选择通话用户</string>
+    <string name="confirm">确认</string>
+</resources>

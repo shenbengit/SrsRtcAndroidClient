@@ -7,4 +7,13 @@ package com.shencoder.srs_rtc_android_client.constant
  * @email   714081644@qq.com
  */
 object MMKVConstant {
+    /**
+     * 用户id
+     */
+    const val USER_ID = "USER_ID"
+
+    /**
+     * 用户信息
+     */
+    const val USER_INFO = "USER_INFO"
 }

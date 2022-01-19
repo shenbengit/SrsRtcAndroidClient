@@ -3,8 +3,28 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_login.xml" value="0.1" />
-        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_main.xml" value="0.11550151975683891" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_accept.xml" value="0.22407407407407406" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_accept111.xml" value="0.15520833333333334" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_bg.xml" value="0.21851851851851853" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_camera_disable.xml" value="1.0083333333333333" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_camera_enable.xml" value="0.22407407407407406" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_connect_bg.xml" value="0.21851851851851853" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_connect_status_bg.xml" value="0.21851851851851853" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_connected_status.xml" value="0.21481481481481482" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_disconnected_status.xml" value="0.21851851851851853" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_hang_up.xml" value="0.22407407407407406" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_launcher_background.xml" value="0.22407407407407406" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_mute_disable.xml" value="0.22407407407407406" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_mute_enable.xml" value="0.22407407407407406" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_speaker_disable.xml" value="0.22407407407407406" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_speaker_enable.xml" value="0.22407407407407406" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_switch_camera.xml" value="0.22407407407407406" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_white_corner_bg.xml" value="0.21851851851851853" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_check_user.xml" value="0.24114583333333334" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_login.xml" value="0.264" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_register_user.xml" value="0.24114583333333334" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.22407407407407406" />
       </map>
     </option>
   </component>

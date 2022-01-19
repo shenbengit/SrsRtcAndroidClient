@@ -1,22 +1,22 @@
-package com.shencoder.srs_rtc_android_client.ui.login
+package com.shencoder.srs_rtc_android_client.ui.register
 
 import android.os.Bundle
 import com.shencoder.srs_rtc_android_client.BR
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.base.BaseActivity
-import com.shencoder.srs_rtc_android_client.databinding.ActivityLoginBinding
+import com.shencoder.srs_rtc_android_client.databinding.ActivityRegisterUserBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
- * 登录页
+ * 用户注册
  */
-class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
+class RegisterUserActivity : BaseActivity<RegisterUserViewModel, ActivityRegisterUserBinding>() {
 
     override fun getLayoutId(): Int {
-        return R.layout.activity_login
+        return R.layout.activity_register_user
     }
 
-    override fun injectViewModel(): Lazy<LoginViewModel> {
+    override fun injectViewModel(): Lazy<RegisterUserViewModel> {
         return viewModel()
     }
 
@@ -29,6 +29,7 @@ class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
     }
 
     override fun initData(savedInstanceState: Bundle?) {
-
     }
+
+
 }

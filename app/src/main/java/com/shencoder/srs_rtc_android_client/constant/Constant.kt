@@ -15,6 +15,24 @@ object Constant {
      */
     const val DEFAULT_SIZE_IN_DP = 360f
 
+    /**
+     * 请求成功code
+     */
+    const val RESULT_OK = 200
+
+    /**
+     * 用户类型：客户端
+     * 目前仅支持客户端
+     * Only client types are supported.
+     */
+    const val USER_TYPE_CLIENT = "0"
+
+    /**
+     * 用户类型：管理员
+     * 当前未支持
+     * Not currently supported.
+     */
+    const val USER_TYPE_ADMINISTRATOR = "1"
 }
 
 /**
@@ -25,7 +43,7 @@ object SIGNAL {
      * 信令服务地址
      * ip或域名
      */
-    const val SERVER_ADDRESS = "192.168.137.14"
+    const val SERVER_ADDRESS = "192.168.2.139"
 
     /**
      * api请求http端口

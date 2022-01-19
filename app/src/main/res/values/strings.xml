@@ -1,12 +1,25 @@
 <resources>
     <string name="app_name">SrsRtcAndroidClient</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="prompt_email">Email</string>
+    <string name="loading">Loading…</string>
+    <string name="prompt_user_id">User Id</string>
+    <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
+    <string name="prompt_confirm_password">Confirm Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_register">Register</string>
     <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="empty_user_id"> user id is empty.</string>
+    <string name="empty_password">password is empty.</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="register_user">Register?</string>
+    <string name="user_info_not_obtained">user information not obtained!</string>
+    <string name="login_succeeded">login succeeded</string>
+    <string name="user_login">User Login</string>
+    <string name="user_register">User Register</string>
+    <string name="inconsistent_passwords">inconsistent passwords.</string>
+    <string name="registration_success">registration success</string>
+    <string name="select_call_user">Select Call User</string>
+    <string name="confirm">Confirm</string>
+
 </resources>

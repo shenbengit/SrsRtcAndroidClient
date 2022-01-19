@@ -7,17 +7,14 @@
 
         <variable
             name="viewModel"
-            type="com.shencoder.srs_rtc_android_client.ui.login.LoginViewModel" />
+            type="com.shencoder.srs_rtc_android_client.ui.register.RegisterUserViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/ic_bg"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        tools:context=".ui.login.LoginActivity">
+        tools:context=".ui.register.RegisterUserActivity">
 
         <TextView
             android:id="@+id/tvTitle"
@@ -25,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="30sp"
             android:layout_marginTop="50dp"
-            android:text="@string/user_login"
+            android:text="@string/user_register"
             android:textColor="@color/white"
             android:textSize="40sp"
             android:textStyle="bold"
@@ -49,6 +46,20 @@
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
         <EditText
+            android:id="@+id/etUsername"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:hint="@string/prompt_username"
+            android:inputType="text"
+            android:singleLine="true"
+            android:text="@={viewModel.usernameField}"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="@id/etUserId"
+            app:layout_constraintStart_toStartOf="@id/etUserId"
+            app:layout_constraintTop_toBottomOf="@+id/etUserId" />
+
+        <EditText
             android:id="@+id/etPassword"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -59,20 +70,24 @@
             android:singleLine="true"
             android:text="@={viewModel.passwordField}"
             android:textColor="@color/white"
-            app:layout_constraintEnd_toEndOf="@id/etUserId"
-            app:layout_constraintStart_toStartOf="@id/etUserId"
-            app:layout_constraintTop_toBottomOf="@+id/etUserId" />
+            app:layout_constraintEnd_toEndOf="@id/etUsername"
+            app:layout_constraintStart_toStartOf="@id/etUsername"
+            app:layout_constraintTop_toBottomOf="@+id/etUsername" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/etConfirmPassword"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:onClick="@{()-> viewModel.registerUser()}"
-            android:text="@string/register_user"
-            android:textColor="#FF9800"
-            android:textSize="15sp"
+            android:layout_marginTop="15dp"
+            android:hint="@string/prompt_confirm_password"
+            android:inputType="textPassword"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:text="@={viewModel.confirmPasswordField}"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="@id/etPassword"
-            app:layout_constraintTop_toBottomOf="@id/etPassword" />
+            app:layout_constraintStart_toStartOf="@id/etPassword"
+            app:layout_constraintTop_toBottomOf="@+id/etPassword" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
@@ -83,14 +98,14 @@
             android:backgroundTint="@color/teal_200"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:onClick="@{()-> viewModel.login()}"
-            android:text="@string/action_sign_in"
+            android:onClick="@{()-> viewModel.registerUser()}"
+            android:text="@string/action_register"
             android:textSize="18sp"
             app:cornerRadius="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etPassword"
+            app:layout_constraintTop_toBottomOf="@+id/etConfirmPassword"
             app:layout_constraintVertical_bias="0.2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

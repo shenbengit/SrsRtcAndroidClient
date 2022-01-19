@@ -1,9 +1,19 @@
 package com.shencoder.srs_rtc_android_client.di
 
+import com.shencoder.srs_rtc_android_client.ui.check_user.CheckUserActivity
+import com.shencoder.srs_rtc_android_client.ui.check_user.CheckUserViewModel
+import com.shencoder.srs_rtc_android_client.ui.check_user.data.CheckUserDataSource
+import com.shencoder.srs_rtc_android_client.ui.check_user.data.CheckUserRepository
 import com.shencoder.srs_rtc_android_client.ui.login.data.LoginDataSource
 import com.shencoder.srs_rtc_android_client.ui.login.data.LoginRepository
 import com.shencoder.srs_rtc_android_client.ui.login.LoginActivity
+import com.shencoder.srs_rtc_android_client.ui.main.MainActivity
+import com.shencoder.srs_rtc_android_client.ui.register.RegisterUserActivity
 import com.shencoder.srs_rtc_android_client.ui.login.LoginViewModel
+import com.shencoder.srs_rtc_android_client.ui.main.MainViewModel
+import com.shencoder.srs_rtc_android_client.ui.register.RegisterUserViewModel
+import com.shencoder.srs_rtc_android_client.ui.register.data.RegisterUserDataSource
+import com.shencoder.srs_rtc_android_client.ui.register.data.RegisterUserRepository
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -24,8 +34,36 @@ private val loginModule = module {
 }
 
 /**
+ * [MainActivity]
+ */
+private val mainModule = module {
+    viewModel { MainViewModel(get(), get()) }
+}
+
+/**
+ * [RegisterUserActivity]
+ */
+private val registerUserModule = module {
+    factory { RegisterUserDataSource(get()) }
+    factory { RegisterUserRepository(get()) }
+    viewModel { RegisterUserViewModel(get(), get()) }
+}
+
+/**
+ * [CheckUserActivity]
+ */
+private val checkUserModule = module {
+    factory { CheckUserDataSource(get()) }
+    factory { CheckUserRepository(get()) }
+    viewModel { CheckUserViewModel(get(), get()) }
+}
+
+/**
  * ViewModel相关
  */
 val viewModelModule = arrayListOf(
-    loginModule
+    loginModule,
+    mainModule,
+    registerUserModule,
+    checkUserModule
 )
