@@ -17,6 +17,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SrsRtcAndroidClient">
         <activity
+            android:name=".ui.chat_room.EnterRoomIdActivity"
+            android:exported="false"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.chat_room.ChatRoomActivity"
+            android:exported="false"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.group_chat.GroupChatActivity"
+            android:exported="false"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.private_chat.PrivateChatActivity"
+            android:exported="false"
+            android:launchMode="singleTop" />
+        <activity
             android:name=".ui.check_user.CheckUserActivity"
             android:exported="false"
             android:launchMode="singleTop" />

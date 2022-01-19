@@ -21,5 +21,10 @@
     <string name="registration_success">registration success</string>
     <string name="select_call_user">Select Call User</string>
     <string name="confirm">Confirm</string>
+    <string name="private_chat">Private Chat</string>
+    <string name="group_chat">Group Chat</string>
+    <string name="chat_room">Chat Room</string>
+    <string name="enter_room_id">Enter Room Id</string>
+    <string name="enter_the_room">Enter The Room</string>
 
 </resources>

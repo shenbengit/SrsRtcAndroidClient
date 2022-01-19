@@ -5,16 +5,13 @@
 
     <data>
 
-        <variable
-            name="viewModel"
-            type="com.shencoder.srs_rtc_android_client.ui.check_user.CheckUserViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/ic_bg"
-        tools:context=".ui.check_user.CheckUserActivity">
+        tools:context=".ui.chat_room.EnterRoomIdActivity">
 
         <TextView
             android:id="@+id/tvTitle"
@@ -22,48 +19,45 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="30sp"
             android:layout_marginTop="50dp"
-            android:text="@string/select_call_user"
+            android:text="@string/enter_room_id"
             android:textColor="@color/white"
             android:textSize="40sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvUserList"
-            setRecyclerViewAdapter="@{viewModel.adapter}"
+        <EditText
+            android:id="@+id/etRoomId"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:layout_marginEnd="30dp"
-            android:layout_marginBottom="20dp"
-            android:background="@color/white"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@id/btnConfirm"
+            android:hint="@string/enter_room_id"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnConfirm"
+            android:id="@+id/btnEnterRoom"
             android:layout_width="0dp"
             android:layout_height="55dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:layout_marginBottom="30dp"
             android:backgroundTint="@color/teal_200"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:text="@string/confirm"
+            android:text="@string/enter_the_room"
             android:textSize="18sp"
             app:cornerRadius="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etRoomId"
+            app:layout_constraintVertical_bias="0.2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

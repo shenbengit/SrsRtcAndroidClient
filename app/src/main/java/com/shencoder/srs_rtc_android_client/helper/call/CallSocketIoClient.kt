@@ -2,7 +2,6 @@ package com.shencoder.srs_rtc_android_client.helper.call
 
 import android.os.Handler
 import android.os.Looper
-import android.provider.SyncStateContract
 import com.elvishew.xlog.XLog
 import com.shencoder.srs_rtc_android_client.constant.ClientNotifyCmd
 import com.shencoder.srs_rtc_android_client.constant.NotifyCmd

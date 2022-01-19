@@ -1,6 +1,7 @@
 package com.shencoder.srs_rtc_android_client.ui.main
 
 import android.app.Application
+import android.content.Intent
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LifecycleOwner
 import com.elvishew.xlog.XLog
@@ -11,6 +12,7 @@ import com.shencoder.srs_rtc_android_client.constant.MMKVConstant
 import com.shencoder.srs_rtc_android_client.constant.SocketIoConnectionStatus
 import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
 import com.shencoder.srs_rtc_android_client.helper.call.SocketIoConnectionStatusCallback
+import com.shencoder.srs_rtc_android_client.ui.chat_room.EnterRoomIdActivity
 import org.koin.core.component.inject
 
 /**
@@ -61,5 +63,27 @@ class MainViewModel(
     override fun onDestroy(owner: LifecycleOwner) {
         callSocketIoClient.disconnect()
         callSocketIoClient.removeConnectionStatusCallback(connectionStatusCallback)
+    }
+
+    /**
+     * 私聊
+     */
+    fun privateChat() {
+
+    }
+
+    /**
+     * 群聊
+     */
+    fun groupChat() {
+
+    }
+
+    /**
+     * 聊天室
+     */
+    fun chatRoom() {
+        val intent = Intent(applicationContext, EnterRoomIdActivity::class.java)
+        startActivity(intent)
     }
 }
