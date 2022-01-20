@@ -13,7 +13,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/ic_bg"
         tools:context=".ui.check_user.CheckUserActivity">
 
         <TextView
@@ -24,7 +23,7 @@
             android:layout_marginTop="50dp"
             android:text="@string/select_call_user"
             android:textColor="@color/white"
-            android:textSize="40sp"
+            android:textSize="35sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -32,6 +31,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvUserList"
+            addRecyclerViewItemDecoration="@{viewModel.itemDecoration}"
             setRecyclerViewAdapter="@{viewModel.adapter}"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -57,6 +57,7 @@
             android:backgroundTint="@color/teal_200"
             android:insetTop="0dp"
             android:insetBottom="0dp"
+            android:onClick="@{()-> viewModel.confirm()}"
             android:text="@string/confirm"
             android:textSize="18sp"
             app:cornerRadius="15dp"

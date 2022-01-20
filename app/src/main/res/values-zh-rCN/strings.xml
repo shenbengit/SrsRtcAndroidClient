@@ -4,6 +4,7 @@
     <string name="loading">加载中…</string>
     <string name="prompt_user_id">用户ID</string>
     <string name="prompt_username">用户名</string>
+    <string name="prompt_user_type">用户类型</string>
     <string name="prompt_password">密码</string>
     <string name="prompt_confirm_password">确认密码</string>
     <string name="action_sign_in">登&#12288;&#12288;录</string>
@@ -26,4 +27,5 @@
     <string name="chat_room">聊天室</string>
     <string name="enter_room_id">请输入房间号</string>
     <string name="enter_the_room">进入房间</string>
+    <string name="please_select_the_callee">请选择会见人员</string>
 </resources>

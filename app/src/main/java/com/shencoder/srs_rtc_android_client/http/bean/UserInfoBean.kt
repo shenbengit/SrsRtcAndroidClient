@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 import com.squareup.moshi.JsonClass
 
 import com.squareup.moshi.Json
+import kotlinx.parcelize.IgnoredOnParcel
 
 
 @Parcelize
@@ -21,6 +22,23 @@ data class UserInfoBean(
     @Json(name = "username")
     val username: String
 ) : Parcelable {
+    /**
+     * 是否可选择
+     *
+     * can selectable
+     */
+    @Transient
+    @IgnoredOnParcel
+    var selectable = true
+
+    /**
+     * 是否是选择状态
+     * 仅当[selectable] = true时，可为true。
+     * can selected when [selectable] = true only.
+     */
+    @Transient
+    @IgnoredOnParcel
+    var isSelected = false
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -4,6 +4,7 @@
     <string name="loading">Loading…</string>
     <string name="prompt_user_id">User Id</string>
     <string name="prompt_username">Username</string>
+    <string name="prompt_user_type">User Type</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_confirm_password">Confirm Password</string>
     <string name="action_sign_in">Sign in</string>
@@ -26,5 +27,6 @@
     <string name="chat_room">Chat Room</string>
     <string name="enter_room_id">Enter Room Id</string>
     <string name="enter_the_room">Enter The Room</string>
+    <string name="please_select_the_callee">Please select the callee.</string>
 
 </resources>

@@ -15,7 +15,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/ic_bg"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         tools:context=".ui.main.MainActivity">
 
         <TextView
@@ -107,10 +108,10 @@
             android:backgroundTint="@color/teal_200"
             android:insetTop="0dp"
             android:insetBottom="0dp"
+            android:onClick="@{()-> viewModel.chatRoom()}"
             android:text="@string/chat_room"
             android:textSize="18sp"
             app:cornerRadius="25dp"
-            android:onClick="@{()-> viewModel.chatRoom()}"
             app:layout_constraintBottom_toBottomOf="@id/viewBg"
             app:layout_constraintEnd_toEndOf="@id/viewBg"
             app:layout_constraintStart_toStartOf="@id/viewBg"

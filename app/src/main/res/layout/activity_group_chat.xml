@@ -13,7 +13,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/ic_bg"
         tools:context=".ui.group_chat.GroupChatActivity">
 
     </androidx.constraintlayout.widget.ConstraintLayout>

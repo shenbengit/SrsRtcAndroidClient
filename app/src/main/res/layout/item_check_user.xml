@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -9,8 +10,68 @@
     </data>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cvRoot"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="70dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text='@{@string/prompt_username + ": " +item.username}'
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toTopOf="@id/tvUserId"
+                app:layout_constraintStart_toEndOf="@id/ivAvatar"
+                app:layout_constraintTop_toTopOf="@id/ivAvatar" />
+
+            <TextView
+                android:id="@+id/tvUserId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{@string/prompt_user_id + ": " +item.userId}'
+                android:textColor="#393939"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toTopOf="@id/tvUserType"
+                app:layout_constraintStart_toStartOf="@id/tvUsername"
+                app:layout_constraintTop_toBottomOf="@id/tvUsername" />
+
+            <TextView
+                android:id="@+id/tvUserType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{@string/prompt_user_type + ": " +item.userType}'
+                android:textColor="#393939"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+                app:layout_constraintStart_toStartOf="@id/tvUsername"
+                app:layout_constraintTop_toBottomOf="@id/tvUserId" />
+
+
+            <CheckBox
+                android:id="@+id/cbSelected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 </layout>

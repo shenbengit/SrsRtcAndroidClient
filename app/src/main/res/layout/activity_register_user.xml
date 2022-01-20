@@ -13,7 +13,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/ic_bg"
         tools:context=".ui.register.RegisterUserActivity">
 
         <TextView
@@ -24,7 +23,7 @@
             android:layout_marginTop="50dp"
             android:text="@string/user_register"
             android:textColor="@color/white"
-            android:textSize="40sp"
+            android:textSize="35sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

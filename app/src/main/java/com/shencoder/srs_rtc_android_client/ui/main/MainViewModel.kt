@@ -8,11 +8,13 @@ import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.base.repository.BaseNothingRepository
 import com.shencoder.mvvmkit.base.viewmodel.BaseViewModel
 import com.shencoder.mvvmkit.ext.toastWarning
+import com.shencoder.srs_rtc_android_client.constant.ChatMode
 import com.shencoder.srs_rtc_android_client.constant.MMKVConstant
 import com.shencoder.srs_rtc_android_client.constant.SocketIoConnectionStatus
 import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
 import com.shencoder.srs_rtc_android_client.helper.call.SocketIoConnectionStatusCallback
 import com.shencoder.srs_rtc_android_client.ui.chat_room.EnterRoomIdActivity
+import com.shencoder.srs_rtc_android_client.ui.check_user.CheckUserActivity
 import org.koin.core.component.inject
 
 /**
@@ -69,14 +71,18 @@ class MainViewModel(
      * 私聊
      */
     fun privateChat() {
-
+        val intent = Intent(applicationContext, CheckUserActivity::class.java)
+        intent.putExtra(CheckUserActivity.CHAT_MODE, ChatMode.PRIVATE_MODE)
+        startActivity(intent)
     }
 
     /**
      * 群聊
      */
     fun groupChat() {
-
+        val intent = Intent(applicationContext, CheckUserActivity::class.java)
+        intent.putExtra(CheckUserActivity.CHAT_MODE, ChatMode.GROUP_MODE)
+        startActivity(intent)
     }
 
     /**

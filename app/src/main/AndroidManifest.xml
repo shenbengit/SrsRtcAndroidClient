@@ -35,11 +35,15 @@
         <activity
             android:name=".ui.check_user.CheckUserActivity"
             android:exported="false"
-            android:launchMode="singleTop" />
+            android:launchMode="standard" />
         <activity
             android:name=".ui.register.RegisterUserActivity"
             android:exported="false"
             android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:exported="false"
+            android:launchMode="singleTask" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="true">
@@ -49,10 +53,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.main.MainActivity"
-            android:exported="false"
-            android:launchMode="singleTask" />
     </application>
 
 </manifest>

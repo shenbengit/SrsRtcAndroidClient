@@ -1,6 +1,9 @@
 package com.shencoder.srs_rtc_android_client.ui.chat_room
 
+import android.Manifest
 import android.os.Bundle
+import com.permissionx.guolindev.PermissionX
+import com.shencoder.mvvmkit.util.toastWarning
 import com.shencoder.srs_rtc_android_client.BR
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.base.BaseActivity
@@ -29,10 +32,27 @@ class ChatRoomActivity : BaseActivity<ChatRoomViewModel, ActivityChatRoomBinding
     }
 
     override fun initView() {
+
     }
 
     override fun initData(savedInstanceState: Bundle?) {
+        val roomId = intent?.getStringExtra(ROOM_ID)
+        if (roomId.isNullOrBlank()) {
+            toastWarning("roomId is empty.")
+            onBackPressedSupport()
+            return
+        }
+        PermissionX.init(this)
+            .permissions(
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.READ_PHONE_STATE
+            )
+            .request { allGranted, grantedList, deniedList ->
+                if (allGranted) {
 
+                }
+            }
     }
 
 }

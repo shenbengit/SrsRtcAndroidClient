@@ -54,7 +54,7 @@ interface ApiService {
      * 仅查询客户端；
      * query clients only.
      */
-    @GET("/srs_rtc/user/getAllUser")
+    @GET("/srs_rtc/user/getAllUserInfo")
     suspend fun getAllUser(): ApiResponse<List<UserInfoBean>>
 
 }
