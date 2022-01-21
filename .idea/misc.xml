@@ -25,6 +25,7 @@
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_speaker_enable.xml" value="0.22407407407407406" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_switch_camera.xml" value="0.22407407407407406" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_white_corner_bg.xml" value="0.21851851851851853" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/font/londrina_shadow.xml" value="0.2671794871794872" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_chat_room.xml" value="0.24114583333333334" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_check_user.xml" value="0.24114583333333334" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_enter_room_id.xml" value="0.24114583333333334" />
@@ -34,7 +35,9 @@
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_private_chat.xml" value="0.24114583333333334" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_register_user.xml" value="0.24114583333333334" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/item_check_user.xml" value="0.2" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/layout_stream_renderer.xml" value="0.2" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/layout_test.xml" value="0.24114583333333334" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/layout_text_view.xml" value="0.72" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.22407407407407406" />
       </map>
     </option>

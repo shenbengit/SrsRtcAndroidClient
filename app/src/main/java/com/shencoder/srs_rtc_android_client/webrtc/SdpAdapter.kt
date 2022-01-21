@@ -11,19 +11,19 @@ import org.webrtc.SessionDescription
  */
 open class SdpAdapter constructor(private val tag: String) : SdpObserver {
 
-    override fun onSetFailure(str: String?) {
-        XLog.e("SdpObserver->${tag}->onSetFailure:$str")
+    override fun onSetFailure(error: String?) {
+        XLog.e("SdpObserver->${tag}->onSetFailure:$error")
     }
 
     override fun onSetSuccess() {
         XLog.i("SdpObserver->${tag}->onSetSuccess")
     }
 
-    override fun onCreateSuccess(description: SessionDescription?) {
+    override fun onCreateSuccess(description: SessionDescription) {
         XLog.i("SdpObserver->${tag}->onCreateSuccess")
     }
 
-    override fun onCreateFailure(s: String?) {
-        XLog.e("SdpObserver->${tag}->onCreateFailure")
+    override fun onCreateFailure(error: String?) {
+        XLog.e("SdpObserver->${tag}->onCreateFailure:${error}")
     }
 }
