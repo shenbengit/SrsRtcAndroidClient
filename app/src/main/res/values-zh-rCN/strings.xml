@@ -28,4 +28,5 @@
     <string name="enter_room_id">请输入房间号</string>
     <string name="enter_the_room">进入房间</string>
     <string name="please_select_the_callee">请选择会见人员</string>
+    <string name="check_srs_request_failure">请检查推流地址是否已存在或sdp中有无H.264信息</string>
 </resources>

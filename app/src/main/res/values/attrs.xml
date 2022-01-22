@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SteamGridLayout">
+        <!--画中画模式-->
+        <attr name="sgl_pip_mode" format="boolean" />
+        <!--画中画view的宽高占父布局的宽高比-->
+        <attr name="sgl_pip_percent" format="float" />
+        <attr name="sgl_pip_margin_top" format="dimension" />
+        <attr name="sgl_pip_margin_end" format="dimension" />
+
+    </declare-styleable>
+
+    <declare-styleable name="CallLayout">
+        <!--SteamGridLayout画中画模式-->
+        <attr name="cl_sgl_pip_mode" format="boolean" />
+    </declare-styleable>
+</resources>

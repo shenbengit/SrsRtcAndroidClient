@@ -87,7 +87,9 @@ class CheckUserViewModel(
      */
     private fun analyticalData(list: List<UserInfoBean>, unSelectedSet: Set<UserInfoBean>) {
         list.forEach { item ->
-            item.selectable = unSelectedSet.contains(item).not()
+            val contains = unSelectedSet.contains(item)
+            item.selectable = contains.not()
+            item.isSelected = contains
         }
         adapter.setList(list)
     }
@@ -111,7 +113,10 @@ class CheckUserViewModel(
             }
             ChatMode.GROUP_MODE -> {
                 intent = Intent(applicationContext, GroupChatActivity::class.java)
-                intent.putParcelableArrayListExtra(GroupChatActivity.CALLEE_INFO_LIST, ArrayList(list))
+                intent.putParcelableArrayListExtra(
+                    GroupChatActivity.CALLEE_INFO_LIST,
+                    ArrayList(list)
+                )
             }
         }
         startActivity(intent)

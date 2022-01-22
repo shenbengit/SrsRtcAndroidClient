@@ -2,6 +2,9 @@ package com.shencoder.srs_rtc_android_client.webrtc.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import android.widget.Toast
+import com.elvishew.xlog.XLog
+import com.shencoder.mvvmkit.util.toastError
 import com.shencoder.srs_rtc_android_client.util.WebRTCUtil
 import com.shencoder.srs_rtc_android_client.webrtc.PeerConnectionObserver
 import org.webrtc.*
@@ -26,8 +29,8 @@ class PublishStreamSurfaceViewRenderer @JvmOverloads constructor(
     private var videoTrack: VideoTrack? = null
     private var surfaceTextureHelper: SurfaceTextureHelper? = null
 
-    override fun afterInit() {
-
+    override fun streamType(): StreamType {
+        return StreamType.PUBLISH
     }
 
     override fun createPeerConnection(
@@ -77,6 +80,10 @@ class PublishStreamSurfaceViewRenderer @JvmOverloads constructor(
         return peerConnection
     }
 
+    override fun afterInit() {
+        svr.setZOrderMediaOverlay(true)
+    }
+
     override fun beginRelease() {
         cameraVideoCapturer?.dispose()
         surfaceTextureHelper?.dispose()
@@ -86,11 +93,15 @@ class PublishStreamSurfaceViewRenderer @JvmOverloads constructor(
 
     /**
      * 开始推流
-     * @param srsServerUrl srs请求url
      * @param webrtcUrl 推流地址
      */
-    fun publishStream(srsServerUrl: String, webrtcUrl: String) {
-
+    fun publishStream(webrtcUrl: String) {
+        requestSrs(webrtcUrl, {
+            isShowPrompt(false)
+        }, {
+            XLog.e("publishStream failure: ${it.message}")
+            context.toastError("publishStream failure: ${it.message}", Toast.LENGTH_LONG)
+        })
     }
 
     /**

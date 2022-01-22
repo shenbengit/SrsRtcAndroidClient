@@ -1,6 +1,5 @@
 package com.shencoder.srs_rtc_android_client.ui.check_user.adapter
 
-import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -28,7 +27,7 @@ class CheckUserAdapter :
 
     fun setChatMode(chatMode: ChatMode) {
         this.chatMode = chatMode
-        lastCheckedPosition = -1
+        lastCheckedPosition = RecyclerView.NO_POSITION
 
         if (data.isNotEmpty()) {
             data.forEach { it.isSelected = false }
@@ -43,8 +42,11 @@ class CheckUserAdapter :
         viewHolder.dataBinding?.run {
             cbSelected.setOnCheckedChangeListener { _, isChecked ->
                 val position = viewHolder.bindingAdapterPosition - headerLayoutCount
-                getItem(position).isSelected = isChecked
-
+                val item = getItem(position)
+                if (item.selectable.not()) {
+                    return@setOnCheckedChangeListener
+                }
+                item.isSelected = isChecked
                 when (chatMode) {
                     ChatMode.PRIVATE_MODE -> {
                         //私聊-单选
@@ -59,7 +61,6 @@ class CheckUserAdapter :
                     }
                     ChatMode.GROUP_MODE -> {
                         //群聊-多选
-
                     }
                 }
             }
@@ -75,8 +76,7 @@ class CheckUserAdapter :
         if (any is String) {
             if (any == UPDATE_CHECKED) {
                 val cbSelected: CheckBox = holder.getView(R.id.cbSelected)
-                cbSelected.isEnabled = item.selectable
-                cbSelected.isChecked = item.selectable && item.isSelected
+                cbSelected.isChecked = item.isSelected
             }
         }
     }
@@ -93,8 +93,8 @@ class CheckUserAdapter :
             this.dataBinding?.item = item
             setImageResource(R.id.ivAvatar, avatarDrawable)
             val cbSelected: CheckBox = getView(R.id.cbSelected)
+            cbSelected.isChecked = item.isSelected
             cbSelected.isEnabled = item.selectable
-            cbSelected.isChecked = item.selectable && item.isSelected
         }
     }
 }

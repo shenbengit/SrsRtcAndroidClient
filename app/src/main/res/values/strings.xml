@@ -28,5 +28,6 @@
     <string name="enter_room_id">Enter Room Id</string>
     <string name="enter_the_room">Enter The Room</string>
     <string name="please_select_the_callee">Please select the callee.</string>
+    <string name="check_srs_request_failure">Please check whether the streaming address already exists or whether there is H.264 information in SDP</string>
 
 </resources>

@@ -2,6 +2,9 @@ package com.shencoder.srs_rtc_android_client.webrtc.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import android.widget.Toast
+import com.elvishew.xlog.XLog
+import com.shencoder.mvvmkit.util.toastError
 import com.shencoder.srs_rtc_android_client.webrtc.PeerConnectionObserver
 import org.webrtc.*
 import org.webrtc.PeerConnection.RTCConfiguration
@@ -22,8 +25,8 @@ class PlayStreamSurfaceViewRenderer @JvmOverloads constructor(
 ) : BaseStreamSurfaceViewRenderer(context, attrs, defStyleAttr, defStyleRes) {
 
 
-    override fun afterInit() {
-
+    override fun streamType(): StreamType {
+        return StreamType.PLAY
     }
 
     override fun createPeerConnection(
@@ -69,17 +72,25 @@ class PlayStreamSurfaceViewRenderer @JvmOverloads constructor(
         return peerConnection
     }
 
+    override fun afterInit() {
+
+    }
+
     override fun beginRelease() {
 
     }
 
     /**
      * 开始拉流
-     * @param srsServerUrl srs请求url
      * @param webrtcUrl 推流地址
      */
-    fun playStream(srsServerUrl: String, webrtcUrl: String) {
-
+    fun playStream(webrtcUrl: String) {
+        requestSrs(webrtcUrl, {
+            isShowPrompt(false)
+        }, {
+            XLog.e("playStream failure: ${it.message}")
+            context.toastError("playStream failure: ${it.message}", Toast.LENGTH_LONG)
+        })
     }
 
 }

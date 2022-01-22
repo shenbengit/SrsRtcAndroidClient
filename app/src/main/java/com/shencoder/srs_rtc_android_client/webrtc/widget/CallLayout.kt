@@ -3,6 +3,7 @@ package com.shencoder.srs_rtc_android_client.webrtc.widget
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import com.shencoder.srs_rtc_android_client.R
 import org.webrtc.DefaultVideoDecoderFactory
 import org.webrtc.EglBase
 import org.webrtc.PeerConnectionFactory
@@ -18,10 +19,9 @@ import org.webrtc.createCustomVideoEncoderFactory
 class CallLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    defStyleRes: Int = 0
+    defStyleAttr: Int = 0
 ) :
-    FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
+    FrameLayout(context, attrs, defStyleAttr) {
 
     private val peerConnectionFactory: PeerConnectionFactory
     private val audioDeviceModule: JavaAudioDeviceModule
@@ -29,6 +29,12 @@ class CallLayout @JvmOverloads constructor(
     private val eglBaseContext = eglBase.eglBaseContext
 
     init {
+        val typedArray =
+            context.obtainStyledAttributes(attrs, R.styleable.CallLayout)
+
+
+        typedArray.recycle()
+
         val options = PeerConnectionFactory.Options()
         val encoderFactory =
             createCustomVideoEncoderFactory(eglBaseContext,

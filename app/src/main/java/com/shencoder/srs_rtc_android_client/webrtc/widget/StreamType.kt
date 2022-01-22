@@ -3,17 +3,17 @@ package com.shencoder.srs_rtc_android_client.webrtc.widget
 /**
  *
  * @author  ShenBen
- * @date    2022/1/21 15:22
+ * @date    2022/01/22 11:33
  * @email   714081644@qq.com
  */
-enum class StreamStatus {
+enum class StreamType {
     /**
-     * 预览状态
+     * 拉流
      */
-    PREVIEW,
+    PLAY,
 
     /**
-     * 推流状态
+     * 推流
      */
-    STREAMING,
+    PUBLISH
 }
