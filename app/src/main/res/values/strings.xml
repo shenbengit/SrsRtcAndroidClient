@@ -29,5 +29,9 @@
     <string name="enter_the_room">Enter The Room</string>
     <string name="please_select_the_callee">Please select the callee.</string>
     <string name="check_srs_request_failure">Please check whether the streaming address already exists or whether there is H.264 information in SDP</string>
-
+    <string name="mute">Mute</string>
+    <string name="switch_camera">Switch camera</string>
+    <string name="speaker">Speaker</string>
+    <string name="hang_up">Hang up</string>
+    <string name="answer">Answer</string>
 </resources>

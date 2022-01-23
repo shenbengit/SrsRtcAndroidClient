@@ -13,5 +13,12 @@
     <declare-styleable name="CallLayout">
         <!--SteamGridLayout画中画模式-->
         <attr name="cl_sgl_pip_mode" format="boolean" />
+        <attr name="cl_sgl_pip_percent" format="float" />
+        <attr name="cl_sgl_pip_margin_top" format="dimension" />
+        <attr name="cl_sgl_pip_margin_end" format="dimension" />
+
+        <attr name="cl_mute_on" format="boolean" />
+        <attr name="cl_speaker_on" format="boolean" />
+
     </declare-styleable>
 </resources>

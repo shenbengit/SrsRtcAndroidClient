@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/clCallingAction"
+    android:layout_width="match_parent"
+    android:layout_height="220dp">
+
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSwitchCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:drawablePadding="3dp"
+        android:gravity="center_horizontal"
+        android:text="@string/switch_camera"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:drawableTopCompat="@drawable/ic_camera_disable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTime" />
+
+    <TextView
+        android:id="@+id/tvMute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="3dp"
+        android:gravity="center_horizontal"
+        android:text="@string/mute"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:drawableTopCompat="@drawable/ic_mute_action_bg"
+        app:layout_constraintBottom_toBottomOf="@id/tvSwitchCamera"
+        app:layout_constraintEnd_toStartOf="@id/tvSwitchCamera"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvSwitchCamera" />
+
+    <TextView
+        android:id="@+id/tvSpeaker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="3dp"
+        android:gravity="center_horizontal"
+        android:text="@string/speaker"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:drawableTopCompat="@drawable/ic_speaker_action_bg"
+        app:layout_constraintBottom_toBottomOf="@id/tvSwitchCamera"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvSwitchCamera"
+        app:layout_constraintTop_toTopOf="@id/tvSwitchCamera" />
+
+    <TextView
+        android:id="@+id/tvHangUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="3dp"
+        android:gravity="center_horizontal"
+        android:text="@string/hang_up"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:drawableTopCompat="@drawable/ic_hang_up"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSwitchCamera" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

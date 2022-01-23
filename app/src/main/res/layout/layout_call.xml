@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#8E8C8C">
+
+    <com.shencoder.srs_rtc_android_client.webrtc.widget.SteamGridLayout
+        android:id="@+id/sgl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+    </com.shencoder.srs_rtc_android_client.webrtc.widget.SteamGridLayout>
+
+    <include
+        layout="@layout/layout_before_call"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="20dp" />
+
+    <include
+        layout="@layout/layout_calling_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="20dp" />
+</FrameLayout>

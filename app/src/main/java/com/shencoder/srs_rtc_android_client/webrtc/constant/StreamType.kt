@@ -1,4 +1,4 @@
-package com.shencoder.srs_rtc_android_client.webrtc.widget
+package com.shencoder.srs_rtc_android_client.webrtc.constant
 
 /**
  *

@@ -1,6 +1,6 @@
 package com.shencoder.srs_rtc_android_client.webrtc.widget
 
-import com.shencoder.srs_rtc_android_client.util.WebRTCUtil
+import com.shencoder.srs_rtc_android_client.webrtc.util.WebRTCUtil
 
 import android.content.Context
 import android.util.AttributeSet
@@ -15,6 +15,7 @@ import com.shencoder.srs_rtc_android_client.constant.SRS
 import com.shencoder.srs_rtc_android_client.http.RetrofitClient
 import com.shencoder.srs_rtc_android_client.http.bean.SrsRequestBean
 import com.shencoder.srs_rtc_android_client.webrtc.SdpAdapter
+import com.shencoder.srs_rtc_android_client.webrtc.constant.StreamType
 import kotlinx.coroutines.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -161,7 +162,8 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
                         }
                     }.onSuccess { bean ->
                         if (bean.isSuccess) {
-                            setRemoteDescription(WebRTCUtil.convertAnswerSdp(sdp, bean.sdp),
+                            setRemoteDescription(
+                                WebRTCUtil.convertAnswerSdp(sdp, bean.sdp),
                                 onSuccess = {
                                     onSuccess.invoke()
                                 }, onFailure = { error ->

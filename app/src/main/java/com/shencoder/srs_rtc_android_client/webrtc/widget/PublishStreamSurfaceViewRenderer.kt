@@ -5,8 +5,9 @@ import android.util.AttributeSet
 import android.widget.Toast
 import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.util.toastError
-import com.shencoder.srs_rtc_android_client.util.WebRTCUtil
+import com.shencoder.srs_rtc_android_client.webrtc.util.WebRTCUtil
 import com.shencoder.srs_rtc_android_client.webrtc.PeerConnectionObserver
+import com.shencoder.srs_rtc_android_client.webrtc.constant.StreamType
 import org.webrtc.*
 import org.webrtc.PeerConnection.RTCConfiguration
 import org.webrtc.RtpTransceiver.RtpTransceiverInit

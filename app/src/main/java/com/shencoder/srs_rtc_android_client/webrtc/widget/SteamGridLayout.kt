@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.FloatRange
 import androidx.annotation.Px
 import androidx.core.view.isGone
 import com.shencoder.srs_rtc_android_client.R
@@ -29,10 +30,10 @@ class SteamGridLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
 
-    private companion object {
-        private const val DEFAULT_PIP_MODE = false
-        private const val DEFAULT_PIP_PERCENT = 0.25f
-        private const val DEFAULT_PIP_MARGIN = 20
+    companion object {
+        const val DEFAULT_PIP_MODE = false
+        const val DEFAULT_PIP_PERCENT = 0.25f
+        const val DEFAULT_PIP_MARGIN = 20
 
     }
 
@@ -83,6 +84,15 @@ class SteamGridLayout @JvmOverloads constructor(
         if (pipMode != isPipMode) {
             pipMode = isPipMode
             if (childCount == 2) {
+                requestLayout()
+            }
+        }
+    }
+
+    fun setPipMarginPercent(@FloatRange(from = 0.0, to = 1.0) pipPercent: Float) {
+        if (this.pipPercent != pipPercent) {
+            this.pipPercent = pipPercent
+            if (pipMode && childCount == 2) {
                 requestLayout()
             }
         }
@@ -364,7 +374,13 @@ class SteamGridLayout @JvmOverloads constructor(
      * 释放资源
      */
     fun release() {
-        removeAllViews()
+        val childCount = childCount
+        for (i in 0 until childCount) {
+            val childView = getChildAt(i)
+            if (childView is BaseStreamSurfaceViewRenderer) {
+                childView.release()
+            }
+        }
     }
 
     private fun checkView(child: View) {

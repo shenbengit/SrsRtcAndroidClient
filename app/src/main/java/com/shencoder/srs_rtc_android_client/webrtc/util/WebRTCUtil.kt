@@ -1,4 +1,4 @@
-package com.shencoder.srs_rtc_android_client.util
+package com.shencoder.srs_rtc_android_client.webrtc.util
 
 import org.webrtc.MediaConstraints
 
