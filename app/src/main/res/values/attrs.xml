@@ -17,8 +17,9 @@
         <attr name="cl_sgl_pip_margin_top" format="dimension" />
         <attr name="cl_sgl_pip_margin_end" format="dimension" />
 
-        <attr name="cl_mute_on" format="boolean" />
-        <attr name="cl_speaker_on" format="boolean" />
+        <attr name="cl_speaker_mute_on" format="boolean" />
+        <attr name="cl_microphone_mute_on" format="boolean" />
+        <attr name="cl_speakerphone_on" format="boolean" />
 
     </declare-styleable>
 </resources>

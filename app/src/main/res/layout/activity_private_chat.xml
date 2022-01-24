@@ -15,114 +15,15 @@
         android:layout_height="match_parent"
         tools:context=".ui.private_chat.PrivateChatActivity">
 
-        <com.shencoder.srs_rtc_android_client.webrtc.widget.SteamGridLayout
+        <com.shencoder.srs_rtc_android_client.webrtc.widget.CallLayout
+            android:id="@+id/callLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:sgl_pip_margin_end="50dp"
-            app:sgl_pip_margin_top="80dp"
-            app:sgl_pip_mode="true">
+            app:cl_sgl_pip_mode="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PublishStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/errorColor" />
-
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/color_connected" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#321554" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#03A9F4" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#FF9800" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#3F51B5" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#8BC34A" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#9C27B0" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#2196F3" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#235870" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#116C95" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#0F191E" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#A5247A" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#BC2AC1" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#0F82B6" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#03A9F4" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#202175" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#9C27B0" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#03A9F4" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#E91E63" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#FF5722" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#FFC107" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#673AB7" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#3F51B5" />
-            <com.shencoder.srs_rtc_android_client.webrtc.widget.PlayStreamSurfaceViewRenderer
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#03A9F4" />
-        </com.shencoder.srs_rtc_android_client.webrtc.widget.SteamGridLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

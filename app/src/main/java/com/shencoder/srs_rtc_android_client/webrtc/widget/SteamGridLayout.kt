@@ -9,16 +9,14 @@ import androidx.annotation.FloatRange
 import androidx.annotation.Px
 import androidx.core.view.isGone
 import com.shencoder.srs_rtc_android_client.R
+import com.shencoder.srs_rtc_android_client.webrtc.bean.WebRTCStreamInfoBean
 import org.webrtc.EglBase
 import org.webrtc.PeerConnectionFactory
 
 /**
  * 专门用来摆放[BaseStreamSurfaceViewRenderer]，不可add其他view
  * 仅可以放一个[PublishStreamSurfaceViewRenderer]，可以放多个[PlayStreamSurfaceViewRenderer]
- * 数量为1时：铺满
- * 数量为2时：是否是画中画模式：不是则上下铺满
- * 数量为3、4时：2x2结构 正方形
- * 数量为5、6、7、8、9时：3x3结构 正方形
+ * @see [getColumns]
  *
  * @author  ShenBen
  * @date    2022/01/22 12:33
@@ -398,6 +396,60 @@ class SteamGridLayout @JvmOverloads constructor(
             }
             if (publishCount > 1) {
                 throw IllegalStateException("A PublishStreamSurfaceViewRenderer already exists.")
+            }
+        }
+    }
+
+    fun getPublishStreamSurfaceViewRenderer(): PublishStreamSurfaceViewRenderer? {
+        val childCount = childCount
+        for (i in 0 until childCount) {
+            val childAt = getChildAt(i)
+            if (childAt is PublishStreamSurfaceViewRenderer) {
+                return childAt
+            }
+        }
+        return null
+    }
+
+    fun getAllPlayStreamSurfaceViewRenderer(): List<PlayStreamSurfaceViewRenderer> {
+        val list = mutableListOf<PlayStreamSurfaceViewRenderer>()
+        val childCount = childCount
+        for (i in 0 until childCount) {
+            val childAt = getChildAt(i)
+            if (childAt is PlayStreamSurfaceViewRenderer) {
+                list.add(childAt)
+            }
+        }
+        return list
+    }
+
+    fun getPlayStreamSurfaceViewRenderer(
+        userId: String,
+        userType: String
+    ): PlayStreamSurfaceViewRenderer? {
+        val bean = WebRTCStreamInfoBean(userId, userType)
+        val childCount = childCount
+        for (i in 0 until childCount) {
+            val childAt = getChildAt(i)
+            if (childAt is PlayStreamSurfaceViewRenderer) {
+                if (bean == childAt.webrtcStreamInfoBean) {
+                    return childAt
+                }
+            }
+        }
+        return null
+    }
+
+    fun removePlayStreamSurfaceView(userId: String, userType: String) {
+        val bean = WebRTCStreamInfoBean(userId, userType)
+        val childCount = childCount
+        for (i in 0 until childCount) {
+            val childAt = getChildAt(i)
+            if (childAt is PlayStreamSurfaceViewRenderer) {
+                if (bean == childAt.webrtcStreamInfoBean) {
+                    removeViewAt(i)
+                    break
+                }
             }
         }
     }

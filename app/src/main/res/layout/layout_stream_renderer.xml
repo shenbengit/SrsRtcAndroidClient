@@ -13,6 +13,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <View
+        android:id="@+id/viewPromptBg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#73000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tvPromptUsername"
         android:layout_width="wrap_content"
@@ -20,7 +30,6 @@
         android:layout_marginBottom="7dp"
         android:textColor="@color/white"
         android:textSize="18sp"
-        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/ivPromptAvatar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,7 +41,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="7dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toEndOf="parent"

@@ -29,6 +29,7 @@
         android:text="@string/answer"
         android:textColor="@color/white"
         android:textSize="15sp"
+        android:visibility="gone"
         app:drawableTopCompat="@drawable/ic_accept"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

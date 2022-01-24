@@ -1,6 +1,12 @@
 package com.shencoder.srs_rtc_android_client.util
 
+import android.Manifest
 import android.os.Build
+import androidx.annotation.DrawableRes
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import com.permissionx.guolindev.PermissionX
+import com.shencoder.srs_rtc_android_client.R
 import okhttp3.OkHttpClient
 import java.net.Socket
 import java.security.SecureRandom
@@ -92,5 +98,47 @@ fun OkHttpClient.Builder.ignoreCertificate(): OkHttpClient.Builder {
     val hostnameVerifier = HostnameVerifier { _, _ -> true }
     return sslSocketFactory(sslContext.socketFactory)
         .hostnameVerifier(hostnameVerifier)
+}
+
+private val avatarList = listOf(
+    R.drawable.ic_avatar01,
+    R.drawable.ic_avatar02,
+    R.drawable.ic_avatar03,
+    R.drawable.ic_avatar04,
+    R.drawable.ic_avatar05,
+)
+
+@DrawableRes
+fun randomAvatar(): Int {
+    return avatarList[(avatarList.indices).random()]
+}
+
+
+/**
+ * 请求通话相关权限
+ */
+fun FragmentActivity.requestCallPermissions(result: (allGranted: Boolean) -> Unit) {
+    PermissionX.init(this)
+        .permissions(
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
+        )
+        .request { allGranted, _, _ ->
+            result.invoke(allGranted)
+        }
+}
+
+/**
+ * 请求通话相关权限
+ */
+fun Fragment.requestCallPermissions(result: (allGranted: Boolean) -> Unit) {
+    PermissionX.init(this)
+        .permissions(
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
+        )
+        .request { allGranted, _, _ ->
+            result.invoke(allGranted)
+        }
 }
 

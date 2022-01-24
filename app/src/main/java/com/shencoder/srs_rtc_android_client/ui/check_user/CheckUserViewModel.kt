@@ -13,6 +13,7 @@ import com.shencoder.mvvmkit.ext.toastInfo
 import com.shencoder.mvvmkit.ext.toastWarning
 import com.shencoder.mvvmkit.util.dp2px
 import com.shencoder.srs_rtc_android_client.R
+import com.shencoder.srs_rtc_android_client.constant.CallRoleType
 import com.shencoder.srs_rtc_android_client.constant.ChatMode
 import com.shencoder.srs_rtc_android_client.constant.MMKVConstant
 import com.shencoder.srs_rtc_android_client.http.bean.UserInfoBean
@@ -108,11 +109,12 @@ class CheckUserViewModel(
             ChatMode.PRIVATE_MODE -> {
                 val userInfoBean = list[0]
                 intent = Intent(applicationContext, PrivateChatActivity::class.java)
+                intent.putExtra(PrivateChatActivity.CALL_ROLE_TYPE, CallRoleType.CALLER)
                 intent.putExtra(PrivateChatActivity.CALLEE_INFO, userInfoBean)
-
             }
             ChatMode.GROUP_MODE -> {
                 intent = Intent(applicationContext, GroupChatActivity::class.java)
+                intent.putExtra(GroupChatActivity.CALL_ROLE_TYPE, CallRoleType.CALLER)
                 intent.putParcelableArrayListExtra(
                     GroupChatActivity.CALLEE_INFO_LIST,
                     ArrayList(list)

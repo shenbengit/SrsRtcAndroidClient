@@ -26,9 +26,22 @@ class PublishStreamSurfaceViewRenderer @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) : BaseStreamSurfaceViewRenderer(context, attrs, defStyleAttr, defStyleRes) {
 
+    private companion object {
+        private const val DEFAULT_WIDTH = 640
+        private const val DEFAULT_HEIGHT = 480
+        private const val DEFAULT_FRAME_RATE = 25
+    }
+
     private var cameraVideoCapturer: CameraVideoCapturer? = null
     private var videoTrack: VideoTrack? = null
     private var surfaceTextureHelper: SurfaceTextureHelper? = null
+
+    private var captureWidth: Int = DEFAULT_WIDTH
+    private var captureHeight: Int = DEFAULT_HEIGHT
+    private var captureFrameRate: Int = DEFAULT_FRAME_RATE
+
+    private var videoSource: VideoSource? = null
+    private var videoProcessor: VideoProcessor? = null
 
     override fun streamType(): StreamType {
         return StreamType.PUBLISH
@@ -53,6 +66,9 @@ class PublishStreamSurfaceViewRenderer @JvmOverloads constructor(
             val videoSource = peerConnectionFactory.createVideoSource(
                 isScreencast
             )
+            //用于帧数据处理
+            videoSource.setVideoProcessor(videoProcessor)
+
             videoTrack =
                 peerConnectionFactory.createVideoTrack("local_video_track", videoSource).apply {
                     //这一步是为了将画面显示到SurfaceViewRenderer上
@@ -66,7 +82,8 @@ class PublishStreamSurfaceViewRenderer @JvmOverloads constructor(
                 videoSource.capturerObserver
             )
             //预览宽、高、帧率
-            startCapture(640, 480, 25)
+            startCapture(captureWidth, captureHeight, captureFrameRate)
+            this@PublishStreamSurfaceViewRenderer.videoSource = videoSource
         }
 
         //这一步也必须调用，设置音视频资源，模式设置为仅发送即可-RtpTransceiver.RtpTransceiverDirection.SEND_ONLY
@@ -86,24 +103,72 @@ class PublishStreamSurfaceViewRenderer @JvmOverloads constructor(
     }
 
     override fun beginRelease() {
+        videoTrack?.dispose()
+        videoSource?.dispose()
         cameraVideoCapturer?.dispose()
         surfaceTextureHelper?.dispose()
-        videoTrack?.dispose()
     }
 
+    /**
+     * 设置Camera捕获帧数据相关参数
+     * 最好在[init]之前调用
+     *
+     * @param width  宽度
+     * @param height 高度
+     * @param frameRate 帧率
+     */
+    fun setCameraCaptureFormat(width: Int, height: Int, frameRate: Int) {
+        captureWidth = width
+        captureHeight = height
+        captureFrameRate = frameRate
+
+        cameraVideoCapturer?.changeCaptureFormat(width, height, frameRate)
+    }
+
+    /**
+     * 自行处理帧数据
+     */
+    fun setVideoProcessor(processor: VideoProcessor?) {
+        videoProcessor = processor
+        videoSource?.setVideoProcessor(processor)
+    }
 
     /**
      * 开始推流
-     * @param webrtcUrl 推流地址
      */
-    fun publishStream(webrtcUrl: String) {
-        requestSrs(webrtcUrl, {
+    fun publishStream(
+        onSuccess: () -> Unit = {},
+        onFailure: (error: Throwable) -> Unit = {}
+    ) {
+        requestSrs({
             isShowPrompt(false)
+            onSuccess.invoke()
         }, {
+            onFailure.invoke(it)
             XLog.e("publishStream failure: ${it.message}")
             context.toastError("publishStream failure: ${it.message}", Toast.LENGTH_LONG)
         })
     }
+
+    /**
+     * 切换相机
+     */
+    fun switchCamera(
+        switchDone: (isFrontCamera: Boolean) -> Unit,
+        switchError: (errorDescription: String) -> Unit
+    ) {
+        cameraVideoCapturer?.switchCamera(object : CameraVideoCapturer.CameraSwitchHandler {
+
+            override fun onCameraSwitchDone(isFrontCamera: Boolean) {
+                switchDone.invoke(isFrontCamera)
+            }
+
+            override fun onCameraSwitchError(errorDescription: String) {
+                switchError.invoke(errorDescription)
+            }
+        })
+    }
+
 
     /**
      * 创建视频源

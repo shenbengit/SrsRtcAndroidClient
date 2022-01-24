@@ -34,4 +34,5 @@
     <string name="speaker">Speaker</string>
     <string name="hang_up">Hang up</string>
     <string name="answer">Answer</string>
+    <string name="mine">Mine</string>
 </resources>

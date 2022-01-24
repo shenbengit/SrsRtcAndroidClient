@@ -14,7 +14,6 @@
         <!-- Customize your theme here. -->
         <item name="textAllCaps">false</item>
         <item name="android:windowBackground">@drawable/ic_bg</item>
-        <item name="android:windowFullscreen">true</item>
     </style>
 
 </resources>

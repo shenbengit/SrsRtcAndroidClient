@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/clCallingAction"
     android:layout_width="match_parent"
-    android:layout_height="220dp">
+    android:layout_height="230dp">
 
     <TextView
         android:id="@+id/tvTime"
@@ -32,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@id/tvTime" />
 
     <TextView
-        android:id="@+id/tvMute"
+        android:id="@+id/tvSpeakerMute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="3dp"
@@ -47,7 +47,7 @@
         app:layout_constraintTop_toTopOf="@id/tvSwitchCamera" />
 
     <TextView
-        android:id="@+id/tvSpeaker"
+        android:id="@+id/tvSpeakerphone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="3dp"

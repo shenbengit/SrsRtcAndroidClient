@@ -83,12 +83,15 @@ class PlayStreamSurfaceViewRenderer @JvmOverloads constructor(
 
     /**
      * 开始拉流
-     * @param webrtcUrl 推流地址
      */
-    fun playStream(webrtcUrl: String) {
-        requestSrs(webrtcUrl, {
-            isShowPrompt(false)
+    fun playStream(
+        onSuccess: () -> Unit = {},
+        onFailure: (error: Throwable) -> Unit = {}
+    ) {
+        requestSrs({
+            onSuccess.invoke()
         }, {
+            onFailure.invoke(it)
             XLog.e("playStream failure: ${it.message}")
             context.toastError("playStream failure: ${it.message}", Toast.LENGTH_LONG)
         })

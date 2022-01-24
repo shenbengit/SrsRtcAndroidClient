@@ -4,10 +4,10 @@ import com.shencoder.srs_rtc_android_client.webrtc.util.WebRTCUtil
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.CallSuper
 import androidx.core.view.isVisible
 import coil.loadAny
 import com.shencoder.srs_rtc_android_client.R
@@ -15,6 +15,7 @@ import com.shencoder.srs_rtc_android_client.constant.SRS
 import com.shencoder.srs_rtc_android_client.http.RetrofitClient
 import com.shencoder.srs_rtc_android_client.http.bean.SrsRequestBean
 import com.shencoder.srs_rtc_android_client.webrtc.SdpAdapter
+import com.shencoder.srs_rtc_android_client.webrtc.bean.WebRTCStreamInfoBean
 import com.shencoder.srs_rtc_android_client.webrtc.constant.StreamType
 import kotlinx.coroutines.*
 import org.koin.core.component.KoinComponent
@@ -49,13 +50,18 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
 
     protected lateinit var peerConnection: PeerConnection
     protected val svr: SurfaceViewRenderer
+    protected val viewPromptBg: View
     protected val tvPromptUsername: TextView
     protected val ivPromptAvatar: ImageView
     protected val streamType: StreamType
 
+    var webrtcStreamInfoBean: WebRTCStreamInfoBean? = null
+
+
     init {
         inflate(context, R.layout.layout_stream_renderer, this)
         svr = findViewById(R.id.svr)
+        viewPromptBg = findViewById(R.id.viewPromptBg)
         tvPromptUsername = findViewById(R.id.tvPromptUsername)
         ivPromptAvatar = findViewById(R.id.ivPromptAvatar)
         streamType = streamType()
@@ -65,7 +71,6 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
      * 此方法必须调用
      * 与[release]对应
      */
-    @CallSuper
     @JvmOverloads
     fun init(
         peerConnectionFactory: PeerConnectionFactory,
@@ -79,13 +84,19 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
         afterInit()
     }
 
-    fun setPrompt(name: String, data: Any?) {
+    fun setWebRTCStreamInfoBean(bean: WebRTCStreamInfoBean) {
+        webrtcStreamInfoBean = bean
+        setPrompt(bean.username, bean.avatar)
+    }
+
+    private fun setPrompt(name: String?, data: Any?) {
         tvPromptUsername.text = name
         ivPromptAvatar.loadAny(data)
     }
 
     fun isShowPrompt(isVisible: Boolean) {
         post {
+            viewPromptBg.isVisible = isVisible
             tvPromptUsername.isVisible = isVisible
             ivPromptAvatar.isVisible = isVisible
         }
@@ -103,10 +114,9 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
      * 此方法必须调用
      * 与[init]对应
      */
-    @CallSuper
     fun release() {
-        beginRelease()
         svr.release()
+        beginRelease()
         if (this::peerConnection.isInitialized) {
             peerConnection.dispose()
         }
@@ -141,17 +151,18 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
      * 向SRS提交请求
      */
     protected inline fun requestSrs(
-        webrtcUrl: String,
         crossinline onSuccess: () -> Unit,
         crossinline onFailure: (error: Throwable) -> Unit
     ) {
+        val infoBean = webrtcStreamInfoBean
+            ?: throw RuntimeException("you have to call setWebRTCStreamInfoBean().")
         createOffer(streamType == StreamType.PLAY,
             onSuccess = { sdp ->
                 //向srs服务器进行推拉流请求
                 launch(Dispatchers.Main) {
                     runCatching {
                         withContext(Dispatchers.IO) {
-                            val srsBean = SrsRequestBean(sdp, webrtcUrl)
+                            val srsBean = SrsRequestBean(sdp, infoBean.webrtcUrl)
                             if (streamType == StreamType.PLAY) {
                                 retrofitClient.getApiService()
                                     .play(SRS.HTTPS_REQUEST_PLAY_URL, srsBean)

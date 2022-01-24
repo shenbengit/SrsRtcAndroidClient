@@ -66,30 +66,4 @@ class MainViewModel(
         callSocketIoClient.disconnect()
         callSocketIoClient.removeConnectionStatusCallback(connectionStatusCallback)
     }
-
-    /**
-     * 私聊
-     */
-    fun privateChat() {
-        val intent = Intent(applicationContext, CheckUserActivity::class.java)
-        intent.putExtra(CheckUserActivity.CHAT_MODE, ChatMode.PRIVATE_MODE)
-        startActivity(intent)
-    }
-
-    /**
-     * 群聊
-     */
-    fun groupChat() {
-        val intent = Intent(applicationContext, CheckUserActivity::class.java)
-        intent.putExtra(CheckUserActivity.CHAT_MODE, ChatMode.GROUP_MODE)
-        startActivity(intent)
-    }
-
-    /**
-     * 聊天室
-     */
-    fun chatRoom() {
-        val intent = Intent(applicationContext, EnterRoomIdActivity::class.java)
-        startActivity(intent)
-    }
 }

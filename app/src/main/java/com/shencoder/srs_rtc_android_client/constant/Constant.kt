@@ -1,5 +1,7 @@
 package com.shencoder.srs_rtc_android_client.constant
 
+import com.shencoder.srs_rtc_android_client.http.bean.UserInfoBean
+
 /**
  *
  * @author  ShenBen
@@ -124,5 +126,24 @@ object SRS {
     const val HTTP_REQUEST_PUBLISH_URL = "${BASE_HTTP_URL}${REQUEST_PUBLISH_PATH}"
     const val HTTPS_REQUEST_PUBLISH_URL = "${BASE_HTTPS_URL}${REQUEST_PUBLISH_PATH}"
 
-
+    /**
+     * 生成推流WebRTC Url
+     * @param bean 用户信息
+     * @param isHttps
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun generatePublishWebRTCUrl(bean: UserInfoBean, isHttps: Boolean = true): String {
+        return buildString {
+            append("webrtc://")
+            append(SERVER_ADDRESS)
+            append(":")
+            if (isHttps) {
+                append(API_HTTPS_PORT)
+            } else {
+                append(API_HTTP_PORT)
+            }
+            append("/srs_rtc/android?userId=${bean.userId}&userType=${bean.userType}&timestamp=${System.currentTimeMillis()}")
+        }
+    }
 }

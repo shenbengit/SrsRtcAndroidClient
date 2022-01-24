@@ -34,4 +34,5 @@
     <string name="speaker">免提</string>
     <string name="hang_up">挂断</string>
     <string name="answer">接听</string>
+    <string name="mine">我</string>
 </resources>
