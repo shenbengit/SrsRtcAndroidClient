@@ -66,4 +66,43 @@ class MainViewModel(
         callSocketIoClient.disconnect()
         callSocketIoClient.removeConnectionStatusCallback(connectionStatusCallback)
     }
+
+
+    /**
+     * 私聊
+     */
+    fun privateChat() {
+        if (SocketIoConnectionStatus.CONNECTED != connectionStatusField.get()) {
+            toastWarning("Signal server disconnected.")
+            return
+        }
+        val intent = Intent(applicationContext, CheckUserActivity::class.java)
+        intent.putExtra(CheckUserActivity.CHAT_MODE, ChatMode.PRIVATE_MODE)
+        startActivity(intent)
+    }
+
+    /**
+     * 群聊
+     */
+    fun groupChat() {
+        if (SocketIoConnectionStatus.CONNECTED != connectionStatusField.get()) {
+            toastWarning("Signal server disconnected.")
+            return
+        }
+        val intent = Intent(applicationContext, CheckUserActivity::class.java)
+        intent.putExtra(CheckUserActivity.CHAT_MODE, ChatMode.GROUP_MODE)
+        startActivity(intent)
+    }
+
+    /**
+     * 聊天室
+     */
+    fun chatRoom() {
+        if (SocketIoConnectionStatus.CONNECTED != connectionStatusField.get()) {
+            toastWarning("Signal server disconnected.")
+            return
+        }
+        val intent = Intent(applicationContext, EnterRoomIdActivity::class.java)
+        startActivity(intent)
+    }
 }

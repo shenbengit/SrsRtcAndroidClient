@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SrsRtcAndroidClient">
         <activity
+            android:name=".ui.chat.ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.chat_room.EnterRoomIdActivity"
             android:exported="false"
             android:launchMode="singleTop" />

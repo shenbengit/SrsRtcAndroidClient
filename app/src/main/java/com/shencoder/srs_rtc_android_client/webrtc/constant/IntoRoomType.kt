@@ -8,9 +8,9 @@ package com.shencoder.srs_rtc_android_client.webrtc.constant
  */
 enum class IntoRoomType {
     /**
-     * 邀请进入房间（主叫）
+     * 主动进入房间（主叫）
      */
-    INVITE_INTO_ROOM,
+    ACTIVELY_INTO_ROOM,
 
     /**
      * 被邀请进入房间（被叫）

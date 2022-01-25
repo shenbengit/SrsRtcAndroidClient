@@ -102,7 +102,7 @@ class PrivateChatActivity : BaseActivity<PrivateChatViewModel, ActivityPrivateCh
                                 return@run
                             }
                             inviteeUserInfo = userInfo
-                            initCallLayout(IntoRoomType.INVITE_INTO_ROOM)
+                            initCallLayout(IntoRoomType.ACTIVELY_INTO_ROOM)
                         }
                         CallRoleType.CALLEE -> {
                             val roomId = getStringExtra(ROOM_ID)

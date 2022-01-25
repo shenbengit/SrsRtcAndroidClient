@@ -175,7 +175,7 @@ class CallLayout @JvmOverloads constructor(
         sgl.init(peerConnectionFactory, eglBaseContext)
 
         when (type) {
-            IntoRoomType.INVITE_INTO_ROOM -> {
+            IntoRoomType.ACTIVELY_INTO_ROOM -> {
                 clBeforeCall.isVisible = true
                 tvAccept.isVisible = false
                 clCallingAction.isVisible = false
