@@ -89,6 +89,10 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
         setPrompt(bean.username, bean.avatar)
     }
 
+    fun updateWebRTCUrl(webrtcUrl: String) {
+        webrtcStreamInfoBean?.webrtcUrl = webrtcUrl
+    }
+
     private fun setPrompt(name: String?, data: Any?) {
         tvPromptUsername.text = name
         ivPromptAvatar.loadAny(data)

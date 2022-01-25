@@ -192,6 +192,9 @@ class CallLayout @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 预览推流
+     */
     fun previewPublishStream(bean: WebRTCStreamInfoBean) {
         val renderer = PublishStreamSurfaceViewRenderer(context)
         renderer.setWebRTCStreamInfoBean(bean)
@@ -199,6 +202,7 @@ class CallLayout @JvmOverloads constructor(
     }
 
     /**
+     * 推流
      * call after [previewPublishStream].
      */
     fun publishStream(
@@ -211,6 +215,9 @@ class CallLayout @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 添加，并播放流
+     */
     fun addPlayStream(
         bean: WebRTCStreamInfoBean,
         onSuccess: () -> Unit = {},
@@ -219,18 +226,33 @@ class CallLayout @JvmOverloads constructor(
         val renderer = PlayStreamSurfaceViewRenderer(context)
         renderer.setWebRTCStreamInfoBean(bean)
         sgl.addView(renderer)
+        renderer.playStream(onSuccess, onFailure)
     }
 
     /**
-     * call after [addPlayStream].
+     * 准备加载拉流，占位
+     */
+    fun addPreparePlayStream(bean: WebRTCStreamInfoBean) {
+        val renderer = PlayStreamSurfaceViewRenderer(context)
+        renderer.setWebRTCStreamInfoBean(bean)
+        sgl.addView(renderer)
+    }
+
+    /**
+     * 播放流
+     * call after [addPreparePlayStream].
      */
     fun playStream(
         userId: String,
         userType: String,
+        webrtcUrl: String,
         onSuccess: () -> Unit = {},
         onFailure: (error: Throwable) -> Unit = {}
     ) {
-        sgl.getPlayStreamSurfaceViewRenderer(userId, userType)?.playStream() ?: let {
+        sgl.getPlayStreamSurfaceViewRenderer(userId, userType)?.run {
+            updateWebRTCUrl(webrtcUrl)
+            playStream(onSuccess, onFailure)
+        } ?: let {
             onFailure.invoke(NullPointerException("PlayStreamSurfaceViewRenderer is null."))
         }
     }
