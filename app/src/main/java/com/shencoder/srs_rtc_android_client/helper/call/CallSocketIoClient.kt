@@ -3,13 +3,18 @@ package com.shencoder.srs_rtc_android_client.helper.call
 import android.os.Handler
 import android.os.Looper
 import com.elvishew.xlog.XLog
-import com.shencoder.srs_rtc_android_client.constant.ClientNotifyCmd
-import com.shencoder.srs_rtc_android_client.constant.NotifyCmd
+import com.shencoder.mvvmkit.util.MoshiUtil
 import com.shencoder.srs_rtc_android_client.constant.SIGNAL
+import com.shencoder.srs_rtc_android_client.helper.call.bean.BaseResponseBean
+import com.shencoder.srs_rtc_android_client.helper.call.bean.ClientInfoBean
+import com.shencoder.srs_rtc_android_client.helper.call.bean.ResInviteSomePeopleBean
 import com.shencoder.srs_rtc_android_client.util.ignoreCertificate
+import com.squareup.moshi.Types
 import io.socket.client.IO
 import io.socket.client.Socket
 import okhttp3.OkHttpClient
+import org.json.JSONArray
+import org.json.JSONObject
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
 
@@ -86,6 +91,7 @@ class CallSocketIoClient private constructor() {
                     connectionStatusCallbackList.forEach { it.connectError() }
                 }
             }
+            //自定义事件
             on(NotifyCmd.NOTIFY_FORCED_OFFLINE) {
 
             }
@@ -129,6 +135,82 @@ class CallSocketIoClient private constructor() {
 
     fun removeConnectionStatusCallback(callback: SocketIoConnectionStatusCallback) {
         connectionStatusCallbackList.remove(callback)
+    }
+
+    /**
+     * 邀请某人进行通话
+     */
+    fun reqInviteSomeone(
+        userId: String,
+        success: (ClientInfoBean) -> Unit = {},
+        failure: (code: Int, reason: String) -> Unit = { _, _ -> }
+    ) {
+        //{"userId" : "123"}
+        val jsonObject = JSONObject()
+        jsonObject.put("userId", userId)
+        socket.emit(ClientReqCmd.REQ_INVITE_SOMEONE, arrayOf(jsonObject)) {
+            if (it != null && it.isNotEmpty()) {
+                val json = it[0] as JSONObject
+
+                val newParameterizedType =
+                    Types.newParameterizedType(
+                        BaseResponseBean::class.java,
+                        ClientInfoBean::class.java
+                    )
+                val bean: BaseResponseBean<ClientInfoBean>? =
+                    MoshiUtil.fromJson(json.toString(), newParameterizedType)
+                mHandler.post {
+                    bean?.run {
+                        if (isSuccess()) {
+                            success.invoke(data!!)
+                        } else {
+                            failure.invoke(code, msg)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 邀请一些人
+     */
+    fun reqInviteSomePeople(
+        userIds: List<String>,
+        success: (ResInviteSomePeopleBean) -> Unit = {},
+        failure: (code: Int, reason: String) -> Unit = { _, _ -> }
+    ) {
+        //{userList:[{userId:"123"}]}
+        val jsonArray = JSONArray(userIds.map {
+            JSONObject().apply {
+                put("userId", it)
+            }
+        })
+        val objects = JSONObject()
+        objects.put("userList", jsonArray)
+
+        socket.emit(ClientReqCmd.REQ_INVITE_SOME_PEOPLE, arrayOf(objects)) {
+            if (it != null && it.isNotEmpty()) {
+                val jsonObject = it[0] as JSONObject
+
+                val newParameterizedType =
+                    Types.newParameterizedType(
+                        BaseResponseBean::class.java,
+                        ResInviteSomePeopleBean::class.java
+                    )
+                val bean: BaseResponseBean<ResInviteSomePeopleBean>? =
+                    MoshiUtil.fromJson(jsonObject.toString(), newParameterizedType)
+                mHandler.post {
+                    bean?.run {
+                        if (isSuccess()) {
+                            success.invoke(data!!)
+                        } else {
+                            failure.invoke(code, msg)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fun disconnect() {

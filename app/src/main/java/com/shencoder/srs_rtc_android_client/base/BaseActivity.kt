@@ -8,7 +8,10 @@ import com.shencoder.mvvmkit.base.view.BaseSupportActivity
 import com.shencoder.mvvmkit.base.viewmodel.BaseViewModel
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.constant.Constant
+import com.tencent.mmkv.MMKV
 import me.jessyan.autosize.internal.CustomAdapt
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 /**
  *
@@ -17,7 +20,9 @@ import me.jessyan.autosize.internal.CustomAdapt
  * @email   714081644@qq.com
  */
 abstract class BaseActivity<VM : BaseViewModel<out IRepository>, VDB : ViewDataBinding> :
-    BaseSupportActivity<VM, VDB>(), CustomAdapt {
+    BaseSupportActivity<VM, VDB>(), CustomAdapt, KoinComponent {
+
+    protected val mmkv: MMKV by inject()
 
     override fun isBaseOnWidth(): Boolean {
         return true

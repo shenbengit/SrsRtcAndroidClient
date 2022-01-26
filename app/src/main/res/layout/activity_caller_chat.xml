@@ -7,23 +7,23 @@
 
         <variable
             name="viewModel"
-            type="com.shencoder.srs_rtc_android_client.ui.private_chat.PrivateChatViewModel" />
+            type="com.shencoder.srs_rtc_android_client.ui.caller_chat.CallerChatViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.private_chat.PrivateChatActivity">
+        tools:context=".ui.caller_chat.CallerChatActivity">
 
         <com.shencoder.srs_rtc_android_client.webrtc.widget.CallLayout
             android:id="@+id/callLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:cl_into_room_type="actively_into_room"
             app:cl_sgl_pip_mode="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -5,13 +5,13 @@ import android.media.AudioManager
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.util.toastError
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.webrtc.bean.WebRTCStreamInfoBean
-import com.shencoder.srs_rtc_android_client.webrtc.constant.IntoRoomType
 import org.webrtc.DefaultVideoDecoderFactory
 import org.webrtc.EglBase
 import org.webrtc.PeerConnectionFactory
@@ -30,6 +30,30 @@ class CallLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) :
     FrameLayout(context, attrs, defStyleAttr) {
+
+    companion object {
+        /**
+         * 主动进入房间（主叫）
+         */
+        const val ACTIVELY_INTO_ROOM = 1
+
+        /**
+         * 被邀请进入房间（被叫）
+         */
+        const val BE_INVITED_INTO_ROOM = 2
+
+        /**
+         * 直接进入房间（聊天室）
+         */
+        const val DIRECTLY_INTO_ROOM = 3
+    }
+
+    @IntDef(value = [ACTIVELY_INTO_ROOM, BE_INVITED_INTO_ROOM, DIRECTLY_INTO_ROOM])
+    @Retention(AnnotationRetention.SOURCE)
+    @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD, AnnotationTarget.FUNCTION)
+    annotation class IntoRoomType {
+
+    }
 
     private val audioManager: AudioManager =
         context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -66,6 +90,9 @@ class CallLayout @JvmOverloads constructor(
 
     private val originSpeakerphoneOn = audioManager.isSpeakerphoneOn
 
+    @IntoRoomType
+    private var intoRoomType: Int
+
     init {
         val typedArray =
             context.obtainStyledAttributes(attrs, R.styleable.CallLayout)
@@ -92,6 +119,9 @@ class CallLayout @JvmOverloads constructor(
         isMicrophoneMute =
             typedArray.getBoolean(R.styleable.CallLayout_cl_microphone_mute_on, false)
         isSpeakerphone = typedArray.getBoolean(R.styleable.CallLayout_cl_speakerphone_on, true)
+
+        intoRoomType =
+            typedArray.getInt(R.styleable.CallLayout_cl_into_room_type, DIRECTLY_INTO_ROOM)
 
         typedArray.recycle()
 
@@ -137,17 +167,38 @@ class CallLayout @JvmOverloads constructor(
         setSpeakerMute(isSpeakerMute)
         setMicrophoneMute(isMicrophoneMute)
         operateSpeakerphone(isSpeakerphone)
+
+        setIntoRoomType(intoRoomType)
     }
 
     fun setCallActionCallback(back: CallActionCallback) {
         actionCallback = back
     }
 
+    fun setIntoRoomType(@IntoRoomType type: Int) {
+        this.intoRoomType = type
+        when (type) {
+            ACTIVELY_INTO_ROOM -> {
+                clBeforeCall.isVisible = true
+                tvAccept.isVisible = false
+                clCallingAction.isVisible = false
+            }
+            BE_INVITED_INTO_ROOM -> {
+                clBeforeCall.isVisible = true
+                tvAccept.isVisible = true
+                clCallingAction.isVisible = false
+            }
+            DIRECTLY_INTO_ROOM -> {
+                clBeforeCall.isVisible = false
+                clCallingAction.isVisible = true
+            }
+        }
+    }
+
     /**
      * 初始化
-     * @param type
      */
-    fun init(type: IntoRoomType) {
+    fun init() {
         eglBase = EglBase.create()
         eglBaseContext = eglBase.eglBaseContext
         val options = PeerConnectionFactory.Options()
@@ -173,32 +224,25 @@ class CallLayout @JvmOverloads constructor(
             .createPeerConnectionFactory()
 
         sgl.init(peerConnectionFactory, eglBaseContext)
-
-        when (type) {
-            IntoRoomType.ACTIVELY_INTO_ROOM -> {
-                clBeforeCall.isVisible = true
-                tvAccept.isVisible = false
-                clCallingAction.isVisible = false
-            }
-            IntoRoomType.BE_INVITED_INTO_ROOM -> {
-                clBeforeCall.isVisible = true
-                tvAccept.isVisible = true
-                clCallingAction.isVisible = false
-            }
-            IntoRoomType.DIRECTLY_INTO_ROOM -> {
-                clBeforeCall.isVisible = false
-                clCallingAction.isVisible = true
-            }
-        }
     }
 
     /**
      * 预览推流
      */
-    fun previewPublishStream(bean: WebRTCStreamInfoBean) {
+    @JvmOverloads
+    fun previewPublishStream(bean: WebRTCStreamInfoBean, isShowPrompt: Boolean = true) {
         val renderer = PublishStreamSurfaceViewRenderer(context)
-        renderer.setWebRTCStreamInfoBean(bean)
+        renderer.setWebRTCStreamInfoBean(bean, isShowPrompt)
         sgl.addView(renderer)
+    }
+
+    /**
+     * 修改推流画面上的提示信息
+     */
+    fun updatePreviewPublishStream(name: String?, data: Any?) {
+        sgl.getPublishStreamSurfaceViewRenderer()?.run {
+            setPrompt(name, data)
+        }
     }
 
     /**
@@ -230,7 +274,7 @@ class CallLayout @JvmOverloads constructor(
     }
 
     /**
-     * 准备加载拉流，占位
+     * 准备加载拉流，先占位，调用[playStream]再播放
      */
     fun addPreparePlayStream(bean: WebRTCStreamInfoBean) {
         val renderer = PlayStreamSurfaceViewRenderer(context)
@@ -337,12 +381,12 @@ class CallLayout @JvmOverloads constructor(
         /**
          * 拒接
          */
-        fun rejectCall()
+        fun rejectCall() {}
 
         /**
          * 接听
          */
-        fun acceptCall()
+        fun acceptCall() {}
 
         /**
          * 挂断

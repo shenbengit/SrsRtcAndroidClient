@@ -1,4 +1,4 @@
-package com.shencoder.srs_rtc_android_client.constant
+package com.shencoder.srs_rtc_android_client.helper.call
 
 /**
  * 信令协议
@@ -23,11 +23,13 @@ object NotifyCmd {
 object ClientReqCmd {
     /**
      * 邀请一个人，并创建房间 ——> 单聊
+     * {"userId" : "123"}
      */
     const val REQ_INVITE_SOMEONE = "req_invite_someone"
 
     /**
      * 邀请一些人，并创建房间 ——> 群聊
+     * {userList:[{userId:"123"}]}
      */
     const val REQ_INVITE_SOME_PEOPLE = "req_invite_some_people"
 

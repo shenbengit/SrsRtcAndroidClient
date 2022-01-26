@@ -3,24 +3,20 @@ package com.shencoder.srs_rtc_android_client.ui.check_user
 import android.app.Application
 import android.content.Intent
 import android.graphics.Rect
-import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.base.viewmodel.BaseViewModel
 import com.shencoder.mvvmkit.ext.httpRequest
-import com.shencoder.mvvmkit.ext.toastInfo
 import com.shencoder.mvvmkit.ext.toastWarning
 import com.shencoder.mvvmkit.util.dp2px
 import com.shencoder.srs_rtc_android_client.R
-import com.shencoder.srs_rtc_android_client.constant.CallRoleType
 import com.shencoder.srs_rtc_android_client.constant.ChatMode
 import com.shencoder.srs_rtc_android_client.constant.MMKVConstant
 import com.shencoder.srs_rtc_android_client.http.bean.UserInfoBean
+import com.shencoder.srs_rtc_android_client.ui.caller_chat.CallerChatActivity
 import com.shencoder.srs_rtc_android_client.ui.check_user.adapter.CheckUserAdapter
 import com.shencoder.srs_rtc_android_client.ui.check_user.data.CheckUserRepository
-import com.shencoder.srs_rtc_android_client.ui.group_chat.GroupChatActivity
-import com.shencoder.srs_rtc_android_client.ui.private_chat.PrivateChatActivity
 
 /**
  *
@@ -104,23 +100,8 @@ class CheckUserViewModel(
             toastWarning(getString(R.string.please_select_the_callee))
             return
         }
-        val intent: Intent
-        when (chatMode) {
-            ChatMode.PRIVATE_MODE -> {
-                val userInfoBean = list[0]
-                intent = Intent(applicationContext, PrivateChatActivity::class.java)
-                intent.putExtra(PrivateChatActivity.CALL_ROLE_TYPE, CallRoleType.CALLER)
-                intent.putExtra(PrivateChatActivity.CALLEE_INFO, userInfoBean)
-            }
-            ChatMode.GROUP_MODE -> {
-                intent = Intent(applicationContext, GroupChatActivity::class.java)
-                intent.putExtra(GroupChatActivity.CALL_ROLE_TYPE, CallRoleType.CALLER)
-                intent.putParcelableArrayListExtra(
-                    GroupChatActivity.CALLEE_INFO_LIST,
-                    ArrayList(list)
-                )
-            }
-        }
+        val intent = Intent(applicationContext, CallerChatActivity::class.java)
+        intent.putParcelableArrayListExtra(CallerChatActivity.CALLEE_INFO_LIST, ArrayList(list))
         startActivity(intent)
         backPressed()
     }

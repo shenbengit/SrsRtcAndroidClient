@@ -21,5 +21,11 @@
         <attr name="cl_microphone_mute_on" format="boolean" />
         <attr name="cl_speakerphone_on" format="boolean" />
 
+        <attr name="cl_into_room_type" format="enum">
+            <enum name="actively_into_room" value="1" />
+            <enum name="be_invited_into_room" value="2" />
+            <enum name="directly_into_room" value="3" />
+        </attr>
+
     </declare-styleable>
 </resources>
