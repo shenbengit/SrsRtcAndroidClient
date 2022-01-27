@@ -109,6 +109,14 @@ class CallerChatActivity : BaseActivity<CallerChatViewModel, ActivityCallerChatB
                 updatePreviewPublishStream(calleeUserInfo.username, randomAvatar())
 
                 mViewModel.reqInviteSomeone(calleeUserInfo.userId) {
+                    addPreparePlayStream(
+                        WebRTCStreamInfoBean(
+                            it.inviteeInfo.userId,
+                            it.inviteeInfo.userType,
+                            it.inviteeInfo.username,
+                            randomAvatar()
+                        )
+                    )
                     //开始推流
                     publishStream(
                         onSuccess = {

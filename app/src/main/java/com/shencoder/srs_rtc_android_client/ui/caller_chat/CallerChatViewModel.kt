@@ -3,11 +3,10 @@ package com.shencoder.srs_rtc_android_client.ui.caller_chat
 import android.app.Application
 import com.shencoder.mvvmkit.base.repository.BaseNothingRepository
 import com.shencoder.mvvmkit.base.viewmodel.BaseViewModel
-import com.shencoder.mvvmkit.ext.launchOnIO
 import com.shencoder.mvvmkit.ext.launchOnUI
 import com.shencoder.mvvmkit.ext.toastWarning
 import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
-import com.shencoder.srs_rtc_android_client.helper.call.bean.ClientInfoBean
+import com.shencoder.srs_rtc_android_client.helper.call.bean.ResInviteeInfoBean
 import com.shencoder.srs_rtc_android_client.helper.call.bean.ResInviteSomePeopleBean
 import kotlinx.coroutines.delay
 import org.koin.core.component.inject
@@ -28,7 +27,7 @@ class CallerChatViewModel(
     /**
      * 邀请某个人
      */
-    fun reqInviteSomeone(userId: String, success: (ClientInfoBean) -> Unit = {}) {
+    fun reqInviteSomeone(userId: String, success: (ResInviteeInfoBean) -> Unit = {}) {
         callSocketIoClient.reqInviteSomeone(userId, success, failure = { code, reason ->
             toastWarning(reason)
             launchOnUI {

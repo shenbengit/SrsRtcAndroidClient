@@ -23,53 +23,61 @@ object NotifyCmd {
 object ClientReqCmd {
     /**
      * 邀请一个人，并创建房间 ——> 单聊
-     * {"userId" : "123"}
+     * {"userId":"123"}
      */
     const val REQ_INVITE_SOMEONE = "req_invite_someone"
 
     /**
      * 邀请一些人，并创建房间 ——> 群聊
-     * {userList:[{userId:"123"}]}
+     * {"userList":[{userId:"123"}]}
      */
     const val REQ_INVITE_SOME_PEOPLE = "req_invite_some_people"
 
     /**
      * 邀请一个人进入邀请人房间——> 单聊
+     * {"userId":"123", "roomId":"123"}
      */
     const val REQ_INVITE_SOMEONE_JOIN_ROOM = "req_invite_someone_join_room"
 
     /**
      * 邀请一些人进入邀请人房间 ——> 群聊
+     * {"userList":[{userId:"123"}], "roomId":"123"}
      */
     const val REQ_INVITE_SOME_PEOPLE_JOIN_ROOM = "req_invite_some_people_join_room"
 
     /**
      * 拒接通话
+     * roomId="123456"
      */
     const val REQ_REJECT_CALL = "req_reject_call"
 
     /**
      * 接受通话
+     * roomId="123456"
      */
     const val REQ_ACCEPT_CALL = "req_accept_call"
 
     /**
      * 加入房间->用于聊天室
+     * roomId="123456"
      */
     const val REQ_JOIN_CHAT_ROOM = "req_join_chat_room"
 
     /**
      * 离开房间->用于聊天室
+     * roomId="123456"
      */
     const val REQ_LEAVE_CHAT_ROOM = "req_leave_chat_room"
 
     /**
      * 请求推流
+     * {"roomId":"123", "publishStreamUrl":"webrtc://192.168.1.1:1990/live/livestream"}
      */
     const val REQ_PUBLISH_STREAM = "req_publish_stream"
 
     /**
      * 挂断
+     * roomId="123456"
      */
     const val REQ_HANG_UP = "req_hang_up"
 }
