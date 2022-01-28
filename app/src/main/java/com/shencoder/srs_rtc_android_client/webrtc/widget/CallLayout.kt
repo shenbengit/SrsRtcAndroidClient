@@ -12,11 +12,9 @@ import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.util.toastError
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.webrtc.bean.WebRTCStreamInfoBean
-import org.webrtc.DefaultVideoDecoderFactory
-import org.webrtc.EglBase
-import org.webrtc.PeerConnectionFactory
+import com.shencoder.srs_rtc_android_client.webrtc.callback.ConnectionChangeCallback
+import org.webrtc.*
 import org.webrtc.audio.JavaAudioDeviceModule
-import org.webrtc.createCustomVideoEncoderFactory
 
 /**
  *
@@ -29,7 +27,7 @@ class CallLayout @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) :
-    FrameLayout(context, attrs, defStyleAttr) {
+    FrameLayout(context, attrs, defStyleAttr), ConnectionChangeCallback {
 
     companion object {
         /**
@@ -233,6 +231,7 @@ class CallLayout @JvmOverloads constructor(
     fun previewPublishStream(bean: WebRTCStreamInfoBean, isShowPrompt: Boolean = true) {
         val renderer = PublishStreamSurfaceViewRenderer(context)
         renderer.setWebRTCStreamInfoBean(bean, isShowPrompt)
+        renderer.setConnectionChangeCallback(this)
         sgl.addView(renderer)
     }
 
@@ -261,24 +260,38 @@ class CallLayout @JvmOverloads constructor(
 
     /**
      * 添加，并播放流
+     * 如果[WebRTCStreamInfoBean.webrtcUrl] 为 null，则先不拉流，后面可使用[playStream]方法继续拉流
      */
     fun addPlayStream(
         bean: WebRTCStreamInfoBean,
         onSuccess: () -> Unit = {},
         onFailure: (error: Throwable) -> Unit = {}
     ) {
-        val renderer = PlayStreamSurfaceViewRenderer(context)
-        renderer.setWebRTCStreamInfoBean(bean)
-        sgl.addView(renderer)
-        renderer.playStream(onSuccess, onFailure)
+        var renderer =
+            sgl.getPlayStreamSurfaceViewRenderer(bean.userId, bean.userType)
+        if (renderer == null) {
+            renderer = PlayStreamSurfaceViewRenderer(context)
+            renderer.setWebRTCStreamInfoBean(bean)
+            renderer.setConnectionChangeCallback(this)
+            sgl.addView(renderer)
+        }
+        if (bean.webrtcUrl.isNullOrEmpty().not()) {
+            renderer.playStream(onSuccess, onFailure)
+        }
     }
 
     /**
      * 准备加载拉流，先占位，调用[playStream]再播放
      */
     fun addPreparePlayStream(bean: WebRTCStreamInfoBean) {
-        val renderer = PlayStreamSurfaceViewRenderer(context)
+        var renderer =
+            sgl.getPlayStreamSurfaceViewRenderer(bean.userId, bean.userType)
+        if (renderer != null) {
+            return
+        }
+        renderer = PlayStreamSurfaceViewRenderer(context)
         renderer.setWebRTCStreamInfoBean(bean)
+        renderer.setConnectionChangeCallback(this)
         sgl.addView(renderer)
     }
 
@@ -305,6 +318,10 @@ class CallLayout @JvmOverloads constructor(
         sgl.removePlayStreamSurfaceView(userId, userType)
     }
 
+    fun removeStream(renderer: BaseStreamSurfaceViewRenderer) {
+        sgl.removeView(renderer)
+    }
+
     /**
      * 释放
      */
@@ -320,6 +337,31 @@ class CallLayout @JvmOverloads constructor(
             eglBase.release()
         }
         operateSpeakerphone(originSpeakerphoneOn)
+    }
+
+
+    override fun onPublishConnectionChange(
+        renderer: PublishStreamSurfaceViewRenderer,
+        newState: PeerConnection.PeerConnectionState
+    ) {
+        //连接出错
+        if (newState == PeerConnection.PeerConnectionState.DISCONNECTED
+            || newState == PeerConnection.PeerConnectionState.FAILED
+        ) {
+
+        }
+    }
+
+    override fun onPlayConnectionChange(
+        renderer: PlayStreamSurfaceViewRenderer,
+        newState: PeerConnection.PeerConnectionState
+    ) {
+        //连接出错
+        if (newState == PeerConnection.PeerConnectionState.DISCONNECTED
+            || newState == PeerConnection.PeerConnectionState.FAILED
+        ) {
+
+        }
     }
 
     private fun setSpeakerMute(mute: Boolean) {
@@ -393,4 +435,5 @@ class CallLayout @JvmOverloads constructor(
          */
         fun hangUpCall()
     }
+
 }

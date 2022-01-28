@@ -60,6 +60,14 @@ class PlayStreamSurfaceViewRenderer @JvmOverloads constructor(
                         }
                     }
                 }
+
+                override fun onConnectionChange(newState: PeerConnection.PeerConnectionState) {
+                    super.onConnectionChange(newState)
+                    getConnectionChangeCallback()?.onPlayConnectionChange(
+                        this@PlayStreamSurfaceViewRenderer,
+                        newState
+                    )
+                }
             })!!
         //这一步也必须调用，接收音视频资源，模式设置为仅接收即可-RtpTransceiver.RtpTransceiverDirection.RECV_ONLY
         peerConnection.addTransceiver(

@@ -13,12 +13,12 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 @JsonClass(generateAdapter = true)
-data class ResPlayStreamListBean(
+data class ResAlreadyInRoomBean(
     /**
-     * 拉流集合
+     * 已经存在房间内的客户端
      */
-    @Json(name = "streamList")
-    val streamList: List<ResPlayStreamBean>,
+    @Json(name = "alreadyInRoomList")
+    val alreadyInRoomList: List<ResClientStreamBean>,
     /**
      * 房间号
      */
@@ -28,7 +28,7 @@ data class ResPlayStreamListBean(
 
 @Parcelize
 @JsonClass(generateAdapter = true)
-data class ResPlayStreamBean(
+data class ResClientStreamBean(
     /**
      * 客户端信息
      */
@@ -36,7 +36,8 @@ data class ResPlayStreamBean(
     val userInfo: ClientInfoBean,
     /**
      * 推流地址
+     * 如果为空，则说明客户端已在房间还未推流
      */
     @Json(name = "publishStreamUrl")
-    val publishStreamUrl: String
+    val publishStreamUrl: String?
 ) : Parcelable

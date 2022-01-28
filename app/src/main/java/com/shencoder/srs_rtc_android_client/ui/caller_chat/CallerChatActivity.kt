@@ -2,9 +2,7 @@ package com.shencoder.srs_rtc_android_client.ui.caller_chat
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
-import com.shencoder.mvvmkit.ext.launchOnUI
-import com.shencoder.mvvmkit.ext.toastWarning
+import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.util.toastWarning
 import com.shencoder.srs_rtc_android_client.BR
 import com.shencoder.srs_rtc_android_client.R
@@ -12,13 +10,12 @@ import com.shencoder.srs_rtc_android_client.base.BaseActivity
 import com.shencoder.srs_rtc_android_client.constant.MMKVConstant
 import com.shencoder.srs_rtc_android_client.constant.SRS
 import com.shencoder.srs_rtc_android_client.databinding.ActivityCallerChatBinding
+import com.shencoder.srs_rtc_android_client.helper.call.bean.ClientInfoBean
 import com.shencoder.srs_rtc_android_client.http.bean.UserInfoBean
 import com.shencoder.srs_rtc_android_client.util.randomAvatar
 import com.shencoder.srs_rtc_android_client.util.requestCallPermissions
 import com.shencoder.srs_rtc_android_client.webrtc.bean.WebRTCStreamInfoBean
 import com.shencoder.srs_rtc_android_client.webrtc.widget.CallLayout
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -34,9 +31,9 @@ class CallerChatActivity : BaseActivity<CallerChatViewModel, ActivityCallerChatB
     }
 
     /**
-     * 被叫用户集合
+     * 实际的被叫用户集合
      */
-    private lateinit var calleeInfoList: ArrayList<UserInfoBean>
+    private val calleeInfoList = mutableListOf<ClientInfoBean>()
 
     override fun getLayoutId(): Int {
         return R.layout.activity_caller_chat
@@ -66,8 +63,9 @@ class CallerChatActivity : BaseActivity<CallerChatViewModel, ActivityCallerChatB
                 onBackPressedSupport()
                 return@requestCallPermissions
             }
-            calleeInfoList = intent?.getParcelableArrayListExtra(CALLEE_INFO_LIST) ?: ArrayList()
-            initCallLayout(calleeInfoList)
+            val list: ArrayList<UserInfoBean> =
+                intent?.getParcelableArrayListExtra(CALLEE_INFO_LIST) ?: ArrayList()
+            initCallLayout(list)
         }
     }
 
@@ -87,11 +85,15 @@ class CallerChatActivity : BaseActivity<CallerChatViewModel, ActivityCallerChatB
             mmkv.decodeParcelable(MMKVConstant.USER_INFO, UserInfoBean::class.java)
         if (localUserInfo == null) {
             toastWarning("local user info is null.")
+            onBackPressedSupport()
             return
         }
 
         with(mBinding.callLayout) {
             init()
+
+            val publishStreamUrl = SRS.generatePublishWebRTCUrl(localUserInfo)
+            XLog.i("caller chat publish stream url: $publishStreamUrl")
 
             previewPublishStream(
                 WebRTCStreamInfoBean(
@@ -99,7 +101,7 @@ class CallerChatActivity : BaseActivity<CallerChatViewModel, ActivityCallerChatB
                     localUserInfo.userType,
                     localUserInfo.username,
                     randomAvatar(),
-                    SRS.generatePublishWebRTCUrl(localUserInfo)
+                    publishStreamUrl
                 ), list.size != 1
             )
             if (list.size == 1) {
@@ -109,101 +111,93 @@ class CallerChatActivity : BaseActivity<CallerChatViewModel, ActivityCallerChatB
                 updatePreviewPublishStream(calleeUserInfo.username, randomAvatar())
 
                 mViewModel.reqInviteSomeone(calleeUserInfo.userId) {
-                    addPreparePlayStream(
-                        WebRTCStreamInfoBean(
-                            it.inviteeInfo.userId,
-                            it.inviteeInfo.userType,
-                            it.inviteeInfo.username,
-                            randomAvatar()
+                    mViewModel.setRoomId(it.roomId)
+
+                    this@CallerChatActivity.publishStream(publishStreamUrl) {
+                        //存储当前会见的所有被叫信息
+                        calleeInfoList.add(it.inviteeInfo)
+                        addPreparePlayStream(
+                            WebRTCStreamInfoBean(
+                                it.inviteeInfo.userId,
+                                it.inviteeInfo.userType,
+                                it.inviteeInfo.username,
+                                randomAvatar()
+                            )
                         )
-                    )
-                    //开始推流
-                    publishStream(
-                        onSuccess = {
-
-                        },
-                        onFailure = {
-
-                        })
+                    }
                 }
             } else {
                 //会见多人时
-                list.forEach { userInfo ->
-                    addPreparePlayStream(
-                        WebRTCStreamInfoBean(
-                            userInfo.userId,
-                            userInfo.userType,
-                            userInfo.username,
-                            randomAvatar()
-                        )
-                    )
-                }
-
                 mViewModel.reqInviteSomePeople(list.map { it.userId }, success = { bean ->
-                    lifecycleScope.launch {
-                        val msg = buildString {
-                            if (bean.busyList.isNotEmpty()) {
-                                append("busyList: [")
-                                bean.busyList.forEachIndexed { index, info ->
-                                    append(info.username)
-                                    if (index != bean.busyList.lastIndex) {
-                                        append("、")
-                                    }
+                    mViewModel.setRoomId(bean.roomId)
+                    val msg = buildString {
+                        if (bean.busyList.isNotEmpty()) {
+                            append("busyList: [")
+                            bean.busyList.forEachIndexed { index, info ->
+                                append(info.username)
+                                if (index != bean.busyList.lastIndex) {
+                                    append("、")
                                 }
-                                append("], ")
                             }
+                            append("], ")
+                        }
 
-                            if (bean.offlineOrNotExistsList.isNotEmpty()) {
-                                append("offlineOrNotExistsList: [")
-                                bean.offlineOrNotExistsList.forEachIndexed { index, info ->
-                                    append(info.username)
-                                    if (index != bean.offlineOrNotExistsList.lastIndex) {
-                                        append("、")
-                                    }
+                        if (bean.offlineOrNotExistsList.isNotEmpty()) {
+                            append("offlineOrNotExistsList: [")
+                            bean.offlineOrNotExistsList.forEachIndexed { index, info ->
+                                append(info.username)
+                                if (index != bean.offlineOrNotExistsList.lastIndex) {
+                                    append("、")
                                 }
-                                append("], ")
                             }
+                            append("], ")
+                        }
 
-                            if (bean.alreadyInRoomList.isNotEmpty()) {
-                                append("alreadyInRoomList: [")
-                                bean.alreadyInRoomList.forEachIndexed { index, info ->
-                                    append(info.username)
-                                    if (index != bean.alreadyInRoomList.lastIndex) {
-                                        append("、")
-                                    }
+                        if (bean.alreadyInRoomList.isNotEmpty()) {
+                            append("alreadyInRoomList: [")
+                            bean.alreadyInRoomList.forEachIndexed { index, info ->
+                                append(info.username)
+                                if (index != bean.alreadyInRoomList.lastIndex) {
+                                    append("、")
                                 }
-                                append("]")
                             }
+                            append("]")
                         }
+                    }
 
-                        if (msg.isNotBlank()) {
-                            toastWarning(msg, Toast.LENGTH_LONG)
+                    if (msg.isNotBlank()) {
+                        toastWarning(msg, Toast.LENGTH_LONG)
+                    }
+
+                    //开始推流
+                    this@CallerChatActivity.publishStream(publishStreamUrl) {
+                        //存储当前会见的所有被叫信息
+                        calleeInfoList.addAll(bean.callList)
+
+                        bean.callList.forEach { clientInfo ->
+                            addPreparePlayStream(
+                                WebRTCStreamInfoBean(
+                                    clientInfo.userId,
+                                    clientInfo.userType,
+                                    clientInfo.username,
+                                    randomAvatar()
+                                )
+                            )
                         }
-
-                        //延迟一下 体验好点
-                        delay(1000L)
-                        bean.busyList.forEach { info ->
-                            removePlayStream(info.userId, info.userType)
-                        }
-                        bean.offlineOrNotExistsList.forEach { info ->
-                            removePlayStream(info.userId, info.userType)
-                        }
-                        bean.alreadyInRoomList.forEach { info ->
-                            removePlayStream(info.userId, info.userType)
-                        }
-
-                        //开始推流
-                        publishStream(
-                            onSuccess = {
-
-                            },
-                            onFailure = {
-
-                            })
                     }
                 })
             }
         }
+    }
+
+    private fun publishStream(streamUrl: String, success: () -> Unit) {
+        mBinding.callLayout.publishStream(onSuccess = {
+            mViewModel.publishStream(streamUrl) {
+                success.invoke()
+            }
+        }, onFailure = {
+
+        })
     }
 
 }

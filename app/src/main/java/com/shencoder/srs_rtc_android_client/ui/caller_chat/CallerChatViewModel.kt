@@ -1,6 +1,7 @@
 package com.shencoder.srs_rtc_android_client.ui.caller_chat
 
 import android.app.Application
+import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.base.repository.BaseNothingRepository
 import com.shencoder.mvvmkit.base.viewmodel.BaseViewModel
 import com.shencoder.mvvmkit.ext.launchOnUI
@@ -24,11 +25,15 @@ class CallerChatViewModel(
 
     private val callSocketIoClient: CallSocketIoClient by inject()
 
+    private lateinit var roomId: String
+
+
     /**
      * 邀请某个人
      */
     fun reqInviteSomeone(userId: String, success: (ResInviteeInfoBean) -> Unit = {}) {
         callSocketIoClient.reqInviteSomeone(userId, success, failure = { code, reason ->
+            XLog.e("failure-code:${code}, reason:${reason}")
             toastWarning(reason)
             launchOnUI {
                 //延迟关闭画面
@@ -46,6 +51,7 @@ class CallerChatViewModel(
         success: (ResInviteSomePeopleBean) -> Unit = {}
     ) {
         callSocketIoClient.reqInviteSomePeople(userIds, success, failure = { code, reason ->
+            XLog.e("failure-code:${code}, reason:${reason}")
             toastWarning(reason)
             launchOnUI {
                 //延迟关闭画面
@@ -53,6 +59,21 @@ class CallerChatViewModel(
                 backPressed()
             }
         })
+    }
+
+    fun setRoomId(roomId: String) {
+        this.roomId = roomId
+    }
+
+    fun publishStream(publishSteamUrl: String, success: () -> Unit) {
+        callSocketIoClient.reqPublishStream(
+            roomId,
+            publishSteamUrl,
+            success,
+            failure = { code, reason ->
+                XLog.e("failure-code:${code}, reason:${reason}")
+                toastWarning(reason)
+            })
     }
 
 

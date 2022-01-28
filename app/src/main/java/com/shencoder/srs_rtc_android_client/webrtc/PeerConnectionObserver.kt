@@ -22,8 +22,8 @@ open class PeerConnectionObserver : PeerConnection.Observer {
         XLog.i("${TAG}onDataChannel")
     }
 
-    override fun onIceConnectionReceivingChange(p0: Boolean) {
-        XLog.i("${TAG}onIceConnectionReceivingChange:$p0")
+    override fun onIceConnectionReceivingChange(receiving: Boolean) {
+        XLog.i("${TAG}onIceConnectionReceivingChange:$receiving")
     }
 
     override fun onIceConnectionChange(iceConnectionState: PeerConnection.IceConnectionState) {

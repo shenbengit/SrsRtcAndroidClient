@@ -396,7 +396,7 @@ class CallSocketIoClient private constructor() {
      */
     fun reqAcceptCall(
         roomId: String,
-        success: (ResPlayStreamListBean) -> Unit = {},
+        success: (ResAlreadyInRoomBean) -> Unit = {},
         failure: (code: Int, reason: String) -> Unit = { _, _ -> }
     ) {
         //roomId="123456"
@@ -408,9 +408,9 @@ class CallSocketIoClient private constructor() {
             val type =
                 Types.newParameterizedType(
                     BaseResponseBean::class.java,
-                    ResPlayStreamListBean::class.java
+                    ResAlreadyInRoomBean::class.java
                 )
-            val bean: BaseResponseBean<ResPlayStreamListBean>? = MoshiUtil.fromJson(json, type)
+            val bean: BaseResponseBean<ResAlreadyInRoomBean>? = MoshiUtil.fromJson(json, type)
             post {
                 bean?.run {
                     if (isSuccess()) {
@@ -428,7 +428,7 @@ class CallSocketIoClient private constructor() {
      */
     fun reqJoinChatRoom(
         roomId: String,
-        success: (ResPlayStreamListBean) -> Unit = {},
+        success: (ResAlreadyInRoomBean) -> Unit = {},
         failure: (code: Int, reason: String) -> Unit = { _, _ -> }
     ) {
         //roomId="123456"
@@ -440,9 +440,9 @@ class CallSocketIoClient private constructor() {
             val type =
                 Types.newParameterizedType(
                     BaseResponseBean::class.java,
-                    ResPlayStreamListBean::class.java
+                    ResAlreadyInRoomBean::class.java
                 )
-            val bean: BaseResponseBean<ResPlayStreamListBean>? = MoshiUtil.fromJson(json, type)
+            val bean: BaseResponseBean<ResAlreadyInRoomBean>? = MoshiUtil.fromJson(json, type)
             post {
                 bean?.run {
                     if (isSuccess()) {

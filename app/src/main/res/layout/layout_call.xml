@@ -15,7 +15,7 @@
     <include
         layout="@layout/layout_before_call"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="20dp"
         android:visibility="gone" />
@@ -23,7 +23,7 @@
     <include
         layout="@layout/layout_calling_action"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="260dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="20dp" />
 </FrameLayout>

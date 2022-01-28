@@ -16,6 +16,7 @@ import com.shencoder.srs_rtc_android_client.http.RetrofitClient
 import com.shencoder.srs_rtc_android_client.http.bean.SrsRequestBean
 import com.shencoder.srs_rtc_android_client.webrtc.SdpAdapter
 import com.shencoder.srs_rtc_android_client.webrtc.bean.WebRTCStreamInfoBean
+import com.shencoder.srs_rtc_android_client.webrtc.callback.ConnectionChangeCallback
 import com.shencoder.srs_rtc_android_client.webrtc.constant.StreamType
 import kotlinx.coroutines.*
 import org.koin.core.component.KoinComponent
@@ -57,6 +58,8 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
 
     var webrtcStreamInfoBean: WebRTCStreamInfoBean? = null
 
+    private var connectionChangeCallback: ConnectionChangeCallback? = null
+
 
     init {
         inflate(context, R.layout.layout_stream_renderer, this)
@@ -66,6 +69,11 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
         ivPromptAvatar = findViewById(R.id.ivPromptAvatar)
         streamType = streamType()
     }
+
+    fun setConnectionChangeCallback(callback: ConnectionChangeCallback?) {
+        this.connectionChangeCallback = callback
+    }
+
 
     /**
      * 此方法必须调用
@@ -128,6 +136,7 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
             peerConnection.dispose()
         }
         scope.cancel()
+        connectionChangeCallback = null
     }
 
     /**
@@ -154,6 +163,8 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
      */
     abstract fun beginRelease()
 
+    protected fun getConnectionChangeCallback() = connectionChangeCallback
+
     /**
      * 向SRS提交请求
      */
@@ -163,13 +174,16 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
     ) {
         val infoBean = webrtcStreamInfoBean
             ?: throw RuntimeException("you have to call setWebRTCStreamInfoBean().")
+        val webrtcUrl = infoBean.webrtcUrl
+            ?: throw RuntimeException("you have to set webrtcUrl.")
+
         createOffer(streamType == StreamType.PLAY,
             onSuccess = { sdp ->
                 //向srs服务器进行推拉流请求
                 launch(Dispatchers.Main) {
                     runCatching {
                         withContext(Dispatchers.IO) {
-                            val srsBean = SrsRequestBean(sdp, infoBean.webrtcUrl)
+                            val srsBean = SrsRequestBean(sdp, webrtcUrl)
                             if (streamType == StreamType.PLAY) {
                                 retrofitClient.getApiService()
                                     .play(SRS.HTTPS_REQUEST_PLAY_URL, srsBean)

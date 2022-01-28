@@ -55,7 +55,19 @@ class PublishStreamSurfaceViewRenderer @JvmOverloads constructor(
         //必须设置PeerConnection.SdpSemantics.UNIFIED_PLAN
         configuration.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN
         val peerConnection =
-            peerConnectionFactory.createPeerConnection(configuration, PeerConnectionObserver())!!
+            peerConnectionFactory.createPeerConnection(configuration,
+                object : PeerConnectionObserver() {
+                    /**
+                     * 连接状态改变时调用
+                     */
+                    override fun onConnectionChange(newState: PeerConnection.PeerConnectionState) {
+                        super.onConnectionChange(newState)
+                        getConnectionChangeCallback()?.onPublishConnectionChange(
+                            this@PublishStreamSurfaceViewRenderer,
+                            newState
+                        )
+                    }
+                })!!
         //创建AudioSource，音频源
         val audioSource =
             peerConnectionFactory.createAudioSource(WebRTCUtil.createAudioConstraints())

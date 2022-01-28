@@ -13,6 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:keepScreenOn="true"
         tools:context=".ui.chat_room.ChatRoomActivity">
 
         <com.shencoder.srs_rtc_android_client.webrtc.widget.CallLayout
@@ -20,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:cl_into_room_type="directly_into_room"
-            app:cl_sgl_pip_mode="true"
+            app:cl_sgl_pip_mode="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

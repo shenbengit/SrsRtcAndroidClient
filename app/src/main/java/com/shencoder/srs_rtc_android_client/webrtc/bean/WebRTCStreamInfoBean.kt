@@ -20,7 +20,7 @@ data class WebRTCStreamInfoBean(
     /**
      * WebRTC推拉流地址
      */
-    var webrtcUrl: String = ""
+    var webrtcUrl: String? = null
 ) {
 
     override fun equals(other: Any?): Boolean {
