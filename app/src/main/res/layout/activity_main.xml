@@ -43,14 +43,44 @@
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
         <ImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_avatar01"
+            app:layout_constraintStart_toStartOf="@id/viewBg"
+            app:layout_constraintTop_toTopOf="@id/viewBg" />
+
+        <TextView
+            android:id="@+id/tvUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@{viewModel.userInfoField.username}"
+            android:textColor="#393939"
+            android:textSize="15sp"
+            app:layout_constraintStart_toEndOf="@id/ivAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar" />
+
+        <TextView
+            android:id="@+id/tvUserId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.userInfoField.userId}"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+            app:layout_constraintStart_toStartOf="@id/tvUsername" />
+
+        <ImageView
             android:id="@+id/ivConnectionStatus"
             android:layout_width="150dp"
             android:layout_height="53dp"
-            android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:src="@{viewModel.connectionStatusField == SocketIoConnectionStatus.CONNECTED ? @drawable/ic_connected_status_bg : @drawable/ic_disconnected_status_bg}"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
             app:layout_constraintEnd_toEndOf="@id/viewBg"
-            app:layout_constraintTop_toTopOf="@id/viewBg" />
+            app:layout_constraintTop_toTopOf="@id/ivAvatar" />
 
         <TextView
             setDrawableStartCompat="@{viewModel.connectionStatusField == SocketIoConnectionStatus.CONNECTED ? @drawable/ic_connected_status : @drawable/ic_disconnected_status}"

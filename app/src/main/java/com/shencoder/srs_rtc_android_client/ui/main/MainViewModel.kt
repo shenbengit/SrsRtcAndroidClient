@@ -12,7 +12,11 @@ import com.shencoder.srs_rtc_android_client.constant.ChatMode
 import com.shencoder.srs_rtc_android_client.constant.MMKVConstant
 import com.shencoder.srs_rtc_android_client.constant.SocketIoConnectionStatus
 import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
+import com.shencoder.srs_rtc_android_client.helper.call.SignalEventCallback
 import com.shencoder.srs_rtc_android_client.helper.call.SocketIoConnectionStatusCallback
+import com.shencoder.srs_rtc_android_client.helper.call.bean.RequestCallBean
+import com.shencoder.srs_rtc_android_client.http.bean.UserInfoBean
+import com.shencoder.srs_rtc_android_client.ui.callee_chat.CalleeChatActivity
 import com.shencoder.srs_rtc_android_client.ui.chat_room.EnterRoomIdActivity
 import com.shencoder.srs_rtc_android_client.ui.check_user.CheckUserActivity
 import org.koin.core.component.inject
@@ -29,6 +33,16 @@ class MainViewModel(
 ) : BaseViewModel<BaseNothingRepository>(application, repo) {
 
     private val callSocketIoClient: CallSocketIoClient by inject()
+
+    /**
+     * 本地用户信息
+     */
+    val userInfoField: ObservableField<UserInfoBean?> = ObservableField(
+        mmkv.decodeParcelable(
+            MMKVConstant.USER_INFO,
+            UserInfoBean::class.java
+        )
+    )
 
     val connectionStatusField = ObservableField(SocketIoConnectionStatus.DISCONNECTED)
 
@@ -50,8 +64,23 @@ class MainViewModel(
         }
     }
 
+
+    private val signalEventCallback = object : SignalEventCallback {
+        /**
+         * 收到会话请求
+         */
+        override fun requestCall(bean: RequestCallBean) {
+            //跳转到被叫页面
+            val intent = Intent(applicationContext, CalleeChatActivity::class.java)
+            intent.putExtra(CalleeChatActivity.REQUEST_CALL, bean)
+            startActivity(intent)
+        }
+    }
+
+
     override fun onCreate(owner: LifecycleOwner) {
         callSocketIoClient.addConnectionStatusCallback(connectionStatusCallback)
+        callSocketIoClient.addSignalEventCallback(signalEventCallback)
         val userId = mmkv.decodeString(MMKVConstant.USER_ID)
         if (userId.isNullOrBlank()) {
             XLog.w("user id not obtained.")
@@ -65,6 +94,7 @@ class MainViewModel(
     override fun onDestroy(owner: LifecycleOwner) {
         callSocketIoClient.disconnect()
         callSocketIoClient.removeConnectionStatusCallback(connectionStatusCallback)
+        callSocketIoClient.removeSignalEventCallback(signalEventCallback)
     }
 
 

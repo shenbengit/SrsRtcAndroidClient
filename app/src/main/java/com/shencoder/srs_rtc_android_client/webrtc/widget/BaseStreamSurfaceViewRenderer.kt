@@ -22,6 +22,7 @@ import kotlinx.coroutines.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.webrtc.*
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -38,6 +39,28 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
     defStyleRes: Int = 0
 ) :
     FrameLayout(context, attrs, defStyleAttr, defStyleRes), CoroutineScope, KoinComponent {
+
+    companion object {
+        /**
+         * 流状态：初始状态
+         */
+        const val STREAM_STATUS_INIT = 1
+
+        /**
+         * 流状态：推流或拉流中状态
+         */
+        const val STREAM_STATUS_STREAMING = 2
+
+        /**
+         * 流状态：成功状态
+         */
+        const val STREAM_STATUS_SUCCESS = 3
+
+        /**
+         * 流状态：失败状态
+         */
+        const val STREAM_STATUS_FAILURE = 4
+    }
 
     /**
      * 协程
@@ -60,6 +83,11 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
 
     private var connectionChangeCallback: ConnectionChangeCallback? = null
 
+    /**
+     * 当前流状态
+     * @see [STREAM_STATUS_INIT] [STREAM_STATUS_STREAMING] [STREAM_STATUS_STREAMING] [STREAM_STATUS_FAILURE]
+     */
+    protected val streamStatus = AtomicInteger(STREAM_STATUS_INIT)
 
     init {
         inflate(context, R.layout.layout_stream_renderer, this)
@@ -73,7 +101,6 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
     fun setConnectionChangeCallback(callback: ConnectionChangeCallback?) {
         this.connectionChangeCallback = callback
     }
-
 
     /**
      * 此方法必须调用
@@ -126,6 +153,11 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
     }
 
     /**
+     * one of [STREAM_STATUS_INIT] [STREAM_STATUS_STREAMING] [STREAM_STATUS_STREAMING] [STREAM_STATUS_FAILURE]
+     */
+    fun getStreamStatus() = streamStatus.get()
+
+    /**
      * 此方法必须调用
      * 与[init]对应
      */
@@ -172,11 +204,18 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
         crossinline onSuccess: () -> Unit,
         crossinline onFailure: (error: Throwable) -> Unit
     ) {
+        val status = streamStatus.get()
+        //推流或拉流中状态、成功状态直接return
+        if (status == STREAM_STATUS_STREAMING || status == STREAM_STATUS_SUCCESS) {
+            return
+        }
         val infoBean = webrtcStreamInfoBean
             ?: throw RuntimeException("you have to call setWebRTCStreamInfoBean().")
         val webrtcUrl = infoBean.webrtcUrl
-            ?: throw RuntimeException("you have to set webrtcUrl.")
-
+        if (webrtcUrl.isNullOrBlank()) {
+            throw RuntimeException("you have to set webrtcUrl.")
+        }
+        streamStatus.set(STREAM_STATUS_STREAMING)
         createOffer(streamType == StreamType.PLAY,
             onSuccess = { sdp ->
                 //向srs服务器进行推拉流请求
@@ -197,19 +236,24 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
                             setRemoteDescription(
                                 WebRTCUtil.convertAnswerSdp(sdp, bean.sdp),
                                 onSuccess = {
+                                    streamStatus.set(STREAM_STATUS_SUCCESS)
                                     onSuccess.invoke()
                                 }, onFailure = { error ->
+                                    streamStatus.set(STREAM_STATUS_FAILURE)
                                     onFailure.invoke(Throwable(error))
                                 })
                         } else {
+                            streamStatus.set(STREAM_STATUS_FAILURE)
                             val error = context.getString(R.string.check_srs_request_failure)
                             onFailure.invoke(Throwable("request srs failure, code: ${bean.code} , $error"))
                         }
                     }.onFailure {
+                        streamStatus.set(STREAM_STATUS_FAILURE)
                         onFailure.invoke(it)
                     }
                 }
             }, onFailure = { error ->
+                streamStatus.set(STREAM_STATUS_FAILURE)
                 onFailure.invoke(Throwable(error))
             })
     }

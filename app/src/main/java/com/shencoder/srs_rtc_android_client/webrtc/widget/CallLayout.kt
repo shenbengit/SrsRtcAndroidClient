@@ -2,6 +2,9 @@ package com.shencoder.srs_rtc_android_client.webrtc.widget
 
 import android.content.Context
 import android.media.AudioManager
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -44,6 +47,8 @@ class CallLayout @JvmOverloads constructor(
          * 直接进入房间（聊天室）
          */
         const val DIRECTLY_INTO_ROOM = 3
+
+        private const val TIME_TAG = 101
     }
 
     @IntDef(value = [ACTIVELY_INTO_ROOM, BE_INVITED_INTO_ROOM, DIRECTLY_INTO_ROOM])
@@ -67,7 +72,7 @@ class CallLayout @JvmOverloads constructor(
     private val clBeforeCall: ConstraintLayout
     private val tvAccept: TextView
     private val clCallingAction: ConstraintLayout
-    private val tvTime: TextView
+    private lateinit var tvTime: TextView
     private val tvSpeakerMute: TextView
     private val tvSpeakerphone: TextView
 
@@ -90,6 +95,23 @@ class CallLayout @JvmOverloads constructor(
 
     @IntoRoomType
     private var intoRoomType: Int
+
+    /**
+     * 通话时长，单位：秒
+     */
+    private var callDuration = 0
+
+    private val mHandler = object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            when (msg.what) {
+                TIME_TAG -> {
+                    ++callDuration
+                    tvTime.text = changeTimeFormat(callDuration)
+                    sendEmptyMessageDelayed(TIME_TAG, 1000L)
+                }
+            }
+        }
+    }
 
     init {
         val typedArray =
@@ -129,13 +151,19 @@ class CallLayout @JvmOverloads constructor(
         clCallingAction = findViewById(R.id.clCallingAction)
         //拒接
         clBeforeCall.findViewById<TextView>(R.id.tvReject).setOnClickListener {
-            actionCallback?.rejectCall()
+            when (intoRoomType) {
+                ACTIVELY_INTO_ROOM -> {
+                    actionCallback?.hangUpCall()
+                }
+                BE_INVITED_INTO_ROOM -> {
+                    actionCallback?.rejectCall()
+                }
+            }
         }
         //接听
         tvAccept = clBeforeCall.findViewById(R.id.tvAccept)
         tvAccept.setOnClickListener {
-            clBeforeCall.isVisible = false
-            clCallingAction.isVisible = true
+            setInCallStatus()
             actionCallback?.acceptCall()
         }
         tvTime = clCallingAction.findViewById(R.id.tvTime)
@@ -167,6 +195,8 @@ class CallLayout @JvmOverloads constructor(
         operateSpeakerphone(isSpeakerphone)
 
         setIntoRoomType(intoRoomType)
+
+        tvTime.text = changeTimeFormat(callDuration)
     }
 
     fun setCallActionCallback(back: CallActionCallback) {
@@ -187,11 +217,19 @@ class CallLayout @JvmOverloads constructor(
                 clCallingAction.isVisible = false
             }
             DIRECTLY_INTO_ROOM -> {
-                clBeforeCall.isVisible = false
-                clCallingAction.isVisible = true
+                setInCallStatus()
             }
         }
     }
+
+    /**
+     * 设置通话中状态
+     */
+    fun setInCallStatus() {
+        clBeforeCall.isVisible = false
+        clCallingAction.isVisible = true
+    }
+
 
     /**
      * 初始化
@@ -253,14 +291,17 @@ class CallLayout @JvmOverloads constructor(
         onFailure: (error: Throwable) -> Unit = {}
     ) {
         val publishStreamSurfaceViewRenderer = sgl.getPublishStreamSurfaceViewRenderer()
-        publishStreamSurfaceViewRenderer?.publishStream(onSuccess, onFailure) ?: let {
+        publishStreamSurfaceViewRenderer?.publishStream({
+            mHandler.sendEmptyMessage(TIME_TAG)
+            onSuccess.invoke()
+        }, onFailure) ?: let {
             onFailure.invoke(NullPointerException("PublishStreamSurfaceViewRenderer is null."))
         }
     }
 
     /**
      * 添加，并播放流
-     * 如果[WebRTCStreamInfoBean.webrtcUrl] 为 null，则先不拉流，后面可使用[playStream]方法继续拉流
+     * 如果[WebRTCStreamInfoBean.webrtcUrl] 为 null，则先不拉流，再次调用该方法即可。
      */
     fun addPlayStream(
         bean: WebRTCStreamInfoBean,
@@ -275,43 +316,12 @@ class CallLayout @JvmOverloads constructor(
             renderer.setConnectionChangeCallback(this)
             sgl.addView(renderer)
         }
-        if (bean.webrtcUrl.isNullOrEmpty().not()) {
-            renderer.playStream(onSuccess, onFailure)
-        }
-    }
-
-    /**
-     * 准备加载拉流，先占位，调用[playStream]再播放
-     */
-    fun addPreparePlayStream(bean: WebRTCStreamInfoBean) {
-        var renderer =
-            sgl.getPlayStreamSurfaceViewRenderer(bean.userId, bean.userType)
-        if (renderer != null) {
+        val webrtcUrl = bean.webrtcUrl
+        if (webrtcUrl.isNullOrBlank()) {
             return
         }
-        renderer = PlayStreamSurfaceViewRenderer(context)
-        renderer.setWebRTCStreamInfoBean(bean)
-        renderer.setConnectionChangeCallback(this)
-        sgl.addView(renderer)
-    }
-
-    /**
-     * 播放流
-     * call after [addPreparePlayStream].
-     */
-    fun playStream(
-        userId: String,
-        userType: String,
-        webrtcUrl: String,
-        onSuccess: () -> Unit = {},
-        onFailure: (error: Throwable) -> Unit = {}
-    ) {
-        sgl.getPlayStreamSurfaceViewRenderer(userId, userType)?.run {
-            updateWebRTCUrl(webrtcUrl)
-            playStream(onSuccess, onFailure)
-        } ?: let {
-            onFailure.invoke(NullPointerException("PlayStreamSurfaceViewRenderer is null."))
-        }
+        renderer.updateWebRTCUrl(webrtcUrl)
+        renderer.playStream(onSuccess, onFailure)
     }
 
     fun removePlayStream(userId: String, userType: String) {
@@ -337,6 +347,7 @@ class CallLayout @JvmOverloads constructor(
             eglBase.release()
         }
         operateSpeakerphone(originSpeakerphoneOn)
+        mHandler.removeCallbacksAndMessages(null)
     }
 
 
@@ -418,6 +429,15 @@ class CallLayout @JvmOverloads constructor(
         })
     }
 
+    /**
+     * 秒转为HH:mm:ss
+     */
+    private fun changeTimeFormat(second: Int): String {
+        val hour = second / 60 / 60
+        val minute = second / 60 % 60
+        val surplusSecond = second % 60
+        return "${if (hour < 10) "0$hour" else "$hour"}:${if (minute < 10) "0$minute" else "$minute"}:${if (surplusSecond < 10) "0$surplusSecond" else "$surplusSecond"}"
+    }
 
     interface CallActionCallback {
         /**

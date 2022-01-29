@@ -84,7 +84,7 @@ interface SignalEventCallback {
     }
 
     /**
-     * 通话时，有人离线了
+     * 通话时，有人离线了，这个方法不适用与聊天室，聊天室会走[leaveChatRoom]
      */
     fun offlineDuringCall(bean: OfflineDuringCallBean) {
 

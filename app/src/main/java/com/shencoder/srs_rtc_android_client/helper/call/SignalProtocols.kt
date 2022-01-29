@@ -80,6 +80,12 @@ object ClientReqCmd {
      * roomId="123456"
      */
     const val REQ_HANG_UP = "req_hang_up"
+
+
+    /**
+     * 用于重置状态，避免偶发情况下未关闭通话
+     */
+    const val REQ_RESET_STATUS = "req_reset_status"
 }
 
 object ClientNotifyCmd {

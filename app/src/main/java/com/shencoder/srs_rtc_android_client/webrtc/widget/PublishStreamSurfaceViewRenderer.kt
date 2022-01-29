@@ -2,9 +2,7 @@ package com.shencoder.srs_rtc_android_client.webrtc.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.Toast
 import com.elvishew.xlog.XLog
-import com.shencoder.mvvmkit.util.toastError
 import com.shencoder.srs_rtc_android_client.webrtc.util.WebRTCUtil
 import com.shencoder.srs_rtc_android_client.webrtc.PeerConnectionObserver
 import com.shencoder.srs_rtc_android_client.webrtc.constant.StreamType
@@ -158,7 +156,6 @@ class PublishStreamSurfaceViewRenderer @JvmOverloads constructor(
         }, {
             onFailure.invoke(it)
             XLog.e("publishStream failure: ${it.message}")
-            context.toastError("publishStream failure: ${it.message}", Toast.LENGTH_LONG)
         })
     }
 

@@ -1,6 +1,7 @@
 package com.shencoder.srs_rtc_android_client.ui.chat_room
 
 import android.os.Bundle
+import android.widget.Toast
 import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.util.toastError
 import com.shencoder.mvvmkit.util.toastInfo
@@ -44,9 +45,7 @@ class ChatRoomActivity : BaseActivity<ChatRoomViewModel, ActivityChatRoomBinding
         mBinding.callLayout.setCallActionCallback(object : CallLayout.CallActionCallback {
 
             override fun hangUpCall() {
-                mViewModel.leaveChatRoom {
-                    onBackPressedSupport()
-                }
+                mViewModel.leaveChatRoom()
             }
         })
     }
@@ -55,7 +54,7 @@ class ChatRoomActivity : BaseActivity<ChatRoomViewModel, ActivityChatRoomBinding
         val roomId = intent?.getStringExtra(ROOM_ID)
         if (roomId.isNullOrBlank()) {
             toastWarning("roomId is empty.")
-            onBackPressedSupport()
+            mViewModel.delayBackPressed()
             return
         }
 
@@ -64,71 +63,62 @@ class ChatRoomActivity : BaseActivity<ChatRoomViewModel, ActivityChatRoomBinding
             mmkv.decodeParcelable(MMKVConstant.USER_INFO, UserInfoBean::class.java)
         if (localUserInfo == null) {
             toastWarning("local user info is null.")
-            onBackPressedSupport()
+            mViewModel.delayBackPressed()
             return
         }
 
         mViewModel.joinChatRoomLiveData.observe(this) { bean ->
-            toastInfo("username:${bean.username} join room.")
+            toastInfo("[${bean.username}] join room.")
             XLog.i("userId:${bean.userId}, userType: ${bean.userType}, userName: ${bean.username} join room.")
-            mBinding.callLayout.addPreparePlayStream(
-                WebRTCStreamInfoBean(
-                    bean.userId,
-                    bean.userType,
-                    bean.username,
-                    randomAvatar()
-                )
-            )
+            addPlayStream(bean, null)
         }
         mViewModel.playSteamLiveData.observe(this) { bean ->
             val userInfo = bean.userInfo
-            XLog.i("play stream, userId:${userInfo.userId}, userType: ${userInfo.userType}, userName: ${userInfo.username}.")
-            mBinding.callLayout.playStream(
-                userInfo.userId,
-                userInfo.userType,
-                bean.publishStreamUrl
-            )
+            XLog.i("play stream, userId:${userInfo.userId}, userType: ${userInfo.userType}, userName: ${userInfo.username}, stream url: ${bean.publishStreamUrl}.")
+            addPlayStream(bean.userInfo, bean.publishStreamUrl)
         }
         mViewModel.leaveChatRoomLiveData.observe(this) { bean ->
-            toastWarning("username:${bean.username} leave room.")
+            toastInfo("[${bean.username}] leave room.")
             XLog.i("userId:${bean.userId}, userType: ${bean.userType}, userName: ${bean.username} leave room.")
             mBinding.callLayout.removePlayStream(bean.userId, bean.userType)
         }
+
         mBinding.callLayout.init()
 
         requestCallPermissions { allGranted ->
-            if (allGranted) {
-                val publishStreamUrl = SRS.generatePublishWebRTCUrl(localUserInfo)
-                XLog.i("chat room publish stream url: $publishStreamUrl")
-                mBinding.callLayout.previewPublishStream(
-                    WebRTCStreamInfoBean(
-                        localUserInfo.userId,
-                        localUserInfo.userType,
-                        localUserInfo.username,
-                        randomAvatar(),
-                        publishStreamUrl
-                    )
-                )
-                mViewModel.setRoomId(roomId)
-                mViewModel.joinChatRoom { inRoomBean ->
-                    //推流
-                    mBinding.callLayout.publishStream(onSuccess = {
-                        XLog.i("chat room publish success.")
-                        //向信令服务器发送流信息
-                        mViewModel.publishStream(publishStreamUrl) {
-                            //推流成功再去拉流
-                            inRoomBean.alreadyInRoomList.forEach { stream ->
-                                addPlayStream(stream.userInfo, stream.publishStreamUrl)
-                            }
-                        }
-                    }, onFailure = {
-                        XLog.w("chat room publish failure: ${it.message}.")
-                        toastError("publish failure: ${it.message}.")
-                    })
-                }
-            } else {
+            if (allGranted.not()) {
                 toastWarning("Permission not granted.")
-                onBackPressedSupport()
+                mViewModel.delayBackPressed()
+                return@requestCallPermissions
+            }
+            val publishStreamUrl = SRS.generatePublishWebRTCUrl(localUserInfo)
+            XLog.i("chat room publish stream url: $publishStreamUrl")
+            mBinding.callLayout.previewPublishStream(
+                WebRTCStreamInfoBean(
+                    localUserInfo.userId,
+                    localUserInfo.userType,
+                    localUserInfo.username,
+                    randomAvatar(),
+                    publishStreamUrl
+                )
+            )
+            mViewModel.setRoomId(roomId)
+            mViewModel.joinChatRoom { inRoomBean ->
+                //拉房间中已存在的流
+                inRoomBean.alreadyInRoomList.forEach { stream ->
+                    addPlayStream(stream.userInfo, stream.publishStreamUrl)
+                }
+                //推流
+                mBinding.callLayout.publishStream(onSuccess = {
+                    XLog.i("chat room publish success.")
+                    //向信令服务器发送流信息
+                    mViewModel.publishStream(publishStreamUrl) {
+
+                    }
+                }, onFailure = {
+                    XLog.w("chat room publish failure: ${it.message}.")
+                    toastError("publish failure: ${it.message}.")
+                })
             }
         }
     }
@@ -150,7 +140,10 @@ class ChatRoomActivity : BaseActivity<ChatRoomViewModel, ActivityChatRoomBinding
             ), onSuccess = {
                 XLog.i("play stream success: userId:${bean.userId}, userType: ${bean.userType}, userName: ${bean.username}")
             }, onFailure = {
-                toastError("username: ${bean.username} play stream failure.")
+                toastError(
+                    "username: ${bean.username} play stream failure: ${it.message}.",
+                    Toast.LENGTH_LONG
+                )
                 XLog.e("play stream failure: userId:${bean.userId}, userType: ${bean.userType}, userName: ${bean.username}, reason: ${it.message}")
                 removePlayStream(bean.userId, bean.userType)
             })

@@ -43,20 +43,19 @@ class CheckUserViewModel(
         }
     }
 
-
     private lateinit var chatMode: ChatMode
     private val unSelectedSet: MutableSet<UserInfoBean> = LinkedHashSet()
 
 
     fun initData(chatMode: ChatMode, unSelectedList: List<UserInfoBean>?) {
         this.chatMode = chatMode
-        if (unSelectedList != null) {
-            unSelectedSet.addAll(unSelectedList)
-        }
         //自身也不可选择
         val selfUserBean = mmkv.decodeParcelable(MMKVConstant.USER_INFO, UserInfoBean::class.java)
         if (selfUserBean != null) {
             unSelectedSet.add(selfUserBean)
+        }
+        if (unSelectedList != null) {
+            unSelectedSet.addAll(unSelectedList)
         }
 
         adapter.setChatMode(chatMode)

@@ -205,8 +205,8 @@ class CallSocketIoClient private constructor() {
      */
     fun reqInviteSomeone(
         userId: String,
-        success: (ResInviteeInfoBean) -> Unit = {},
-        failure: (code: Int, reason: String) -> Unit = { _, _ -> }
+        success: ((ResInviteeInfoBean) -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //{"userId" : "123"}
         val jsonObject = JSONObject()
@@ -225,9 +225,9 @@ class CallSocketIoClient private constructor() {
             post {
                 bean?.run {
                     if (isSuccess()) {
-                        success.invoke(data!!)
+                        success?.invoke(data!!)
                     } else {
-                        failure.invoke(code, msg)
+                        failure?.invoke(code, msg)
                     }
                 }
             }
@@ -239,8 +239,8 @@ class CallSocketIoClient private constructor() {
      */
     fun reqInviteSomePeople(
         userIds: List<String>,
-        success: (ResInviteSomePeopleBean) -> Unit = {},
-        failure: (code: Int, reason: String) -> Unit = { _, _ -> }
+        success: ((ResInviteSomePeopleBean) -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //{"userList":[{userId:"123"}]}
         val jsonArray = JSONArray(userIds.map {
@@ -265,9 +265,9 @@ class CallSocketIoClient private constructor() {
             post {
                 bean?.run {
                     if (isSuccess()) {
-                        success.invoke(data!!)
+                        success?.invoke(data!!)
                     } else {
-                        failure.invoke(code, msg)
+                        failure?.invoke(code, msg)
                     }
                 }
             }
@@ -282,8 +282,8 @@ class CallSocketIoClient private constructor() {
     fun reqInviteSomeoneIntoRoom(
         userId: String,
         roomId: String,
-        success: (ResInviteeInfoBean) -> Unit = {},
-        failure: (code: Int, reason: String) -> Unit = { _, _ -> }
+        success: ((ResInviteeInfoBean) -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //{"userId":"123", "roomId":"123"}
         val jsonObject = JSONObject()
@@ -303,9 +303,9 @@ class CallSocketIoClient private constructor() {
             post {
                 bean?.run {
                     if (isSuccess()) {
-                        success.invoke(data!!)
+                        success?.invoke(data!!)
                     } else {
-                        failure.invoke(code, msg)
+                        failure?.invoke(code, msg)
                     }
                 }
             }
@@ -320,8 +320,8 @@ class CallSocketIoClient private constructor() {
     fun reqInviteSomePeopleIntoRoom(
         userIds: List<String>,
         roomId: String,
-        success: (ResInviteSomePeopleBean) -> Unit = {},
-        failure: (code: Int, reason: String) -> Unit = { _, _ -> }
+        success: ((ResInviteSomePeopleBean) -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //{"userList":[{userId:"123"}], "roomId":"123"}
         val jsonArray = JSONArray(userIds.map {
@@ -347,9 +347,9 @@ class CallSocketIoClient private constructor() {
             post {
                 bean?.run {
                     if (isSuccess()) {
-                        success.invoke(data!!)
+                        success?.invoke(data!!)
                     } else {
-                        failure.invoke(code, msg)
+                        failure?.invoke(code, msg)
                     }
                 }
             }
@@ -361,8 +361,8 @@ class CallSocketIoClient private constructor() {
      */
     fun reqRejectCall(
         roomId: String,
-        success: () -> Unit = {},
-        failure: (code: Int, reason: String) -> Unit = { _, _ -> }
+        success: (() -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //roomId="123456"
         socket.emit(ClientReqCmd.REQ_REJECT_CALL, arrayOf(roomId)) {
@@ -379,9 +379,9 @@ class CallSocketIoClient private constructor() {
             post {
                 bean?.run {
                     if (isSuccess()) {
-                        success.invoke()
+                        success?.invoke()
                     } else {
-                        failure.invoke(code, msg)
+                        failure?.invoke(code, msg)
                     }
                 }
             }
@@ -396,8 +396,8 @@ class CallSocketIoClient private constructor() {
      */
     fun reqAcceptCall(
         roomId: String,
-        success: (ResAlreadyInRoomBean) -> Unit = {},
-        failure: (code: Int, reason: String) -> Unit = { _, _ -> }
+        success: ((ResAlreadyInRoomBean) -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //roomId="123456"
         socket.emit(ClientReqCmd.REQ_ACCEPT_CALL, arrayOf(roomId)) {
@@ -414,9 +414,9 @@ class CallSocketIoClient private constructor() {
             post {
                 bean?.run {
                     if (isSuccess()) {
-                        success.invoke(data!!)
+                        success?.invoke(data!!)
                     } else {
-                        failure.invoke(code, msg)
+                        failure?.invoke(code, msg)
                     }
                 }
             }
@@ -428,8 +428,8 @@ class CallSocketIoClient private constructor() {
      */
     fun reqJoinChatRoom(
         roomId: String,
-        success: (ResAlreadyInRoomBean) -> Unit = {},
-        failure: (code: Int, reason: String) -> Unit = { _, _ -> }
+        success: ((ResAlreadyInRoomBean) -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //roomId="123456"
         socket.emit(ClientReqCmd.REQ_JOIN_CHAT_ROOM, arrayOf(roomId)) {
@@ -446,9 +446,9 @@ class CallSocketIoClient private constructor() {
             post {
                 bean?.run {
                     if (isSuccess()) {
-                        success.invoke(data!!)
+                        success?.invoke(data!!)
                     } else {
-                        failure.invoke(code, msg)
+                        failure?.invoke(code, msg)
                     }
                 }
             }
@@ -460,8 +460,8 @@ class CallSocketIoClient private constructor() {
      */
     fun reqLeaveChatRoom(
         roomId: String,
-        success: () -> Unit = {},
-        failure: (code: Int, reason: String) -> Unit = { _, _ -> }
+        success: (() -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //roomId="123456"
         socket.emit(ClientReqCmd.REQ_LEAVE_CHAT_ROOM, arrayOf(roomId)) {
@@ -478,9 +478,9 @@ class CallSocketIoClient private constructor() {
             post {
                 bean?.run {
                     if (isSuccess()) {
-                        success.invoke()
+                        success?.invoke()
                     } else {
-                        failure.invoke(code, msg)
+                        failure?.invoke(code, msg)
                     }
                 }
             }
@@ -495,8 +495,8 @@ class CallSocketIoClient private constructor() {
     fun reqPublishStream(
         roomId: String,
         publishStreamUrl: String,
-        success: () -> Unit = {},
-        failure: (code: Int, reason: String) -> Unit = { _, _ -> }
+        success: (() -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //{"roomId":"123", "publishStreamUrl":"webrtc://192.168.1.1:1990/live/livestream"}
         val jsonObject = JSONObject()
@@ -516,9 +516,9 @@ class CallSocketIoClient private constructor() {
             post {
                 bean?.run {
                     if (isSuccess()) {
-                        success.invoke()
+                        success?.invoke()
                     } else {
-                        failure.invoke(code, msg)
+                        failure?.invoke(code, msg)
                     }
                 }
             }
@@ -530,8 +530,8 @@ class CallSocketIoClient private constructor() {
      */
     fun reqHangUp(
         roomId: String,
-        success: () -> Unit = {},
-        failure: (code: Int, reason: String) -> Unit = { _, _ -> }
+        success: (() -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //roomId="123456"
         socket.emit(ClientReqCmd.REQ_HANG_UP, arrayOf(roomId)) {
@@ -548,13 +548,20 @@ class CallSocketIoClient private constructor() {
             post {
                 bean?.run {
                     if (isSuccess()) {
-                        success.invoke()
+                        success?.invoke()
                     } else {
-                        failure.invoke(code, msg)
+                        failure?.invoke(code, msg)
                     }
                 }
             }
         }
+    }
+
+    /**
+     * 用于重置状态
+     */
+    fun reqResetStatus() {
+        socket.emit(ClientReqCmd.REQ_RESET_STATUS)
     }
 
 

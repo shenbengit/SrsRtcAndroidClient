@@ -24,7 +24,7 @@ data class ResInviteSomePeopleBean(
      * 离线或不存在列表列表
      */
     @Json(name = "offlineOrNotExistsList")
-    val offlineOrNotExistsList: List<ClientInfoBean>,
+    val offlineOrNotExistsList: List<OfflineOrNotExistsBean>,
     /**
      * 已经在房间内列表，属于无效邀请
      */
@@ -65,4 +65,25 @@ data class ResInviteSomePeopleBean(
         return "ResInviteSomePeopleBean(callList=$callList, busyList=$busyList, offlineOrNotExistsList=$offlineOrNotExistsList, alreadyInRoomList=$alreadyInRoomList, roomId='$roomId')"
     }
 
+}
+
+@Parcelize
+data class OfflineOrNotExistsBean(
+    @Json(name = "userId")
+    val userId: String
+) : Parcelable {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as OfflineOrNotExistsBean
+
+        if (userId != other.userId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return userId.hashCode()
+    }
 }

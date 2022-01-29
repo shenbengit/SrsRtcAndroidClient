@@ -35,4 +35,10 @@
     <string name="hang_up">挂断</string>
     <string name="answer">接听</string>
     <string name="mine">我</string>
+    <string name="invite_you_to_call">邀请你通话</string>
+    <string name="reject_call">拒绝通话</string>
+    <string name="accept_call">接受通话</string>
+    <string name="offline">离线</string>
+    <string name="online">在线</string>
+    <string name="call_ended">通话已结束</string>
 </resources>

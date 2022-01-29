@@ -7,19 +7,24 @@ package com.shencoder.srs_rtc_android_client.webrtc.bean
  * @email   714081644@qq.com
  */
 data class WebRTCStreamInfoBean(
+    @JvmField
     val userId: String,
+    @JvmField
     val userType: String,
     /**
      * 用户名
      */
+    @JvmField
     val username: String? = "",
     /**
      * 头像信息
      */
+    @JvmField
     val avatar: Any? = null,
     /**
      * WebRTC推拉流地址
      */
+    @JvmField
     var webrtcUrl: String? = null
 ) {
 

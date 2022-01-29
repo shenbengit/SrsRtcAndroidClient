@@ -35,4 +35,10 @@
     <string name="hang_up">Hang up</string>
     <string name="answer">Answer</string>
     <string name="mine">Mine</string>
+    <string name="invite_you_to_call">invite you to call</string>
+    <string name="reject_call">reject call</string>
+    <string name="accept_call">accept call</string>
+    <string name="offline">offline</string>
+    <string name="online">online</string>
+    <string name="call_ended">Call ended.</string>
 </resources>

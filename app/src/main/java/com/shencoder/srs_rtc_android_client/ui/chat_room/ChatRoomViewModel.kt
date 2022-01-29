@@ -6,10 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.base.repository.BaseNothingRepository
 import com.shencoder.mvvmkit.base.viewmodel.BaseViewModel
+import com.shencoder.mvvmkit.ext.launchOnUI
+import com.shencoder.mvvmkit.ext.toastInfo
 import com.shencoder.mvvmkit.ext.toastWarning
 import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
 import com.shencoder.srs_rtc_android_client.helper.call.SignalEventCallback
 import com.shencoder.srs_rtc_android_client.helper.call.bean.*
+import kotlinx.coroutines.delay
 import org.koin.core.component.inject
 
 /**
@@ -50,6 +53,7 @@ class ChatRoomViewModel(
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
+        callSocketIoClient.reqResetStatus()
         callSocketIoClient.removeSignalEventCallback(signalEventCallback)
     }
 
@@ -68,18 +72,27 @@ class ChatRoomViewModel(
         callSocketIoClient.reqPublishStream(
             roomId,
             publishSteamUrl,
-            success,
-            failure = { code, reason ->
-                XLog.e("failure-code:${code}, reason:${reason}")
-                toastWarning(reason)
-            })
+            success
+        ) { code, reason ->
+            XLog.e("failure-code:${code}, reason:${reason}")
+            toastWarning(reason)
+        }
     }
 
-    fun leaveChatRoom(success: () -> Unit) {
-        callSocketIoClient.reqLeaveChatRoom(roomId, success, failure = { code, reason ->
+    fun leaveChatRoom() {
+        callSocketIoClient.reqLeaveChatRoom(roomId, success = {
+            toastInfo("left the room.")
+            delayBackPressed()
+        }, failure = { code, reason ->
             XLog.e("failure-code:${code}, reason:${reason}")
             toastWarning(reason)
         })
     }
 
+    fun delayBackPressed(timeMillis: Long = 1000L) {
+        launchOnUI {
+            delay(timeMillis)
+            backPressed()
+        }
+    }
 }
