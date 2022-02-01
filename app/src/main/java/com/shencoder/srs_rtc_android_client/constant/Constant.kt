@@ -45,7 +45,7 @@ object SIGNAL {
      * 信令服务地址
      * ip或域名
      */
-    const val SERVER_ADDRESS = "192.168.2.139"
+    const val SERVER_ADDRESS = "192.168.137.14"
 
     /**
      * api请求http端口

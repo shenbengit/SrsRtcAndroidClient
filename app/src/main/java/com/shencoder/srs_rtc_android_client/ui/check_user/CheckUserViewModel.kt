@@ -13,10 +13,12 @@ import com.shencoder.mvvmkit.util.dp2px
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.constant.ChatMode
 import com.shencoder.srs_rtc_android_client.constant.MMKVConstant
+import com.shencoder.srs_rtc_android_client.http.RetrofitClient
 import com.shencoder.srs_rtc_android_client.http.bean.UserInfoBean
 import com.shencoder.srs_rtc_android_client.ui.caller_chat.CallerChatActivity
 import com.shencoder.srs_rtc_android_client.ui.check_user.adapter.CheckUserAdapter
 import com.shencoder.srs_rtc_android_client.ui.check_user.data.CheckUserRepository
+import org.koin.core.component.inject
 
 /**
  *
@@ -30,6 +32,7 @@ class CheckUserViewModel(
 ) : BaseViewModel<CheckUserRepository>(application, repo) {
 
     val adapter = CheckUserAdapter()
+    private val retrofitClient: RetrofitClient by inject()
 
     val itemDecoration = object : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(
@@ -62,20 +65,20 @@ class CheckUserViewModel(
 
         httpRequest({
             repo.getAllUser()
-        }, {
+        }, onSuccess = {
             val data = it.data
             if (data == null) {
                 toastWarning("userList is null.")
                 return@httpRequest
             }
             analyticalData(data, unSelectedSet)
-        }, {
-            XLog.w("getAllUser failed: ${it.msg}")
+        }, onFailure = {
+            XLog.w("getAllUser failed,code:${it.code}, msg: ${it.msg}")
             toastWarning("getAllUser failed: ${it.msg}")
-        }, {
+        }, onError = {
             XLog.w("getAllUser error: ${it.throwable.message}")
             toastWarning("getAllUser error: ${it.throwable.message}")
-        })
+        }, isShowLoadingDialog = true)
     }
 
     /**

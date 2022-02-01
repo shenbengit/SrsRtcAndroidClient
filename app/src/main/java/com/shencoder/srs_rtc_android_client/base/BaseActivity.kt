@@ -8,10 +8,7 @@ import com.shencoder.mvvmkit.base.view.BaseSupportActivity
 import com.shencoder.mvvmkit.base.viewmodel.BaseViewModel
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.constant.Constant
-import com.tencent.mmkv.MMKV
 import me.jessyan.autosize.internal.CustomAdapt
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 /**
  *
@@ -20,9 +17,7 @@ import org.koin.core.component.inject
  * @email   714081644@qq.com
  */
 abstract class BaseActivity<VM : BaseViewModel<out IRepository>, VDB : ViewDataBinding> :
-    BaseSupportActivity<VM, VDB>(), CustomAdapt, KoinComponent {
-
-    protected val mmkv: MMKV by inject()
+    BaseSupportActivity<VM, VDB>(), CustomAdapt {
 
     override fun isBaseOnWidth(): Boolean {
         return true
@@ -32,6 +27,9 @@ abstract class BaseActivity<VM : BaseViewModel<out IRepository>, VDB : ViewDataB
         return Constant.DEFAULT_SIZE_IN_DP
     }
 
+    /**
+     * 不使用默认的LoadingDialog，自定义LoadingDialog
+     */
     override fun initLoadingDialog(): Dialog {
         return LoadingDialog.builder(this)
             .setHintText(getString(R.string.loading))

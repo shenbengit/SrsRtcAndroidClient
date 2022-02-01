@@ -3,7 +3,6 @@ package com.shencoder.srs_rtc_android_client
 import android.app.Application
 import coil.ImageLoader
 import coil.ImageLoaderFactory
-import coil.decode.SvgDecoder
 import com.shencoder.mvvmkit.coil.BufferedSourceFetcher
 import com.shencoder.mvvmkit.coil.ByteArrayFetcher
 import com.shencoder.mvvmkit.ext.globalInit
@@ -47,8 +46,6 @@ class App : Application(), ImageLoaderFactory {
                 add(ByteArrayFetcher())
                 //直接使用网络流显示图片
                 add(BufferedSourceFetcher())
-                //支持svg
-                add(SvgDecoder(this@App))
             }
             .build()
     }

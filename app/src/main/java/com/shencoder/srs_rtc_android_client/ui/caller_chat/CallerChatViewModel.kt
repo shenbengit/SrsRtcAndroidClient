@@ -8,6 +8,7 @@ import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.base.repository.BaseNothingRepository
 import com.shencoder.mvvmkit.base.viewmodel.BaseViewModel
 import com.shencoder.mvvmkit.ext.launchOnUI
+import com.shencoder.mvvmkit.ext.launchOnUIDelay
 import com.shencoder.mvvmkit.ext.toastInfo
 import com.shencoder.mvvmkit.ext.toastWarning
 import com.shencoder.srs_rtc_android_client.R
@@ -169,8 +170,7 @@ class CallerChatViewModel(
     }
 
     fun delayBackPressed(timeMillis: Long = 1000L) {
-        launchOnUI {
-            delay(timeMillis)
+        launchOnUIDelay(timeMillis) {
             backPressed()
         }
     }

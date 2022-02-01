@@ -8,10 +8,7 @@ import com.shencoder.mvvmkit.base.view.BaseSupportFragment
 import com.shencoder.mvvmkit.base.viewmodel.BaseViewModel
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.constant.Constant
-import com.tencent.mmkv.MMKV
 import me.jessyan.autosize.internal.CustomAdapt
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 /**
  *
@@ -20,9 +17,8 @@ import org.koin.core.component.inject
  * @email   714081644@qq.com
  */
 abstract class BaseFragment<VM : BaseViewModel<out IRepository>, VDB : ViewDataBinding> :
-    BaseSupportFragment<VM, VDB>(), CustomAdapt, KoinComponent {
+    BaseSupportFragment<VM, VDB>(), CustomAdapt {
 
-    protected val mmkv: MMKV by inject()
 
     override fun isBaseOnWidth(): Boolean {
         return true
