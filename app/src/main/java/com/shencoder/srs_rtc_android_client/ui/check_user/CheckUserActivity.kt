@@ -7,6 +7,7 @@ import com.shencoder.srs_rtc_android_client.base.BaseActivity
 import com.shencoder.srs_rtc_android_client.constant.ChatMode
 import com.shencoder.srs_rtc_android_client.databinding.ActivityCheckUserBinding
 import com.shencoder.srs_rtc_android_client.http.bean.UserInfoBean
+import com.shencoder.srs_rtc_android_client.widget.CheckUserView
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -20,12 +21,6 @@ class CheckUserActivity : BaseActivity<CheckUserViewModel, ActivityCheckUserBind
          * @see [ChatMode]
          */
         const val CHAT_MODE = "CHAT_MODE"
-
-        /**
-         * 不可选择的会见人员列表
-         * [ArrayList<UserInfoBean>]
-         */
-        const val NON_SELECTABLE_LIST = "NON_SELECTABLE_LIST"
     }
 
     override fun getLayoutId(): Int {
@@ -41,18 +36,22 @@ class CheckUserActivity : BaseActivity<CheckUserViewModel, ActivityCheckUserBind
     }
 
     override fun initView() {
+        mBinding.cuv.setCheckUserCallback(object : CheckUserView.CheckUserCallback {
 
+            override fun onClose() {
+                onBackPressedSupport()
+            }
+
+            override fun onCheckUser(list: List<UserInfoBean>) {
+                mViewModel.confirm(list)
+            }
+        })
     }
 
     override fun initData(savedInstanceState: Bundle?) {
         intent?.run {
             val chatMode = getSerializableExtra(CHAT_MODE) as ChatMode
-            val list: ArrayList<UserInfoBean>? = getParcelableArrayListExtra(NON_SELECTABLE_LIST)
-
-            mViewModel.initData(chatMode, list)
+            mBinding.cuv.setChatMode(chatMode)
         }
-
     }
-
-
 }

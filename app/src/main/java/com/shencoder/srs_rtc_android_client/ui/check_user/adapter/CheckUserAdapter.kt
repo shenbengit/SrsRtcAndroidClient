@@ -6,8 +6,12 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.constant.ChatMode
+import com.shencoder.srs_rtc_android_client.constant.MMKVConstant
 import com.shencoder.srs_rtc_android_client.databinding.ItemCheckUserBinding
 import com.shencoder.srs_rtc_android_client.http.bean.UserInfoBean
+import com.tencent.mmkv.MMKV
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 /**
  *
@@ -16,22 +20,36 @@ import com.shencoder.srs_rtc_android_client.http.bean.UserInfoBean
  * @email   714081644@qq.com
  */
 class CheckUserAdapter :
-    BaseQuickAdapter<UserInfoBean, BaseDataBindingHolder<ItemCheckUserBinding>>(R.layout.item_check_user) {
+    BaseQuickAdapter<UserInfoBean, BaseDataBindingHolder<ItemCheckUserBinding>>(R.layout.item_check_user),KoinComponent {
+
 
     private companion object {
         private const val UPDATE_CHECKED = "UPDATE_CHECKED"
     }
+    private val mmkv: MMKV by inject()
 
     private var chatMode = ChatMode.PRIVATE_MODE
     private var lastCheckedPosition = RecyclerView.NO_POSITION
 
     fun setChatMode(chatMode: ChatMode) {
-        this.chatMode = chatMode
-        lastCheckedPosition = RecyclerView.NO_POSITION
+        if (this.chatMode != ChatMode.GROUP_MODE) {
+            this.chatMode = chatMode
+            lastCheckedPosition = RecyclerView.NO_POSITION
 
-        if (data.isNotEmpty()) {
-            data.forEach { it.isSelected = false }
-            notifyDataSetChanged()
+            if (data.isNotEmpty()) {
+                val localUserInfo =
+                    mmkv.decodeParcelable(MMKVConstant.USER_INFO, UserInfoBean::class.java)
+                //先还原数据，当前用户不可点击
+                data.forEach {
+                    if (it == localUserInfo) {
+                        it.selectable = false
+                        it.isSelected = true
+                    } else {
+                        it.isSelected = false
+                    }
+                }
+                notifyDataSetChanged()
+            }
         }
     }
 

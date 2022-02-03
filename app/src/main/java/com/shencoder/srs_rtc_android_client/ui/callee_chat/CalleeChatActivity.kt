@@ -2,6 +2,7 @@ package com.shencoder.srs_rtc_android_client.ui.callee_chat
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.view.isVisible
 import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.util.toastError
 import com.shencoder.mvvmkit.util.toastInfo
@@ -20,6 +21,7 @@ import com.shencoder.srs_rtc_android_client.util.randomAvatar
 import com.shencoder.srs_rtc_android_client.util.requestCallPermissions
 import com.shencoder.srs_rtc_android_client.webrtc.bean.WebRTCStreamInfoBean
 import com.shencoder.srs_rtc_android_client.webrtc.widget.CallLayout
+import com.shencoder.srs_rtc_android_client.widget.CheckUserDialog
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -31,6 +33,13 @@ class CalleeChatActivity : BaseActivity<CalleeChatViewModel, ActivityCalleeChatB
     companion object {
         const val REQUEST_CALL = "REQUEST_CALL"
     }
+
+    private lateinit var checkUserDialog: CheckUserDialog
+
+    /**
+     * 实际的被叫用户集合
+     */
+    private val calleeInfoList = mutableSetOf<ClientInfoBean>()
 
     /**
      * 当前设备像SRS服务器推流地址
@@ -61,35 +70,78 @@ class CalleeChatActivity : BaseActivity<CalleeChatViewModel, ActivityCalleeChatB
     }
 
     override fun initView() {
-        mBinding.callLayout.setCallActionCallback(object : CallLayout.CallActionCallback {
-
-            override fun rejectCall() {
-                mViewModel.rejectCall()
-            }
-
-            override fun acceptCall() {
-                mViewModel.acceptCall {
-                    publishStream(publishStreamUrl) {
-                        acceptedCall = true
-                        tempPlayStreamList.forEach {
-                            addPlayStream(it.userInfo, it.publishStreamUrl)
-                        }
-                        tempPlayStreamList.clear()
-
-                        it.alreadyInRoomList.forEach { bean ->
-                            addPlayStream(bean.userInfo, bean.publishStreamUrl)
+        checkUserDialog = CheckUserDialog(this).apply {
+            setCheckUserCallback { list ->
+                if (list.size == 1) {
+                    mViewModel.reqInviteSomeoneIntoRoom(list[0].userId) {
+                        addPlayStream(it.inviteeInfo, null)
+                    }
+                } else {
+                    mViewModel.reqInviteSomePeopleIntoRoom(list.map { it.userId }) {
+                        it.callList.forEach { bean ->
+                            addPlayStream(bean, null)
                         }
                     }
                 }
             }
-
-            override fun hangUpCall() {
-                mViewModel.hangUp()
+        }
+        mBinding.run {
+            btnAdd.setOnClickListener {
+                checkUserDialog.run {
+                    setUnSelectedList(calleeInfoList.map {
+                        UserInfoBean(
+                            it.createdAt,
+                            it.id,
+                            it.userId,
+                            it.userType,
+                            it.username
+                        )
+                    })
+                    show()
+                }
             }
-        })
+            callLayout.setCallActionCallback(object : CallLayout.CallActionCallback {
+
+                override fun rejectCall() {
+                    mViewModel.rejectCall()
+                }
+
+                override fun acceptCall() {
+                    mViewModel.acceptCall {
+                        publishStream(publishStreamUrl) {
+                            XLog.i("callee publish stream success.")
+                            //推流成功再显示添加按钮
+                            mBinding.btnAdd.isVisible = true
+                            acceptedCall = true
+
+                            tempPlayStreamList.forEach {
+                                addPlayStream(it.userInfo, it.publishStreamUrl)
+                            }
+                            tempPlayStreamList.clear()
+
+                            it.alreadyInRoomList.forEach { bean ->
+                                addPlayStream(bean.userInfo, bean.publishStreamUrl)
+                            }
+                        }
+                    }
+                }
+
+                override fun hangUpCall() {
+                    mViewModel.hangUp()
+                }
+            })
+        }
     }
 
     override fun initData(savedInstanceState: Bundle?) {
+        mViewModel.inviteSomeoneIntoRoomLiveData.observe(this) {
+            addPlayStream(it.inviteeInfo, null)
+        }
+        mViewModel.inviteSomePeopleIntoRoomLiveData.observe(this) {
+            it.inviteeInfoList.forEach { bean ->
+                addPlayStream(bean, null)
+            }
+        }
         mViewModel.rejectCallLiveData.observe(this) {
             removePlayStream(it.userInfo, it.callEnded, getString(R.string.reject_call))
         }
@@ -176,11 +228,13 @@ class CalleeChatActivity : BaseActivity<CalleeChatViewModel, ActivityCalleeChatB
                 success.invoke()
             }
         }, onFailure = {
-            XLog.e("")
+            XLog.e("callee publish failure: ${it.message}")
+            toastError("publish failure: ${it.message}")
         })
     }
 
     private fun addPlayStream(bean: ClientInfoBean, publishStreamUrl: String?) {
+        calleeInfoList.add(bean)
         //播放流
         mBinding.callLayout.run {
             mBinding.callLayout.addPlayStream(WebRTCStreamInfoBean(
@@ -198,6 +252,7 @@ class CalleeChatActivity : BaseActivity<CalleeChatViewModel, ActivityCalleeChatB
                 )
                 XLog.e("play stream failure: userId:${bean.userId}, userType: ${bean.userType}, userName: ${bean.username}, reason: ${it.message}")
                 mBinding.callLayout.removePlayStream(bean.userId, bean.userType)
+                calleeInfoList.remove(bean)
             })
         }
     }
@@ -211,6 +266,8 @@ class CalleeChatActivity : BaseActivity<CalleeChatViewModel, ActivityCalleeChatB
             mViewModel.delayBackPressed()
             return
         }
+        calleeInfoList.remove(bean)
+
         if (acceptedCall) {
             //已接受通话
             mBinding.callLayout.removePlayStream(bean.userId, bean.userType)

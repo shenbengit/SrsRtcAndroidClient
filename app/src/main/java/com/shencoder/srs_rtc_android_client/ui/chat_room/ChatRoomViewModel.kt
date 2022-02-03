@@ -34,6 +34,12 @@ class ChatRoomViewModel(
     val leaveChatRoomLiveData = MutableLiveData<ClientInfoBean>()
 
     private val signalEventCallback = object : SignalEventCallback {
+
+        override fun forcedOffline() {
+            toastWarning("forced offline.")
+            delayBackPressed()
+        }
+
         override fun joinChatRoom(bean: JoinChatRoomBean) {
             joinChatRoomLiveData.value = bean.userInfo
         }
@@ -62,8 +68,9 @@ class ChatRoomViewModel(
 
     fun joinChatRoom(success: (ResAlreadyInRoomBean) -> Unit) {
         callSocketIoClient.reqJoinChatRoom(roomId, success, failure = { code, reason ->
-            XLog.e("failure-code:${code}, reason:${reason}")
+            XLog.e("join chat room failure-code:${code}, reason:${reason}")
             toastWarning(reason)
+            delayBackPressed()
         })
     }
 
@@ -73,8 +80,9 @@ class ChatRoomViewModel(
             publishSteamUrl,
             success
         ) { code, reason ->
-            XLog.e("failure-code:${code}, reason:${reason}")
+            XLog.e("publish stream failure-code:${code}, reason:${reason}")
             toastWarning(reason)
+            delayBackPressed()
         }
     }
 
@@ -83,8 +91,9 @@ class ChatRoomViewModel(
             toastInfo("left the room.")
             delayBackPressed()
         }, failure = { code, reason ->
-            XLog.e("failure-code:${code}, reason:${reason}")
+            XLog.e("leave chat room failure-code:${code}, reason:${reason}")
             toastWarning(reason)
+            delayBackPressed()
         })
     }
 

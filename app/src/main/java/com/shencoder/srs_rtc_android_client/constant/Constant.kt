@@ -129,21 +129,13 @@ object SRS {
     /**
      * 生成推流WebRTC Url
      * @param bean 用户信息
-     * @param isHttps
      */
     @JvmStatic
-    @JvmOverloads
-    fun generatePublishWebRTCUrl(bean: UserInfoBean, isHttps: Boolean = true): String {
+    fun generatePublishWebRTCUrl(bean: UserInfoBean): String {
         return buildString {
             append("webrtc://")
             append(SERVER_ADDRESS)
-            append(":")
-            if (isHttps) {
-                append(API_HTTPS_PORT)
-            } else {
-                append(API_HTTP_PORT)
-            }
-            append("/srs_rtc/android?userId=${bean.userId}&userType=${bean.userType}&timestamp=${System.currentTimeMillis()}")
+            append("/srs_rtc/android/${bean.userId}/${bean.userType}/${System.currentTimeMillis()}")
         }
     }
 }

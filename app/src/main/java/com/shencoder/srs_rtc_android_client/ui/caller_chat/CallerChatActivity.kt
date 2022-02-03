@@ -2,10 +2,9 @@ package com.shencoder.srs_rtc_android_client.ui.caller_chat
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.view.isVisible
 import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.util.toastError
-import com.shencoder.mvvmkit.util.toastInfo
-import com.shencoder.mvvmkit.util.toastSuccess
 import com.shencoder.mvvmkit.util.toastWarning
 import com.shencoder.srs_rtc_android_client.BR
 import com.shencoder.srs_rtc_android_client.R
@@ -19,6 +18,7 @@ import com.shencoder.srs_rtc_android_client.util.randomAvatar
 import com.shencoder.srs_rtc_android_client.util.requestCallPermissions
 import com.shencoder.srs_rtc_android_client.webrtc.bean.WebRTCStreamInfoBean
 import com.shencoder.srs_rtc_android_client.webrtc.widget.CallLayout
+import com.shencoder.srs_rtc_android_client.widget.CheckUserDialog
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -36,7 +36,9 @@ class CallerChatActivity : BaseActivity<CallerChatViewModel, ActivityCallerChatB
     /**
      * 实际的被叫用户集合
      */
-    private val calleeInfoList = mutableListOf<ClientInfoBean>()
+    private val calleeInfoList = mutableSetOf<ClientInfoBean>()
+
+    private lateinit var checkUserDialog: CheckUserDialog
 
     /**
      * 当前设备像SRS服务器推流地址
@@ -56,28 +58,72 @@ class CallerChatActivity : BaseActivity<CallerChatViewModel, ActivityCallerChatB
     }
 
     override fun initView() {
-        mBinding.callLayout.setCallActionCallback(object : CallLayout.CallActionCallback {
-
-            override fun hangUpCall() {
-                mViewModel.hangUp()
+        checkUserDialog = CheckUserDialog(this).apply {
+            setCheckUserCallback { list ->
+                if (list.size == 1) {
+                    mViewModel.reqInviteSomeoneIntoRoom(list[0].userId) {
+                        addPlayStream(it.inviteeInfo, null)
+                    }
+                } else {
+                    mViewModel.reqInviteSomePeopleIntoRoom(list.map { it.userId }) {
+                        it.callList.forEach { bean->
+                            addPlayStream(bean,null)
+                        }
+                    }
+                }
             }
-        })
+        }
+        mBinding.run {
+            btnAdd.setOnClickListener {
+                checkUserDialog.run {
+                    kotlin.runCatching {
+                        setUnSelectedList(calleeInfoList.map {
+                            UserInfoBean(
+                                it.createdAt,
+                                it.id,
+                                it.userId,
+                                it.userType,
+                                it.username
+                            )
+                        })
+                        show()
+                    }.onFailure {
+                        it.printStackTrace()
+                    }
+
+                }
+            }
+            callLayout.setCallActionCallback(object : CallLayout.CallActionCallback {
+
+                override fun hangUpCall() {
+                    mViewModel.hangUp()
+                }
+            })
+        }
     }
 
     override fun initData(savedInstanceState: Bundle?) {
+        mViewModel.inviteSomeoneIntoRoomLiveData.observe(this) {
+            addPlayStream(it.inviteeInfo, null)
+        }
+        mViewModel.inviteSomePeopleIntoRoomLiveData.observe(this) {
+            it.inviteeInfoList.forEach { bean ->
+                addPlayStream(bean, null)
+            }
+        }
         mViewModel.rejectCallLiveData.observe(this) {
             removePlayStream(it.userInfo)
-            toastInfo("[${it.userInfo.username}]${getString(R.string.reject_call)}")
             if (it.callEnded) {
                 mViewModel.delayBackPressed()
             }
         }
         mViewModel.acceptCallLiveData.observe(this) {
             mBinding.callLayout.setInCallStatus()
-            toastSuccess("[${it.username}]${getString(R.string.accept_call)}")
             //开始推流
             this@CallerChatActivity.publishStream(publishStreamUrl) {
                 XLog.i("caller publish stream success.")
+                //推流成功再显示添加按钮
+                mBinding.btnAdd.isVisible = true
             }
         }
         mViewModel.playSteamLiveData.observe(this) {
@@ -85,14 +131,12 @@ class CallerChatActivity : BaseActivity<CallerChatViewModel, ActivityCallerChatB
         }
         mViewModel.hangUpLiveData.observe(this) {
             removePlayStream(it.userInfo)
-            toastInfo("[${it.userInfo.username}]${getString(R.string.hang_up)}")
             if (it.callEnded) {
                 mViewModel.delayBackPressed()
             }
         }
         mViewModel.offlineDuringCallLiveData.observe(this) {
             removePlayStream(it.userInfo)
-            toastInfo("[${it.userInfo.username}]${getString(R.string.offline)}")
             if (it.callEnded) {
                 mViewModel.delayBackPressed()
             }
@@ -153,63 +197,16 @@ class CallerChatActivity : BaseActivity<CallerChatViewModel, ActivityCallerChatB
                 updatePreviewPublishStream(calleeUserInfo.username, randomAvatar())
 
                 mViewModel.reqInviteSomeone(calleeUserInfo.userId) {
-                    mViewModel.setRoomId(it.roomId)
                     //再显示回自己的信息
 //                    updatePreviewPublishStream(getString(R.string.mine), publishStreamBean.avatar)
 //                    this@CallerChatActivity.addPlayStream(it.inviteeInfo, null)
-
-                    //存储当前会见的所有被叫信息
-                    calleeInfoList.add(it.inviteeInfo)
                 }
             } else {
                 //会见多人时
                 mViewModel.reqInviteSomePeople(list.map { it.userId }, success = { bean ->
-                    mViewModel.setRoomId(bean.roomId)
-                    val msg = buildString {
-                        if (bean.busyList.isNotEmpty()) {
-                            append("busyList: [")
-                            bean.busyList.forEachIndexed { index, info ->
-                                append(info.username)
-                                if (index != bean.busyList.lastIndex) {
-                                    append("、")
-                                }
-                            }
-                            append("], ")
-                        }
-
-                        if (bean.offlineOrNotExistsList.isNotEmpty()) {
-                            append("offlineOrNotExistsList: userId[")
-                            bean.offlineOrNotExistsList.forEachIndexed { index, info ->
-                                append(info.userId)
-                                if (index != bean.offlineOrNotExistsList.lastIndex) {
-                                    append("、")
-                                }
-                            }
-                            append("], ")
-                        }
-
-                        if (bean.alreadyInRoomList.isNotEmpty()) {
-                            append("alreadyInRoomList: [")
-                            bean.alreadyInRoomList.forEachIndexed { index, info ->
-                                append(info.username)
-                                if (index != bean.alreadyInRoomList.lastIndex) {
-                                    append("、")
-                                }
-                            }
-                            append("]")
-                        }
-                    }
-
-                    if (msg.isNotBlank()) {
-                        toastWarning(msg, Toast.LENGTH_LONG)
-                    }
-
                     bean.callList.forEach { clientInfo ->
                         this@CallerChatActivity.addPlayStream(clientInfo, null)
                     }
-                    //存储当前会见的所有被叫信息
-                    calleeInfoList.addAll(bean.callList)
-
                 })
             }
         }
@@ -221,11 +218,14 @@ class CallerChatActivity : BaseActivity<CallerChatViewModel, ActivityCallerChatB
                 success.invoke()
             }
         }, onFailure = {
-            XLog.e("")
+            XLog.e("caller publish failure: ${it.message}")
+            toastError("publish failure: ${it.message}")
         })
     }
 
     private fun addPlayStream(bean: ClientInfoBean, publishStreamUrl: String?) {
+        //存储当前会见的所有被叫信息
+        calleeInfoList.add(bean)
         //播放流
         mBinding.callLayout.run {
             mBinding.callLayout.addPlayStream(WebRTCStreamInfoBean(

@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_accept.xml" value="0.22407407407407406" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_accept111.xml" value="0.15520833333333334" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_add.xml" value="0.25729166666666664" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_avatar01.xml" value="0.25729166666666664" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_avatar06.xml" value="0.25729166666666664" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_avatar15.xml" value="0.25729166666666664" />
@@ -13,6 +14,7 @@
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_bg.xml" value="0.21851851851851853" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_camera_disable.xml" value="1.0083333333333333" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_camera_enable.xml" value="0.22407407407407406" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_close.xml" value="0.25729166666666664" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_connect_bg.xml" value="0.21851851851851853" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_connect_status_bg.xml" value="0.21851851851851853" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/drawable/ic_connected_status.xml" value="0.21481481481481482" />
@@ -37,11 +39,13 @@
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_private_chat.xml" value="0.24114583333333334" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/activity_register_user.xml" value="0.24114583333333334" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/dialog_check_user.xml" value="0.12" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/fragment_test.xml" value="0.14764492753623187" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/item_check_user.xml" value="0.2" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/layout_before_call.xml" value="0.23052536231884058" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/layout_call.xml" value="0.23052536231884058" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/layout_calling_action.xml" value="0.264" />
+        <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/layout_check_user.xml" value="0.1453804347826087" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/layout_stream_renderer.xml" value="0.2" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/layout_test.xml" value="0.24114583333333334" />
         <entry key="..\:/Work/Android/AndroidStudioProjects/SrsRtcAndroidClient/app/src/main/res/layout/layout_text_view.xml" value="0.72" />

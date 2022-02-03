@@ -10,61 +10,15 @@
             type="com.shencoder.srs_rtc_android_client.ui.check_user.CheckUserViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.check_user.CheckUserActivity">
 
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30sp"
-            android:layout_marginTop="50dp"
-            android:text="@string/select_call_user"
-            android:textColor="@color/white"
-            android:textSize="35sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <com.shencoder.srs_rtc_android_client.widget.CheckUserView
+            android:id="@+id/cuv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvUserList"
-            addRecyclerViewItemDecoration="@{viewModel.itemDecoration}"
-            setRecyclerViewAdapter="@{viewModel.adapter}"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="20dp"
-            android:background="@color/white"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@id/btnConfirm"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnConfirm"
-            android:layout_width="0dp"
-            android:layout_height="55dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="30dp"
-            android:backgroundTint="@color/teal_200"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:onClick="@{()-> viewModel.confirm()}"
-            android:text="@string/confirm"
-            android:textSize="18sp"
-            app:cornerRadius="15dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 </layout>

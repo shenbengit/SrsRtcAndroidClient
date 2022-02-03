@@ -177,7 +177,6 @@ class CallLayout @JvmOverloads constructor(
         tvSpeakerphone = clCallingAction.findViewById(R.id.tvSpeakerphone)
         tvSpeakerphone.setOnClickListener {
             this.isSpeakerphone = isSpeakerphone.not()
-            tvSpeakerphone.isSelected = isSpeakerphone
             operateSpeakerphone(isSpeakerphone)
         }
         //挂断
@@ -414,6 +413,7 @@ class CallLayout @JvmOverloads constructor(
             )
             audioManager.isSpeakerphoneOn = true
         }
+        tvSpeakerphone.isSelected = isSpeakerphone
     }
 
 

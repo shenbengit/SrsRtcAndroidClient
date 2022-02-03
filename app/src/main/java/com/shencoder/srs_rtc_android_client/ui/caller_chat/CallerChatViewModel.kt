@@ -2,15 +2,13 @@ package com.shencoder.srs_rtc_android_client.ui.caller_chat
 
 import android.app.Application
 import android.media.MediaPlayer
+import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.base.repository.BaseNothingRepository
 import com.shencoder.mvvmkit.base.viewmodel.BaseViewModel
-import com.shencoder.mvvmkit.ext.launchOnUI
-import com.shencoder.mvvmkit.ext.launchOnUIDelay
-import com.shencoder.mvvmkit.ext.toastInfo
-import com.shencoder.mvvmkit.ext.toastWarning
+import com.shencoder.mvvmkit.ext.*
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
 import com.shencoder.srs_rtc_android_client.helper.call.SignalEventCallback
@@ -31,6 +29,8 @@ class CallerChatViewModel(
 
     private val callSocketIoClient: CallSocketIoClient by inject()
 
+    val inviteSomeoneIntoRoomLiveData = MutableLiveData<InviteSomeoneBean>()
+    val inviteSomePeopleIntoRoomLiveData = MutableLiveData<InviteSomePeopleBean>()
     val rejectCallLiveData = MutableLiveData<RejectCallBean>()
     val acceptCallLiveData = MutableLiveData<ClientInfoBean>()
     val playSteamLiveData = MutableLiveData<PlayStreamBean>()
@@ -43,22 +43,33 @@ class CallerChatViewModel(
          * 被强制下线
          */
         override fun forcedOffline() {
-
+            toastWarning("forced offline.")
+            delayBackPressed()
         }
 
         override fun inviteSomeoneIntoRoom(bean: InviteSomeoneBean) {
-
+            toastInfo("[${bean.inviteInfo.username}] invited [${bean.inviteeInfo.username}]")
+            inviteSomeoneIntoRoomLiveData.value = bean
         }
 
         override fun inviteSomePeopleIntoRoom(bean: InviteSomePeopleBean) {
-
+            toastInfo(
+                "[${bean.inviteInfo.username}] invited ${
+                    bean.inviteeInfoList.map { info -> info.username }.toTypedArray()
+                        .contentToString()
+                }"
+            )
+            inviteSomePeopleIntoRoomLiveData.value = bean
         }
 
         override fun rejectCall(bean: RejectCallBean) {
+            toastInfo("[${bean.userInfo.username}]${getString(R.string.reject_call)}")
             rejectCallLiveData.value = bean
         }
 
         override fun acceptCall(bean: AcceptCallBean) {
+            toastSuccess("[${bean.userInfo.username}]${getString(R.string.accept_call)}")
+
             if (mediaPlayer.isPlaying) {
                 mediaPlayer.stop()
             }
@@ -70,10 +81,13 @@ class CallerChatViewModel(
         }
 
         override fun hangUp(bean: HangUpBean) {
+            toastInfo("[${bean.userInfo.username}]${getString(R.string.hang_up)}")
             hangUpLiveData.value = bean
         }
 
         override fun offlineDuringCall(bean: OfflineDuringCallBean) {
+            toastInfo("[${bean.userInfo.username}]${getString(R.string.offline)}")
+
             offlineDuringCallLiveData.value = bean
         }
     }
@@ -99,20 +113,23 @@ class CallerChatViewModel(
         mediaPlayer.release()
     }
 
+    private fun setRoomId(roomId: String) {
+        this.roomId = roomId
+    }
+
     /**
      * 邀请某个人
      */
     fun reqInviteSomeone(userId: String, success: (ResInviteeInfoBean) -> Unit = {}) {
         mediaPlayer.start()
 
-        callSocketIoClient.reqInviteSomeone(userId, success, failure = { code, reason ->
-            XLog.e("failure-code:${code}, reason:${reason}")
+        callSocketIoClient.reqInviteSomeone(userId, success = {
+            setRoomId(it.roomId)
+            success.invoke(it)
+        }, failure = { code, reason ->
+            XLog.e("req invite someone failure-code:${code}, reason:${reason}")
             toastWarning(reason)
-            launchOnUI {
-                //延迟关闭画面
-                delay(1000L)
-                backPressed()
-            }
+            delayBackPressed()
         })
     }
 
@@ -125,19 +142,19 @@ class CallerChatViewModel(
     ) {
         mediaPlayer.start()
 
-        callSocketIoClient.reqInviteSomePeople(userIds, success, failure = { code, reason ->
-            XLog.e("failure-code:${code}, reason:${reason}")
+        callSocketIoClient.reqInviteSomePeople(userIds, success = { bean ->
+            setRoomId(bean.roomId)
+            toastInviteSomePeopleInfo(
+                bean.busyList,
+                bean.offlineOrNotExistsList,
+                bean.alreadyInRoomList
+            )
+            success.invoke(bean)
+        }, failure = { code, reason ->
+            XLog.e("req invite some people failure-code:${code}, reason:${reason}")
             toastWarning(reason)
-            launchOnUI {
-                //延迟关闭画面
-                delay(1000L)
-                backPressed()
-            }
+            delayBackPressed()
         })
-    }
-
-    fun setRoomId(roomId: String) {
-        this.roomId = roomId
     }
 
     fun publishStream(publishSteamUrl: String, success: () -> Unit) {
@@ -149,6 +166,44 @@ class CallerChatViewModel(
             XLog.e("publish stream failure-code:${code}, reason:${reason}")
             toastWarning(reason)
         }
+    }
+
+    /**
+     * 邀请某人进入自己房间
+     */
+    fun reqInviteSomeoneIntoRoom(userId: String, success: (ResInviteeInfoBean) -> Unit) {
+        callSocketIoClient.reqInviteSomeoneIntoRoom(
+            userId,
+            roomId,
+            success,
+            failure = { code, reason ->
+                XLog.e("req invite someone into room failure-code:${code}, reason:${reason}")
+                toastWarning(reason)
+            })
+    }
+
+    /**
+     * 邀请某些人进入自己房间
+     */
+    fun reqInviteSomePeopleIntoRoom(
+        userIds: List<String>,
+        success: (ResInviteSomePeopleBean) -> Unit
+    ) {
+        callSocketIoClient.reqInviteSomePeopleIntoRoom(
+            userIds,
+            roomId,
+            success = { bean ->
+                toastInviteSomePeopleInfo(
+                    bean.busyList,
+                    bean.offlineOrNotExistsList,
+                    bean.alreadyInRoomList
+                )
+                success.invoke(bean)
+            },
+            failure = { code, reason ->
+                XLog.e("req invite some people into room failure-code:${code}, reason:${reason}")
+                toastWarning(reason)
+            })
     }
 
     /**
@@ -164,7 +219,9 @@ class CallerChatViewModel(
                     delayBackPressed()
                 },
                 failure = { code, reason ->
-
+                    XLog.e("hang up failure-code:${code}, reason:${reason}")
+                    toastWarning(reason)
+                    delayBackPressed()
                 })
         }
     }
@@ -172,6 +229,51 @@ class CallerChatViewModel(
     fun delayBackPressed(timeMillis: Long = 1000L) {
         launchOnUIDelay(timeMillis) {
             backPressed()
+        }
+    }
+
+
+    private fun toastInviteSomePeopleInfo(
+        busyList: List<ClientInfoBean>,
+        offlineOrNotExistsList: List<OfflineOrNotExistsBean>,
+        alreadyInRoomList: List<ClientInfoBean>
+    ) {
+        val msg = buildString {
+            if (busyList.isNotEmpty()) {
+                append("busyList: [")
+                busyList.forEachIndexed { index, info ->
+                    append(info.username)
+                    if (index != busyList.lastIndex) {
+                        append("、")
+                    }
+                }
+                append("], ")
+            }
+
+            if (offlineOrNotExistsList.isNotEmpty()) {
+                append("offlineOrNotExistsList: userId[")
+                offlineOrNotExistsList.forEachIndexed { index, info ->
+                    append(info.userId)
+                    if (index != offlineOrNotExistsList.lastIndex) {
+                        append("、")
+                    }
+                }
+                append("], ")
+            }
+
+            if (alreadyInRoomList.isNotEmpty()) {
+                append("alreadyInRoomList: [")
+                alreadyInRoomList.forEachIndexed { index, info ->
+                    append(info.username)
+                    if (index != alreadyInRoomList.lastIndex) {
+                        append("、")
+                    }
+                }
+                append("]")
+            }
+        }
+        if (msg.isNotBlank()) {
+            toastWarning(msg, Toast.LENGTH_LONG)
         }
     }
 
