@@ -5,6 +5,12 @@
 - 信令服务器[srs-rtc-server](https://github.com/shenbengit/srs-rtc-server) 
 - Android客户端[SrsRtcAndroidClient](https://github.com/shenbengit/SrsRtcAndroidClient) 
 - Web客户端[srs-rtc-web-client](https://github.com/shenbengit/srs-rtc-web-client) （功能开发中...）
+## 功能特点
+- 支持用户注册、登录
+- 支持私聊
+- 支持群聊
+- 支持聊天室
+- 支持私聊、群聊中继续添加会见人
 
 ## 运行效果
 
