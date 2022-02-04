@@ -10,7 +10,7 @@ import com.shencoder.srs_rtc_android_client.http.bean.UserInfoBean
  */
 object Constant {
 
-    const val TAG = "SRS_RTC"
+    const val TAG = "SrsRtcAndroidClient"
 
     /**
      * 页面适配基准

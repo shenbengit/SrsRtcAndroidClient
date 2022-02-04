@@ -6,6 +6,15 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('..\\shencoder.jks')
+            storePassword '123456'
+            keyAlias 'shencoder'
+            keyPassword '123456'
+        }
+    }
+
     compileSdk 31
 
     defaultConfig {
@@ -22,8 +31,19 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def date = new Date().format("yyyy.M.d", TimeZone.getTimeZone("GMT+08"))
+            def apkName = "SrsRtcAndroidClient_${date}_v${variant.versionName}_${variant.buildType.name}.apk"
+            output.outputFileName = apkName
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -39,6 +59,7 @@ android {
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
@@ -49,7 +70,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'io.socket:socket.io-client:2.0.1'
+    implementation ("io.socket:socket.io-client:2.0.1"){
+        exclude group: 'org.json', module: 'json'
+    }
     implementation 'org.webrtc:google-webrtc:1.0.32006'
     implementation 'com.github.shenbengit:WebRTCExtension:1.0.6'
     implementation 'com.github.shenbengit:MVVMKit:1.0.7'

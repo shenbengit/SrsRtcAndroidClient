@@ -74,16 +74,16 @@ class CallLayout @JvmOverloads constructor(
     private val tvAccept: TextView
     private val clCallingAction: ConstraintLayout
     private lateinit var tvTime: TextView
-    private val tvSpeakerMute: TextView
+    private val tvMicrophoneMute: TextView
     private val tvSpeakerphone: TextView
 
     /**
-     * 音频录入是否静音
+     * 音频输出是否静音
      */
     private var isSpeakerMute: Boolean
 
     /**
-     * 音频输出是否静音
+     * 音频输入是否静音，即：麦克风输入是否静音
      */
     private var isMicrophoneMute: Boolean
 
@@ -168,9 +168,9 @@ class CallLayout @JvmOverloads constructor(
             actionCallback?.acceptCall()
         }
         tvTime = clCallingAction.findViewById(R.id.tvTime)
-        tvSpeakerMute = clCallingAction.findViewById(R.id.tvSpeakerMute)
-        tvSpeakerMute.setOnClickListener {
-            setSpeakerMute(isSpeakerMute.not())
+        tvMicrophoneMute = clCallingAction.findViewById(R.id.tvMicrophoneMute)
+        tvMicrophoneMute.setOnClickListener {
+            setMicrophoneMute(isMicrophoneMute.not())
         }
         clCallingAction.findViewById<TextView>(R.id.tvSwitchCamera).setOnClickListener {
             switchCamera()
@@ -376,20 +376,25 @@ class CallLayout @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 音频输出是否静音
+     */
     private fun setSpeakerMute(mute: Boolean) {
         isSpeakerMute = mute
         if (this::audioDeviceModule.isInitialized) {
             audioDeviceModule.setSpeakerMute(mute)
         }
-        tvSpeakerMute.isSelected = mute
     }
 
+    /**
+     * 音频输入是否静音，即：麦克风输入是否静音
+     */
     private fun setMicrophoneMute(mute: Boolean) {
         isMicrophoneMute = mute
         if (this::audioDeviceModule.isInitialized) {
             audioDeviceModule.setMicrophoneMute(mute)
         }
-
+        tvMicrophoneMute.isSelected = mute
     }
 
     /**

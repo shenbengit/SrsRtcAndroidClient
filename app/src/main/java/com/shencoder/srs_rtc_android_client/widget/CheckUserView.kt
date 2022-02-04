@@ -150,13 +150,6 @@ class CheckUserView @JvmOverloads constructor(
         scope.cancel()
     }
 
-    /**
-     * 解析数据
-     */
-    private fun analyticalData(list: List<UserInfoBean>, unSelectedSet: Set<UserInfoBean>) {
-
-    }
-
     interface CheckUserCallback {
         fun onClose()
 
