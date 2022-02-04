@@ -13,7 +13,23 @@
 - 支持私聊、群聊中继续添加会见人
 
 ## 运行效果
+|用户注册|用户登录|
+|:---:|:---:|
+|<img src="https://github.com/shenbengit/SrsRtcAndroidClient/blob/master/screenshots/%E6%B3%A8%E5%86%8C.gif" alt="用户注册" width="250px">|<img src="https://github.com/shenbengit/SrsRtcAndroidClient/blob/master/screenshots/%E7%99%BB%E5%BD%95.gif" alt="用户登录" width="250px">|
 
+|私聊|
+|:---:|
+|<img src="https://github.com/shenbengit/SrsRtcAndroidClient/blob/master/screenshots/%E7%A7%81%E8%81%8A.gif" alt="私聊" width="530px">|
+
+
+|群聊|
+|:---:|
+|<img src="https://github.com/shenbengit/SrsRtcAndroidClient/blob/master/screenshots/%E7%BE%A4%E8%81%8A.gif" alt="群聊" width="530px">|
+
+
+|聊天室|
+|:---:|
+|<img src="https://github.com/shenbengit/SrsRtcAndroidClient/blob/master/screenshots/%E8%81%8A%E5%A4%A9%E5%AE%A4.gif" alt="聊天室" width="530px">|
 ## Getting Started
 
 ### 依赖环境
@@ -79,5 +95,18 @@ object SRS {
     const val API_HTTPS_PORT = 1990
 }
 ```
+
+## 实现流程解析
+- [Android端从SRS服务器拉取WebRTC流](https://blog.csdn.net/csdn_shen0221/article/details/120269707)
+- [Android端向SRS服务器推送WebRTC流](https://blog.csdn.net/csdn_shen0221/article/details/120331004)
+- [Android端WebRTC启用H264编码-sdp中无H264信息](https://blog.csdn.net/csdn_shen0221/article/details/119982257)
+
+## 作者其他的开源项目
+- 基于RecyclerView实现网格分页布局：[PagerGridLayoutManager](https://github.com/shenbengit/PagerGridLayoutManager)
+- Android端WebRTC一些扩展方法：[WebRTCExtension](https://github.com/shenbengit/WebRTCExtension)
+- 基于Netty封装UDP收发工具：[UdpNetty](https://github.com/shenbengit/UdpNetty)
+- Android端基于JavaCV实现人脸检测功能：[JavaCV-FaceDetect](https://github.com/shenbengit/JavaCV-FaceDetect)
+- 使用Kotlin搭建Android MVVM快速开发框架：[MVVMKit](https://github.com/shenbengit/MVVMKit)
+
 
 ## [LICENSE](https://github.com/shenbengit/SrsRtcAndroidClient/blob/master/LICENSE)
