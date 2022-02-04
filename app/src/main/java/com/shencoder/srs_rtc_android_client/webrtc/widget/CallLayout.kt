@@ -5,6 +5,7 @@ import android.media.AudioManager
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -241,8 +242,9 @@ class CallLayout @JvmOverloads constructor(
             createCustomVideoEncoderFactory(eglBaseContext,
                 enableIntelVp8Encoder = true,
                 enableH264HighProfile = true,
-                videoEncoderSupportedCallback = { info -> //判断编码器是否支持
-                    false
+                videoEncoderSupportedCallback = { info ->
+                    //判断编码器是否支持
+                    TextUtils.equals("OMX.rk.video_encoder.avc", info.name)
                 })
         val decoderFactory = DefaultVideoDecoderFactory(eglBaseContext)
         audioDeviceModule =
