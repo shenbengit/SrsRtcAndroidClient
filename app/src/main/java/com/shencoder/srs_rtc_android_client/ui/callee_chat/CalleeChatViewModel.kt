@@ -12,8 +12,10 @@ import com.shencoder.mvvmkit.ext.launchOnUIDelay
 import com.shencoder.mvvmkit.ext.toastInfo
 import com.shencoder.mvvmkit.ext.toastWarning
 import com.shencoder.srs_rtc_android_client.R
+import com.shencoder.srs_rtc_android_client.constant.SocketIoConnectionStatus
 import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
 import com.shencoder.srs_rtc_android_client.helper.call.SignalEventCallback
+import com.shencoder.srs_rtc_android_client.helper.call.SocketIoConnectionStatusCallback
 import com.shencoder.srs_rtc_android_client.helper.call.bean.*
 import org.koin.core.component.inject
 
@@ -37,6 +39,17 @@ class CalleeChatViewModel(
     val playSteamLiveData = MutableLiveData<PlayStreamBean>()
     val hangUpLiveData = MutableLiveData<HangUpBean>()
     val offlineDuringCallLiveData = MutableLiveData<OfflineDuringCallBean>()
+
+    /**
+     * 添加连接状态回调
+     */
+    private val connectionStatusCallback = object : SocketIoConnectionStatusCallback {
+
+        override fun disconnected() {
+            toastWarning("disconnect signal server.")
+            delayBackPressed()
+        }
+    }
 
     private val signalEventCallback = object : SignalEventCallback {
         /**
@@ -90,11 +103,13 @@ class CalleeChatViewModel(
     private lateinit var roomId: String
 
     override fun onCreate(owner: LifecycleOwner) {
+        callSocketIoClient.addConnectionStatusCallback(connectionStatusCallback)
         callSocketIoClient.addSignalEventCallback(signalEventCallback)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
         callSocketIoClient.reqResetStatus()
+        callSocketIoClient.removeConnectionStatusCallback(connectionStatusCallback)
         callSocketIoClient.removeSignalEventCallback(signalEventCallback)
 
         if (mediaPlayer.isPlaying) {

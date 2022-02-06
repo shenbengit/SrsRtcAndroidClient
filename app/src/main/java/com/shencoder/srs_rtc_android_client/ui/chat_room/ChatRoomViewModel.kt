@@ -11,6 +11,7 @@ import com.shencoder.mvvmkit.ext.toastInfo
 import com.shencoder.mvvmkit.ext.toastWarning
 import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
 import com.shencoder.srs_rtc_android_client.helper.call.SignalEventCallback
+import com.shencoder.srs_rtc_android_client.helper.call.SocketIoConnectionStatusCallback
 import com.shencoder.srs_rtc_android_client.helper.call.bean.*
 import org.koin.core.component.inject
 
@@ -33,6 +34,17 @@ class ChatRoomViewModel(
     val playSteamLiveData = MutableLiveData<PlayStreamBean>()
     val leaveChatRoomLiveData = MutableLiveData<ClientInfoBean>()
 
+    /**
+     * 添加连接状态回调
+     */
+    private val connectionStatusCallback = object : SocketIoConnectionStatusCallback {
+
+        override fun disconnected() {
+            toastWarning("disconnect signal server.")
+            delayBackPressed()
+        }
+    }
+
     private val signalEventCallback = object : SignalEventCallback {
 
         override fun forcedOffline() {
@@ -54,11 +66,13 @@ class ChatRoomViewModel(
     }
 
     override fun onCreate(owner: LifecycleOwner) {
+        callSocketIoClient.addConnectionStatusCallback(connectionStatusCallback)
         callSocketIoClient.addSignalEventCallback(signalEventCallback)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
         callSocketIoClient.reqResetStatus()
+        callSocketIoClient.removeConnectionStatusCallback(connectionStatusCallback)
         callSocketIoClient.removeSignalEventCallback(signalEventCallback)
     }
 

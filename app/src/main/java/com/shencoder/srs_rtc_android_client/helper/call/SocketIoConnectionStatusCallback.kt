@@ -10,15 +10,15 @@ interface SocketIoConnectionStatusCallback {
     /**
      * 已连接
      */
-    fun connected()
+    fun connected() {}
 
     /**
      * 未连接
      */
-    fun disconnected()
+    fun disconnected() {}
 
     /**
      * 连接错误
      */
-    fun connectError()
+    fun connectError() {}
 }
