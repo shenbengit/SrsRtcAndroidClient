@@ -410,7 +410,7 @@ class CallLayout @JvmOverloads constructor(
                 audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL),
                 AudioManager.FX_KEY_CLICK
             )
-            audioManager.isSpeakerphoneOn = false
+            audioManager.isSpeakerphoneOn = true
         } else {
             //之前关闭的，打开
             audioManager.setStreamVolume(
@@ -418,7 +418,7 @@ class CallLayout @JvmOverloads constructor(
                 audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL),
                 AudioManager.FX_KEY_CLICK
             )
-            audioManager.isSpeakerphoneOn = true
+            audioManager.isSpeakerphoneOn = false
         }
         tvSpeakerphone.isSelected = isSpeakerphone
     }
