@@ -96,7 +96,7 @@ fun OkHttpClient.Builder.ignoreCertificate(): OkHttpClient.Builder {
     val sslContext = SSLContext.getInstance("SSL")
     sslContext.init(null, arrayOf<TrustManager>(xtm), SecureRandom())
     val hostnameVerifier = HostnameVerifier { _, _ -> true }
-    return sslSocketFactory(sslContext.socketFactory)
+    return sslSocketFactory(sslContext.socketFactory, xtm)
         .hostnameVerifier(hostnameVerifier)
 }
 
