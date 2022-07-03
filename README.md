@@ -40,7 +40,7 @@
 修改[Constant.kt](https://github.com/shenbengit/SrsRtcAndroidClient/blob/master/app/src/main/java/com/shencoder/srs_rtc_android_client/constant/Constant.kt)；
 - 信令服务相关参数
 
-```koltin
+```kotlin
 /**
  * 信令服务相关
  */
