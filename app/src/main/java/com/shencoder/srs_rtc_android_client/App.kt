@@ -1,10 +1,6 @@
 package com.shencoder.srs_rtc_android_client
 
 import android.app.Application
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import com.shencoder.mvvmkit.coil.BufferedSourceFetcher
-import com.shencoder.mvvmkit.coil.ByteArrayFetcher
 import com.shencoder.mvvmkit.ext.globalInit
 import com.shencoder.srs_rtc_android_client.constant.Constant
 import com.shencoder.srs_rtc_android_client.di.appModule
@@ -18,7 +14,7 @@ import org.webrtc.PeerConnectionFactory
  * @date    2022/1/18 14:45
  * @email   714081644@qq.com
  */
-class App : Application(), ImageLoaderFactory {
+class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
@@ -37,16 +33,5 @@ class App : Application(), ImageLoaderFactory {
                 .modules(appModule)
 
         globalInit(BuildConfig.DEBUG, Constant.TAG, koinApplication)
-    }
-
-    override fun newImageLoader(): ImageLoader {
-        return ImageLoader.Builder(this)
-            .componentRegistry {
-                //Coil 图片加载框架不支持 ByteArray ，需要自己实现
-                add(ByteArrayFetcher())
-                //直接使用网络流显示图片
-                add(BufferedSourceFetcher())
-            }
-            .build()
     }
 }

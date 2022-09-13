@@ -9,7 +9,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
-import coil.loadAny
+import coil.load
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.constant.SRS
 import com.shencoder.srs_rtc_android_client.http.RetrofitClient
@@ -133,7 +133,7 @@ abstract class BaseStreamSurfaceViewRenderer @JvmOverloads constructor(
 
     fun setPrompt(name: String?, data: Any?) {
         tvPromptUsername.text = name
-        ivPromptAvatar.loadAny(data)
+        ivPromptAvatar.load(data)
     }
 
     fun isShowPrompt(isVisible: Boolean) {
