@@ -61,7 +61,7 @@ object WebRTCUtil {
 
     /**
      * 转换Answer Sdp，用来保证[offerSdp]顺序与[answerSdp]一致
-     *
+     * 或者srs版本升级到SRS/4.0.265以上
      * @param offerSdp
      * @param answerSdp
      * @return

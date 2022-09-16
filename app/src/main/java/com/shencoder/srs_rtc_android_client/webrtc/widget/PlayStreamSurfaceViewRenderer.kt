@@ -72,6 +72,7 @@ class PlayStreamSurfaceViewRenderer @JvmOverloads constructor(
         /**
          * tips: 调整peerConnection.addTransceiver调用顺序也会影响sdp中video、audio的顺序
          * @see WebRTCUtil.convertAnswerSdp
+         * 或者srs版本升级到SRS/4.0.265以上
          */
         peerConnection.addTransceiver(
             MediaStreamTrack.MediaType.MEDIA_TYPE_AUDIO,
