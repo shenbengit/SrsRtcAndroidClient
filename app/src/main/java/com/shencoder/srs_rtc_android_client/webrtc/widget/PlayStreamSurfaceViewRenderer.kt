@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import com.elvishew.xlog.XLog
 import com.shencoder.srs_rtc_android_client.webrtc.PeerConnectionObserver
 import com.shencoder.srs_rtc_android_client.webrtc.constant.StreamType
+import com.shencoder.srs_rtc_android_client.webrtc.util.WebRTCUtil
 import org.webrtc.*
 import org.webrtc.PeerConnection.RTCConfiguration
 import org.webrtc.RtpTransceiver.RtpTransceiverInit
@@ -68,12 +69,16 @@ class PlayStreamSurfaceViewRenderer @JvmOverloads constructor(
                 }
             })!!
         //这一步也必须调用，接收音视频资源，模式设置为仅接收即可-RtpTransceiver.RtpTransceiverDirection.RECV_ONLY
+        /**
+         * tips: 调整peerConnection.addTransceiver调用顺序也会影响sdp中video、audio的顺序
+         * @see WebRTCUtil.convertAnswerSdp
+         */
         peerConnection.addTransceiver(
-            MediaStreamTrack.MediaType.MEDIA_TYPE_VIDEO,
+            MediaStreamTrack.MediaType.MEDIA_TYPE_AUDIO,
             RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.RECV_ONLY)
         )
         peerConnection.addTransceiver(
-            MediaStreamTrack.MediaType.MEDIA_TYPE_AUDIO,
+            MediaStreamTrack.MediaType.MEDIA_TYPE_VIDEO,
             RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.RECV_ONLY)
         )
         return peerConnection

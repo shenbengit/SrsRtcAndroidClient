@@ -75,7 +75,6 @@ private val calleeChatModule = module {
  * [CallerChatActivity]
  */
 private val callerChatModule = module {
-    CalleeChatActivity
     viewModel { CallerChatViewModel(get(), get()) }
 }
 

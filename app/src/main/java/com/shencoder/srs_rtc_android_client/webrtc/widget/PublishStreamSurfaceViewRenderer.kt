@@ -97,12 +97,16 @@ class PublishStreamSurfaceViewRenderer @JvmOverloads constructor(
         }
 
         //这一步也必须调用，设置音视频资源，模式设置为仅发送即可-RtpTransceiver.RtpTransceiverDirection.SEND_ONLY
+        /**
+         * tips: 调整peerConnection.addTransceiver调用顺序也会影响sdp中video、audio的顺序
+         * @see WebRTCUtil.convertAnswerSdp
+         */
         peerConnection.addTransceiver(
-            videoTrack,
+            audioTrack,
             RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.SEND_ONLY)
         )
         peerConnection.addTransceiver(
-            audioTrack,
+            videoTrack,
             RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.SEND_ONLY)
         )
         return peerConnection

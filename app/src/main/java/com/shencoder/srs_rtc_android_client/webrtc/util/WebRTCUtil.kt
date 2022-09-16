@@ -60,7 +60,7 @@ object WebRTCUtil {
     }
 
     /**
-     * 转换Answer Sdp
+     * 转换Answer Sdp，用来保证[offerSdp]顺序与[answerSdp]一致
      *
      * @param offerSdp
      * @param answerSdp
