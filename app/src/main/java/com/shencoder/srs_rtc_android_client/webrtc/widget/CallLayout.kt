@@ -415,7 +415,7 @@ class CallLayout @JvmOverloads constructor(
             //之前关闭的，打开
             audioManager.setStreamVolume(
                 AudioManager.STREAM_VOICE_CALL,
-                audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL),
+                audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL),
                 AudioManager.FX_KEY_CLICK
             )
             audioManager.isSpeakerphoneOn = false
