@@ -72,7 +72,7 @@ class PublishStreamSurfaceViewRenderer @JvmOverloads constructor(
         //创建AudioTrack，音频轨
         val audioTrack = peerConnectionFactory.createAudioTrack("local_audio_track", audioSource)
 
-        cameraVideoCapturer = createVideoCapture(context).apply {
+        cameraVideoCapturer = createVideoCapture(context.applicationContext).apply {
             val videoSource = peerConnectionFactory.createVideoSource(
                 isScreencast
             )

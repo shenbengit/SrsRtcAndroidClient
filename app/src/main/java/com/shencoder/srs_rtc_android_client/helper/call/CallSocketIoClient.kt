@@ -8,8 +8,11 @@ import com.shencoder.srs_rtc_android_client.constant.SIGNAL
 import com.shencoder.srs_rtc_android_client.helper.call.bean.*
 import com.shencoder.srs_rtc_android_client.util.ignoreCertificate
 import com.squareup.moshi.Types
+import io.socket.client.Ack
 import io.socket.client.IO
 import io.socket.client.Socket
+import io.socket.emitter.Emitter
+import io.socket.emitter.Emitter.Listener
 import okhttp3.OkHttpClient
 import org.json.JSONArray
 import org.json.JSONObject
@@ -53,6 +56,40 @@ class CallSocketIoClient private constructor() {
 
         @JvmStatic
         fun getInstance() = SingleHolder.INSTANCE
+
+        private inline fun Emitter.onEvent(
+            event: String,
+            crossinline callback: (json: String) -> Unit
+        ) {
+            on(event, object : EventCallback() {
+                override fun analysisResponseToJson(json: String) {
+                    callback(json)
+                }
+            })
+        }
+
+        private inline fun Emitter.onceEvent(
+            event: String,
+            crossinline callback: (json: String) -> Unit
+        ) {
+            once(event, object : EventCallback() {
+                override fun analysisResponseToJson(json: String) {
+                    callback(json)
+                }
+            })
+        }
+
+        private inline fun Socket.emitEvent(
+            event: String,
+            args: Array<Any>,
+            crossinline callback: (json: String) -> Unit
+        ) {
+            emit(event, args, object : EventCallback() {
+                override fun analysisResponseToJson(json: String) {
+                    callback(json)
+                }
+            })
+        }
     }
 
     private val mHandler = Handler(Looper.getMainLooper())
@@ -98,75 +135,61 @@ class CallSocketIoClient private constructor() {
                     signalEventCallbackList.forEach { it.forcedOffline() }
                 }
             }
-            on(ClientNotifyCmd.NOTIFY_REQUEST_CALL) {
-                val json = analysisResponseToJson(it)
-                if (json.isNullOrBlank()) {
-                    return@on
-                }
+            onEvent(SfuClientNotifyCmd.NOTIFY_REQUEST_CALL) { json ->
                 notifyRequestCall(json)
             }
-            on(ClientNotifyCmd.NOTIFY_INVITE_SOMEONE_JOIN_ROOM) {
-                val json = analysisResponseToJson(it)
-                if (json.isNullOrBlank()) {
-                    return@on
-                }
+            onEvent(SfuClientNotifyCmd.NOTIFY_INVITE_SOMEONE_JOIN_ROOM) { json ->
                 notifyInviteSomeoneJoinRoom(json)
             }
-            on(ClientNotifyCmd.NOTIFY_INVITE_SOME_PEOPLE_JOIN_ROOM) {
-                val json = analysisResponseToJson(it)
-                if (json.isNullOrBlank()) {
-                    return@on
-                }
+            onEvent(SfuClientNotifyCmd.NOTIFY_INVITE_SOME_PEOPLE_JOIN_ROOM) { json ->
                 notifyInviteSomePeopleJoinRoom(json)
             }
-            on(ClientNotifyCmd.NOTIFY_REJECT_CALL) {
-                val json = analysisResponseToJson(it)
-                if (json.isNullOrBlank()) {
-                    return@on
-                }
+            onEvent(SfuClientNotifyCmd.NOTIFY_REJECT_CALL) { json ->
                 notifyRejectCall(json)
             }
-            on(ClientNotifyCmd.NOTIFY_ACCEPT_CALL) {
-                val json = analysisResponseToJson(it)
-                if (json.isNullOrBlank()) {
-                    return@on
-                }
+            onEvent(SfuClientNotifyCmd.NOTIFY_ACCEPT_CALL) { json ->
                 notifyAcceptCall(json)
             }
-            on(ClientNotifyCmd.NOTIFY_JOIN_CHAT_ROOM) {
-                val json = analysisResponseToJson(it)
-                if (json.isNullOrBlank()) {
-                    return@on
-                }
+            onEvent(SfuClientNotifyCmd.NOTIFY_JOIN_CHAT_ROOM) { json ->
                 notifyJoinChatRoom(json)
             }
-            on(ClientNotifyCmd.NOTIFY_LEAVE_CHAT_ROOM) {
-                val json = analysisResponseToJson(it)
-                if (json.isNullOrBlank()) {
-                    return@on
-                }
+            onEvent(SfuClientNotifyCmd.NOTIFY_LEAVE_CHAT_ROOM) { json ->
                 notifyLeaveChatRoom(json)
             }
-            on(ClientNotifyCmd.NOTIFY_PLAY_STREAM) {
-                val json = analysisResponseToJson(it)
-                if (json.isNullOrBlank()) {
-                    return@on
-                }
+            onEvent(SfuClientNotifyCmd.NOTIFY_PLAY_STREAM) { json ->
                 notifyPlayStream(json)
             }
-            on(ClientNotifyCmd.NOTIFY_HANG_UP) {
-                val json = analysisResponseToJson(it)
-                if (json.isNullOrBlank()) {
-                    return@on
-                }
+            onEvent(SfuClientNotifyCmd.NOTIFY_HANG_UP) { json ->
                 notifyHangUp(json)
             }
-            on(ClientNotifyCmd.NOTIFY_OFFLINE_DURING_CALL) {
-                val json = analysisResponseToJson(it)
-                if (json.isNullOrBlank()) {
-                    return@on
-                }
+            onEvent(SfuClientNotifyCmd.NOTIFY_OFFLINE_DURING_CALL) { json ->
                 notifyOfflineDuringCall(json)
+            }
+
+            /*P2P*/
+            onEvent(P2PClientNotifyCmd.NOTIFY_P2P_REQUEST_CALL) { json ->
+
+            }
+            onEvent(P2PClientNotifyCmd.NOTIFY_P2P_REJECT_CALL) { json ->
+
+            }
+            onEvent(P2PClientNotifyCmd.NOTIFY_P2P_ACCEPT_CALL) { json ->
+
+            }
+            onEvent(P2PClientNotifyCmd.NOTIFY_P2P_RECEIVE_OFFER) { json ->
+
+            }
+            onEvent(P2PClientNotifyCmd.NOTIFY_P2P_RECEIVE_ANSWER) { json ->
+
+            }
+            onEvent(P2PClientNotifyCmd.NOTIFY_P2P_RECEIVE_ICE) { json ->
+
+            }
+            onEvent(P2PClientNotifyCmd.NOTIFY_P2P_HANG_UP) { json ->
+
+            }
+            onEvent(P2PClientNotifyCmd.NOTIFY_P2P_OFFLINE_DURING_CALL) { json ->
+
             }
         }
         socket.connect()
@@ -211,11 +234,7 @@ class CallSocketIoClient private constructor() {
         //{"userId" : "123"}
         val jsonObject = JSONObject()
         jsonObject.put("userId", userId)
-        socket.emit(ClientReqCmd.REQ_INVITE_SOMEONE, arrayOf(jsonObject)) {
-            val json = analysisResponseToJson(it)
-            if (json.isNullOrBlank()) {
-                return@emit
-            }
+        socket.emitEvent(SfuClientReqCmd.REQ_INVITE_SOMEONE, arrayOf(jsonObject)) { json ->
             val type =
                 Types.newParameterizedType(
                     BaseResponseBean::class.java,
@@ -251,11 +270,7 @@ class CallSocketIoClient private constructor() {
         val objects = JSONObject()
         objects.put("userList", jsonArray)
 
-        socket.emit(ClientReqCmd.REQ_INVITE_SOME_PEOPLE, arrayOf(objects)) {
-            val json = analysisResponseToJson(it)
-            if (json.isNullOrBlank()) {
-                return@emit
-            }
+        socket.emitEvent(SfuClientReqCmd.REQ_INVITE_SOME_PEOPLE, arrayOf(objects)) { json ->
             val type =
                 Types.newParameterizedType(
                     BaseResponseBean::class.java,
@@ -289,11 +304,10 @@ class CallSocketIoClient private constructor() {
         val jsonObject = JSONObject()
         jsonObject.put("userId", userId)
         jsonObject.put("roomId", roomId)
-        socket.emit(ClientReqCmd.REQ_INVITE_SOMEONE_JOIN_ROOM, arrayOf(jsonObject)) {
-            val json = analysisResponseToJson(it)
-            if (json.isNullOrBlank()) {
-                return@emit
-            }
+        socket.emitEvent(
+            SfuClientReqCmd.REQ_INVITE_SOMEONE_JOIN_ROOM,
+            arrayOf(jsonObject)
+        ) { json ->
             val type =
                 Types.newParameterizedType(
                     BaseResponseBean::class.java,
@@ -333,11 +347,10 @@ class CallSocketIoClient private constructor() {
         objects.put("userList", jsonArray)
         objects.put("roomId", roomId)
 
-        socket.emit(ClientReqCmd.REQ_INVITE_SOME_PEOPLE_JOIN_ROOM, arrayOf(objects)) {
-            val json = analysisResponseToJson(it)
-            if (json.isNullOrBlank()) {
-                return@emit
-            }
+        socket.emitEvent(
+            SfuClientReqCmd.REQ_INVITE_SOME_PEOPLE_JOIN_ROOM,
+            arrayOf(objects)
+        ) { json ->
             val type =
                 Types.newParameterizedType(
                     BaseResponseBean::class.java,
@@ -365,11 +378,7 @@ class CallSocketIoClient private constructor() {
         failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //roomId="123456"
-        socket.emit(ClientReqCmd.REQ_REJECT_CALL, arrayOf(roomId)) {
-            val json = analysisResponseToJson(it)
-            if (json.isNullOrBlank()) {
-                return@emit
-            }
+        socket.emitEvent(SfuClientReqCmd.REQ_REJECT_CALL, arrayOf(roomId)) { json ->
             val type =
                 Types.newParameterizedType(
                     BaseResponseBean::class.java,
@@ -400,11 +409,7 @@ class CallSocketIoClient private constructor() {
         failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //roomId="123456"
-        socket.emit(ClientReqCmd.REQ_ACCEPT_CALL, arrayOf(roomId)) {
-            val json = analysisResponseToJson(it)
-            if (json.isNullOrBlank()) {
-                return@emit
-            }
+        socket.emitEvent(SfuClientReqCmd.REQ_ACCEPT_CALL, arrayOf(roomId)) { json ->
             val type =
                 Types.newParameterizedType(
                     BaseResponseBean::class.java,
@@ -432,11 +437,7 @@ class CallSocketIoClient private constructor() {
         failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //roomId="123456"
-        socket.emit(ClientReqCmd.REQ_JOIN_CHAT_ROOM, arrayOf(roomId)) {
-            val json = analysisResponseToJson(it)
-            if (json.isNullOrBlank()) {
-                return@emit
-            }
+        socket.emitEvent(SfuClientReqCmd.REQ_JOIN_CHAT_ROOM, arrayOf(roomId)) { json ->
             val type =
                 Types.newParameterizedType(
                     BaseResponseBean::class.java,
@@ -464,11 +465,7 @@ class CallSocketIoClient private constructor() {
         failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //roomId="123456"
-        socket.emit(ClientReqCmd.REQ_LEAVE_CHAT_ROOM, arrayOf(roomId)) {
-            val json = analysisResponseToJson(it)
-            if (json.isNullOrBlank()) {
-                return@emit
-            }
+        socket.emitEvent(SfuClientReqCmd.REQ_LEAVE_CHAT_ROOM, arrayOf(roomId)) { json ->
             val type =
                 Types.newParameterizedType(
                     BaseResponseBean::class.java,
@@ -502,11 +499,7 @@ class CallSocketIoClient private constructor() {
         val jsonObject = JSONObject()
         jsonObject.put("roomId", roomId)
         jsonObject.put("publishStreamUrl", publishStreamUrl)
-        socket.emit(ClientReqCmd.REQ_PUBLISH_STREAM, arrayOf(jsonObject)) {
-            val json = analysisResponseToJson(it)
-            if (json.isNullOrBlank()) {
-                return@emit
-            }
+        socket.emitEvent(SfuClientReqCmd.REQ_PUBLISH_STREAM, arrayOf(jsonObject)) { json ->
             val type =
                 Types.newParameterizedType(
                     BaseResponseBean::class.java,
@@ -534,11 +527,7 @@ class CallSocketIoClient private constructor() {
         failure: ((code: Int, reason: String) -> Unit)? = null
     ) {
         //roomId="123456"
-        socket.emit(ClientReqCmd.REQ_HANG_UP, arrayOf(roomId)) {
-            val json = analysisResponseToJson(it)
-            if (json.isNullOrBlank()) {
-                return@emit
-            }
+        socket.emitEvent(SfuClientReqCmd.REQ_HANG_UP, arrayOf(roomId)) { json ->
             val type =
                 Types.newParameterizedType(
                     BaseResponseBean::class.java,
@@ -561,7 +550,7 @@ class CallSocketIoClient private constructor() {
      * 用于重置状态
      */
     fun reqResetStatus() {
-        socket.emit(ClientReqCmd.REQ_RESET_STATUS)
+        socket.emit(SfuClientReqCmd.REQ_RESET_STATUS)
     }
 
 
@@ -714,12 +703,15 @@ class CallSocketIoClient private constructor() {
         }
     }
 
-
-    private fun analysisResponseToJson(args: Array<Any>?): String? {
-        if (args.isNullOrEmpty()) {
-            return null
+    private abstract class EventCallback : Listener, Ack {
+        override fun call(vararg args: Any) {
+            if (args.isEmpty()) {
+                return
+            }
+            analysisResponseToJson((args[0] as JSONObject).toString())
         }
-        return (args[0] as JSONObject).toString()
+
+        protected abstract fun analysisResponseToJson(json: String)
     }
 
     private fun post(runnable: Runnable) {

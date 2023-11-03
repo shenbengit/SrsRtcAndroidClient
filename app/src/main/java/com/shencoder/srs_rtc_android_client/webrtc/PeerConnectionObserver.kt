@@ -59,6 +59,6 @@ open class PeerConnectionObserver : PeerConnection.Observer {
     }
 
     override fun onAddTrack(rtpReceiver: RtpReceiver?, array: Array<out MediaStream>?) {
-        XLog.i("${TAG}onDataChannel")
+        XLog.i("${TAG}onAddTrack")
     }
 }

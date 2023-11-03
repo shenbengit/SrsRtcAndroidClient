@@ -188,8 +188,8 @@ class CalleeChatActivity : BaseActivity<CalleeChatViewModel, ActivityCalleeChatB
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         mBinding.callLayout.release()
+        super.onDestroy()
     }
 
     private fun initCallLayout(bean: RequestCallBean) {

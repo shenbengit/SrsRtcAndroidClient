@@ -124,8 +124,8 @@ class ChatRoomActivity : BaseActivity<ChatRoomViewModel, ActivityChatRoomBinding
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         mBinding.callLayout.release()
+        super.onDestroy()
     }
 
     private fun addPlayStream(bean: ClientInfoBean, publishStreamUrl: String?) {

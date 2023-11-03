@@ -6,6 +6,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.RadioGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.elvishew.xlog.XLog
@@ -13,6 +15,7 @@ import com.google.android.material.button.MaterialButton
 import com.shencoder.mvvmkit.util.dp2px
 import com.shencoder.mvvmkit.util.toastWarning
 import com.shencoder.srs_rtc_android_client.R
+import com.shencoder.srs_rtc_android_client.constant.CallType
 import com.shencoder.srs_rtc_android_client.constant.ChatMode
 import com.shencoder.srs_rtc_android_client.constant.MMKVConstant
 import com.shencoder.srs_rtc_android_client.http.RetrofitClient
@@ -48,6 +51,7 @@ class CheckUserView @JvmOverloads constructor(
         get() = scope
 
     private val mRecyclerView: RecyclerView
+    private val rgCallType: RadioGroup
 
     private val itemDecoration = object : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(
@@ -73,6 +77,8 @@ class CheckUserView @JvmOverloads constructor(
     init {
         inflate(context, R.layout.layout_check_user, this)
         mRecyclerView = findViewById(R.id.rvUserList)
+        rgCallType = findViewById(R.id.rgCallType)
+
         mRecyclerView.adapter = mAdapter
         mRecyclerView.layoutManager = LinearLayoutManager(context)
         mRecyclerView.addItemDecoration(itemDecoration)
@@ -81,7 +87,12 @@ class CheckUserView @JvmOverloads constructor(
             callback?.onClose()
         }
         findViewById<MaterialButton>(R.id.btnConfirm).setOnClickListener {
-            callback?.onCheckUser(getCheckList())
+            val callType = if (rgCallType.checkedRadioButtonId == R.id.rbAudioCall) {
+                CallType.Audio
+            } else {
+                CallType.Video
+            }
+            callback?.onCheckUser(getCheckList(), callType)
         }
 
         launch(Dispatchers.Main) {
@@ -116,6 +127,10 @@ class CheckUserView @JvmOverloads constructor(
     fun setChatMode(chatMode: ChatMode) {
         this.chatMode = chatMode
         mAdapter.setChatMode(chatMode)
+    }
+
+    fun showRgCallType(isShow: Boolean) {
+        rgCallType.isVisible = isShow
     }
 
     fun setUnSelectedList(list: List<UserInfoBean>) {
@@ -153,6 +168,6 @@ class CheckUserView @JvmOverloads constructor(
     interface CheckUserCallback {
         fun onClose()
 
-        fun onCheckUser(list: List<UserInfoBean>)
+        fun onCheckUser(list: List<UserInfoBean>, callType: CallType)
     }
 }

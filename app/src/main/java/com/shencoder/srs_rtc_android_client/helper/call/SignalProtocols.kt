@@ -20,7 +20,7 @@ object NotifyCmd {
 /**
  * 客户端请求发送的命令
  */
-object ClientReqCmd {
+object SfuClientReqCmd {
     /**
      * 邀请一个人，并创建房间 ——> 单聊
      * {"userId":"123"}
@@ -88,7 +88,7 @@ object ClientReqCmd {
     const val REQ_RESET_STATUS = "req_reset_status"
 }
 
-object ClientNotifyCmd {
+object SfuClientNotifyCmd {
     /**
      * 通知请求通话
      */
@@ -138,4 +138,26 @@ object ClientNotifyCmd {
      * 通知房间内，有人通话中掉线
      */
     const val NOTIFY_OFFLINE_DURING_CALL = "notify_offline_during_call"
+}
+
+object P2PClientReqCmd {
+    const val REQ_P2P_INVITE_SOMEONE = "req_p2p_invite_someone"
+    const val REQ_P2P_REJECT_CALL = "req_p2p_reject_call"
+    const val REQ_P2P_ACCEPT_CALL = "req_p2p_accept_call"
+    const val REQ_P2P_SEND_OFFER = "req_p2p_send_offer"
+    const val REQ_P2P_SEND_ANSWER = "req_p2p_send_answer"
+    const val REQ_P2P_SEND_ICE = "req_p2p_send_ice"
+    const val REQ_P2P_HANG_UP = "req_p2p_hang_up"
+    const val REQ_P2P_RESET_STATUS = "req_p2p_reset_status"
+}
+
+object P2PClientNotifyCmd {
+    const val NOTIFY_P2P_REQUEST_CALL = "notify_p2p_request_call"
+    const val NOTIFY_P2P_REJECT_CALL = "notify_p2p_reject_call"
+    const val NOTIFY_P2P_ACCEPT_CALL = "notify_p2p_accept_call"
+    const val NOTIFY_P2P_RECEIVE_OFFER = "notify_p2p_receive_offer"
+    const val NOTIFY_P2P_RECEIVE_ANSWER = "notify_p2p_receive_answer"
+    const val NOTIFY_P2P_RECEIVE_ICE = "notify_p2p_receive_ice"
+    const val NOTIFY_P2P_HANG_UP = "notify_p2p_hang_up"
+    const val NOTIFY_P2P_OFFLINE_DURING_CALL = "notify_p2p_offline_during_call"
 }

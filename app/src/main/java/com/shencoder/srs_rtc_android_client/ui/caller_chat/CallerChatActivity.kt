@@ -157,8 +157,8 @@ class CallerChatActivity : BaseActivity<CallerChatViewModel, ActivityCallerChatB
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         mBinding.callLayout.release()
+        super.onDestroy()
     }
 
 

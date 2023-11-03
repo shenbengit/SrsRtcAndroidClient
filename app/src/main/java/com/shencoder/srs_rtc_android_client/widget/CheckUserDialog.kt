@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatDialog
 import com.shencoder.mvvmkit.util.toastWarning
 import com.shencoder.srs_rtc_android_client.R
+import com.shencoder.srs_rtc_android_client.constant.CallType
 import com.shencoder.srs_rtc_android_client.constant.ChatMode
 import com.shencoder.srs_rtc_android_client.http.bean.UserInfoBean
 
@@ -33,7 +34,7 @@ class CheckUserDialog @JvmOverloads constructor(context: Context, theme: Int = R
                 dismiss()
             }
 
-            override fun onCheckUser(list: List<UserInfoBean>) {
+            override fun onCheckUser(list: List<UserInfoBean>, callType: CallType) {
                 if (list.isEmpty()) {
                     context.toastWarning(context.getString(R.string.please_select_the_callee))
                     return

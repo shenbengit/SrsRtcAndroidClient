@@ -60,7 +60,7 @@ class CallLayout @JvmOverloads constructor(
     }
 
     private val audioManager: AudioManager =
-        context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        context.applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     private var actionCallback: CallActionCallback? = null
 

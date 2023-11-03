@@ -102,8 +102,7 @@ class MainViewModel(
      * 私聊
      */
     fun privateChat() {
-        if (SocketIoConnectionStatus.CONNECTED != connectionStatusField.get()) {
-            toastWarning("Signal server disconnected.")
+        if (isNotConnectedServer()) {
             return
         }
         val intent = Intent(applicationContext, CheckUserActivity::class.java)
@@ -115,8 +114,7 @@ class MainViewModel(
      * 群聊
      */
     fun groupChat() {
-        if (SocketIoConnectionStatus.CONNECTED != connectionStatusField.get()) {
-            toastWarning("Signal server disconnected.")
+        if (isNotConnectedServer()) {
             return
         }
         val intent = Intent(applicationContext, CheckUserActivity::class.java)
@@ -128,11 +126,32 @@ class MainViewModel(
      * 聊天室
      */
     fun chatRoom() {
-        if (SocketIoConnectionStatus.CONNECTED != connectionStatusField.get()) {
-            toastWarning("Signal server disconnected.")
+        if (isNotConnectedServer()) {
             return
         }
         val intent = Intent(applicationContext, EnterRoomIdActivity::class.java)
         startActivity(intent)
+    }
+
+    /**
+     * p2p聊天
+     *
+     */
+    fun p2p() {
+        if (isNotConnectedServer()) {
+            return
+        }
+        val intent = Intent(applicationContext, CheckUserActivity::class.java)
+        intent.putExtra(CheckUserActivity.CHAT_MODE, ChatMode.PRIVATE_MODE)
+        intent.putExtra(CheckUserActivity.IS_P2P, true)
+        startActivity(intent)
+    }
+
+    private fun isNotConnectedServer(): Boolean {
+        if (SocketIoConnectionStatus.CONNECTED != connectionStatusField.get()) {
+            toastWarning("Signal server disconnected.")
+            return true
+        }
+        return false
     }
 }

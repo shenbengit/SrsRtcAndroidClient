@@ -17,10 +17,15 @@ import com.shencoder.srs_rtc_android_client.ui.main.MainActivity
 import com.shencoder.srs_rtc_android_client.ui.register.RegisterUserActivity
 import com.shencoder.srs_rtc_android_client.ui.login.LoginViewModel
 import com.shencoder.srs_rtc_android_client.ui.main.MainViewModel
+import com.shencoder.srs_rtc_android_client.ui.p2p.P2pCalleeActivity
+import com.shencoder.srs_rtc_android_client.ui.p2p.P2pCalleeViewModel
+import com.shencoder.srs_rtc_android_client.ui.p2p.P2pCallerActivity
+import com.shencoder.srs_rtc_android_client.ui.p2p.P2pCallerViewModel
 import com.shencoder.srs_rtc_android_client.ui.register.RegisterUserViewModel
 import com.shencoder.srs_rtc_android_client.ui.register.data.RegisterUserDataSource
 import com.shencoder.srs_rtc_android_client.ui.register.data.RegisterUserRepository
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
 /**
@@ -86,6 +91,20 @@ private val chatRoomModule = module {
 }
 
 /**
+ * [P2pCallerActivity]
+ */
+private val p2pCallerModule = module {
+    viewModelOf(::P2pCallerViewModel)
+}
+
+/**
+ * [P2pCalleeActivity]
+ */
+private val p2pCalleeModule = module {
+    viewModelOf(::P2pCalleeViewModel)
+}
+
+/**
  * ViewModel相关
  */
 val viewModelModule = arrayListOf(
@@ -95,5 +114,7 @@ val viewModelModule = arrayListOf(
     checkUserModule,
     calleeChatModule,
     callerChatModule,
-    chatRoomModule
+    chatRoomModule,
+    p2pCallerModule,
+    p2pCalleeModule
 )
