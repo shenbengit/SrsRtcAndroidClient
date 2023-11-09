@@ -115,25 +115,17 @@ class CallSocketIoClient private constructor() {
         XLog.i("${TAG}->connect url: $url")
         socket = IO.socket(url, options).apply {
             on(Socket.EVENT_CONNECT) {
-                post {
-                    connectionStatusCallbackList.forEach { it.connected() }
-                }
+                postDispatchConnectionStatusCallback { it.connected() }
             }
             on(Socket.EVENT_DISCONNECT) {
-                post {
-                    connectionStatusCallbackList.forEach { it.disconnected() }
-                }
+                postDispatchConnectionStatusCallback { it.disconnected() }
             }
             on(Socket.EVENT_CONNECT_ERROR) {
-                post {
-                    connectionStatusCallbackList.forEach { it.connectError() }
-                }
+                postDispatchConnectionStatusCallback { it.connectError() }
             }
             //自定义事件
             on(NotifyCmd.NOTIFY_FORCED_OFFLINE) {
-                post {
-                    signalEventCallbackList.forEach { it.forcedOffline() }
-                }
+                postDispatchSignalEventCallback { it.forcedOffline() }
             }
             onEvent(SfuClientNotifyCmd.NOTIFY_REQUEST_CALL) { json ->
                 notifyRequestCall(json)
@@ -569,10 +561,8 @@ class CallSocketIoClient private constructor() {
     private fun notifyRequestCall(json: String) {
         val bean = MoshiUtil.fromJson(json, RequestCallBean::class.java)
         bean?.let {
-            post {
-                signalEventCallbackList.forEach { callback ->
-                    callback.requestCall(it)
-                }
+            postDispatchSignalEventCallback { callback ->
+                callback.requestCall(it)
             }
         }
     }
@@ -583,10 +573,8 @@ class CallSocketIoClient private constructor() {
     private fun notifyInviteSomeoneJoinRoom(json: String) {
         val bean = MoshiUtil.fromJson(json, InviteSomeoneBean::class.java)
         bean?.let {
-            post {
-                signalEventCallbackList.forEach { callback ->
-                    callback.inviteSomeoneIntoRoom(it)
-                }
+            postDispatchSignalEventCallback { callback ->
+                callback.inviteSomeoneIntoRoom(it)
             }
         }
     }
@@ -597,10 +585,8 @@ class CallSocketIoClient private constructor() {
     private fun notifyInviteSomePeopleJoinRoom(json: String) {
         val bean = MoshiUtil.fromJson(json, InviteSomePeopleBean::class.java)
         bean?.let {
-            post {
-                signalEventCallbackList.forEach { callback ->
-                    callback.inviteSomePeopleIntoRoom(it)
-                }
+            postDispatchSignalEventCallback { callback ->
+                callback.inviteSomePeopleIntoRoom(it)
             }
         }
     }
@@ -611,10 +597,8 @@ class CallSocketIoClient private constructor() {
     private fun notifyRejectCall(json: String) {
         val bean = MoshiUtil.fromJson(json, RejectCallBean::class.java)
         bean?.let {
-            post {
-                signalEventCallbackList.forEach { callback ->
-                    callback.rejectCall(it)
-                }
+            postDispatchSignalEventCallback { callback ->
+                callback.rejectCall(it)
             }
         }
     }
@@ -625,10 +609,8 @@ class CallSocketIoClient private constructor() {
     private fun notifyAcceptCall(json: String) {
         val bean = MoshiUtil.fromJson(json, AcceptCallBean::class.java)
         bean?.let {
-            post {
-                signalEventCallbackList.forEach { callback ->
-                    callback.acceptCall(it)
-                }
+            postDispatchSignalEventCallback { callback ->
+                callback.acceptCall(it)
             }
         }
     }
@@ -639,10 +621,8 @@ class CallSocketIoClient private constructor() {
     private fun notifyJoinChatRoom(json: String) {
         val bean = MoshiUtil.fromJson(json, JoinChatRoomBean::class.java)
         bean?.let {
-            post {
-                signalEventCallbackList.forEach { callback ->
-                    callback.joinChatRoom(it)
-                }
+            postDispatchSignalEventCallback { callback ->
+                callback.joinChatRoom(it)
             }
         }
     }
@@ -653,10 +633,8 @@ class CallSocketIoClient private constructor() {
     private fun notifyLeaveChatRoom(json: String) {
         val bean = MoshiUtil.fromJson(json, LeaveChatRoomBean::class.java)
         bean?.let {
-            post {
-                signalEventCallbackList.forEach { callback ->
-                    callback.leaveChatRoom(it)
-                }
+            postDispatchSignalEventCallback { callback ->
+                callback.leaveChatRoom(it)
             }
         }
     }
@@ -667,10 +645,8 @@ class CallSocketIoClient private constructor() {
     private fun notifyPlayStream(json: String) {
         val bean = MoshiUtil.fromJson(json, PlayStreamBean::class.java)
         bean?.let {
-            post {
-                signalEventCallbackList.forEach { callback ->
-                    callback.playSteam(it)
-                }
+            postDispatchSignalEventCallback { callback ->
+                callback.playSteam(it)
             }
         }
     }
@@ -681,10 +657,8 @@ class CallSocketIoClient private constructor() {
     private fun notifyHangUp(json: String) {
         val bean = MoshiUtil.fromJson(json, HangUpBean::class.java)
         bean?.let {
-            post {
-                signalEventCallbackList.forEach { callback ->
-                    callback.hangUp(it)
-                }
+            postDispatchSignalEventCallback { callback ->
+                callback.hangUp(it)
             }
         }
     }
@@ -695,12 +669,22 @@ class CallSocketIoClient private constructor() {
     private fun notifyOfflineDuringCall(json: String) {
         val bean = MoshiUtil.fromJson(json, OfflineDuringCallBean::class.java)
         bean?.let {
-            post {
-                signalEventCallbackList.forEach { callback ->
-                    callback.offlineDuringCall(it)
-                }
+            postDispatchSignalEventCallback { callback ->
+                callback.offlineDuringCall(it)
             }
         }
+    }
+
+    private fun post(runnable: Runnable) {
+        mHandler.post(runnable)
+    }
+
+    private inline fun postDispatchSignalEventCallback(crossinline item: (SignalEventCallback) -> Unit) {
+        mHandler.post { signalEventCallbackList.forEach(item) }
+    }
+
+    private inline fun postDispatchConnectionStatusCallback(crossinline item: (SocketIoConnectionStatusCallback) -> Unit) {
+        mHandler.post { connectionStatusCallbackList.forEach(item) }
     }
 
     private abstract class EventCallback : Listener, Ack {
@@ -714,7 +698,5 @@ class CallSocketIoClient private constructor() {
         protected abstract fun analysisResponseToJson(json: String)
     }
 
-    private fun post(runnable: Runnable) {
-        mHandler.post(runnable)
-    }
+
 }

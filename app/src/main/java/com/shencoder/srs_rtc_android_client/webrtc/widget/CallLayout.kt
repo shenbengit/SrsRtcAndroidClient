@@ -443,7 +443,7 @@ class CallLayout @JvmOverloads constructor(
         val hour = second / 60 / 60
         val minute = second / 60 % 60
         val surplusSecond = second % 60
-        return "${if (hour < 10) "0$hour" else "$hour"}:${if (minute < 10) "0$minute" else "$minute"}:${if (surplusSecond < 10) "0$surplusSecond" else "$surplusSecond"}"
+        return String.format("%02d:%02d:%02d", hour, minute, surplusSecond)
     }
 
     interface CallActionCallback {

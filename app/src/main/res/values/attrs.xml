@@ -28,4 +28,8 @@
         </attr>
 
     </declare-styleable>
+
+    <declare-styleable name="P2PCallLayout">
+
+    </declare-styleable>
 </resources>
