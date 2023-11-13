@@ -12,6 +12,7 @@ import org.webrtc.AudioTrack
 import org.webrtc.DataChannel
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
+import org.webrtc.MediaStreamTrack
 import org.webrtc.SessionDescription
 import org.webrtc.VideoTrack
 
@@ -37,6 +38,7 @@ class P2PSessionManager(
     private val originSpeakerphoneOn = audioManager.isSpeakerphoneOn
 
     var onAddStream: ((MediaStream) -> Unit)? = null
+    var onRemoteVideoTrack: ((VideoTrack) -> Unit)? = null
     var onIceCandidate: ((IceCandidate) -> Unit)? = null
     var onDataChannel: ((DataChannel) -> Unit)? = null
 
@@ -45,8 +47,12 @@ class P2PSessionManager(
             sessionManagerScope,
             callType,
             callRoleType,
-            onAddStream = {
-                onAddStream?.invoke(it)
+            onRemoteTrack = {
+                val track = it.receiver.track()
+                if (track?.kind() == MediaStreamTrack.VIDEO_TRACK_KIND) {
+                    val videoTrack = track as VideoTrack
+                    onRemoteVideoTrack?.invoke(videoTrack)
+                }
             },
             onIceCandidate = { iceCandidate, callRoleType ->
                 onIceCandidate?.invoke(iceCandidate)

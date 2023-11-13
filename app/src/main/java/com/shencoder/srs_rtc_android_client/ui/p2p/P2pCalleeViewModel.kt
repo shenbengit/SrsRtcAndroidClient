@@ -14,7 +14,6 @@ import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
 import com.shencoder.srs_rtc_android_client.helper.call.SignalEventCallback
 import com.shencoder.srs_rtc_android_client.helper.call.SocketIoConnectionStatusCallback
-import com.shencoder.srs_rtc_android_client.helper.call.bean.ClientInfoBean
 import com.shencoder.srs_rtc_android_client.helper.call.bean.HangUpBean
 import com.shencoder.srs_rtc_android_client.helper.call.bean.OfflineDuringCallBean
 import com.shencoder.srs_rtc_android_client.helper.call.bean.P2pReceiveIceBean
@@ -43,7 +42,6 @@ class P2pCalleeViewModel(
 
     private var roomId = ""
 
-    val acceptCallLiveData = MutableLiveData<ClientInfoBean>()
     val receiveOfferLiveData = MutableLiveData<String>()
     val receiveIceLiveData = MutableLiveData<P2pReceiveIceBean.Ice>()
 
@@ -106,15 +104,27 @@ class P2pCalleeViewModel(
 
     fun setRoomId(roomId: String) {
         this.roomId = roomId
+        mediaPlayer.start()
     }
 
-    fun reqP2pRejectCall(success: () -> Unit = {}) {
-        callSocketIoClient.reqP2pRejectCall(roomId, success) { _, _ ->
-
+    fun reqP2pRejectCall() {
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.stop()
         }
+        callSocketIoClient.reqP2pRejectCall(roomId, {
+            toastInfo(getString(R.string.call_ended))
+            delayBackPressed()
+        }, { code, reason ->
+            XLog.e("reject call failure-code:${code}, reason:${reason}")
+            toastWarning(reason)
+            delayBackPressed()
+        })
     }
 
     fun reqP2pAcceptCall(success: (ResAlreadyInRoomBean) -> Unit = {}) {
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.stop()
+        }
         callSocketIoClient.reqP2pAcceptCall(roomId, success) { _, _ ->
 
         }

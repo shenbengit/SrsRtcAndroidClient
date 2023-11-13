@@ -1,5 +1,6 @@
 package com.shencoder.srs_rtc_android_client.webrtc.p2p
 
+import android.util.Log
 import com.shencoder.srs_rtc_android_client.constant.CallRoleType
 import com.shencoder.srs_rtc_android_client.constant.CallType
 import com.shencoder.srs_rtc_android_client.constant.isVideo
@@ -13,6 +14,8 @@ import org.webrtc.IceCandidate
 import org.webrtc.MediaConstraints
 import org.webrtc.MediaStream
 import org.webrtc.PeerConnection
+import org.webrtc.RtpReceiver
+import org.webrtc.RtpTransceiver
 import org.webrtc.SessionDescription
 import java.lang.RuntimeException
 
@@ -29,6 +32,7 @@ class P2PPeerConnection(
     private val callType: CallType,
     private val roleType: CallRoleType,
     private val onAddStream: ((MediaStream) -> Unit)?,
+    private val onRemoteTrack: ((RtpTransceiver) -> Unit)?,
     private val onNegotiationNeeded: ((P2PPeerConnection, CallRoleType) -> Unit)?,
     private val onIceCandidate: ((IceCandidate, CallRoleType) -> Unit)?,
     private val onDataChannel: ((DataChannel) -> Unit)?,
@@ -131,6 +135,7 @@ class P2PPeerConnection(
     }
 
     override fun onAddStream(stream: MediaStream) {
+        Log.i("P2PPeerConnection", "onAddStream: ")
         onAddStream?.invoke(stream)
     }
 
@@ -146,4 +151,17 @@ class P2PPeerConnection(
         onNegotiationNeeded?.invoke(this, roleType)
     }
 
+    override fun onAddTrack(receiver: RtpReceiver?, mediaStreams: Array<out MediaStream>?) {
+        Log.i(
+            "P2PPeerConnection",
+            "onAddTrack: ${receiver?.track()}, mediaStreams: ${mediaStreams?.size}--${mediaStreams?.contentToString()}"
+        )
+    }
+
+    override fun onTrack(transceiver: RtpTransceiver?) {
+        Log.i("P2PPeerConnection", "onTrack: ${transceiver?.receiver?.track()}")
+        if (transceiver != null) {
+            onRemoteTrack?.invoke(transceiver)
+        }
+    }
 }

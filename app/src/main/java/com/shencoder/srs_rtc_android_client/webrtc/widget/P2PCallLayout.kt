@@ -73,6 +73,8 @@ class P2PCallLayout @JvmOverloads constructor(
 
         typedArray.recycle()
 
+        keepScreenOn = true
+
         inflate(context, R.layout.layout_p2p_call, this)
         textureRemote = findViewById(R.id.textureRemote)
         textureSelf = findViewById(R.id.textureSelf)
@@ -157,15 +159,13 @@ class P2PCallLayout @JvmOverloads constructor(
         clBeforeCall.isVisible = false
         clCallingAction.isVisible = true
 
-        if (callRoleType == CallRoleType.CALLER) {
-            val videoTrack = localVideoTrack
-            if (videoTrack != null && callType.isVideo()) {
+        val videoTrack = localVideoTrack
+        if (videoTrack != null && callType.isVideo()) {
 
-                videoTrack.removeSink(textureRemote)
-                textureRemote.clearImage()
+            videoTrack.removeSink(textureRemote)
+            textureRemote.clearImage()
 
-                videoTrack.addSink(textureSelf)
-            }
+            videoTrack.addSink(textureSelf)
         }
     }
 

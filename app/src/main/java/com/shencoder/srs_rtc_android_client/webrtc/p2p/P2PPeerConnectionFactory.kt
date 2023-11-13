@@ -18,6 +18,7 @@ import org.webrtc.MediaConstraints
 import org.webrtc.MediaStream
 import org.webrtc.PeerConnection
 import org.webrtc.PeerConnectionFactory
+import org.webrtc.RtpTransceiver
 import org.webrtc.SurfaceTextureHelper
 import org.webrtc.VideoTrack
 import org.webrtc.audio.JavaAudioDeviceModule
@@ -82,7 +83,7 @@ class P2PPeerConnectionFactory(private val context: Context, private val callTyp
     }
 
     private val localVideoTrack by lazy {
-        factory.createVideoTrack("VideoTrack: ${UUID.randomUUID()}", localVideoSource)
+        factory.createVideoTrack("VideoTrack:${UUID.randomUUID()}", localVideoSource)
     }
 
     private val localAudioSource by lazy {
@@ -90,16 +91,16 @@ class P2PPeerConnectionFactory(private val context: Context, private val callTyp
     }
 
     private val localAudioTrack by lazy {
-        factory.createAudioTrack("AudioTrack: ${UUID.randomUUID()}", localAudioSource)
+        factory.createAudioTrack("AudioTrack:${UUID.randomUUID()}", localAudioSource)
     }
 
-    private var remoteMediaStream: MediaStream? = null
 
     fun createPeerConnection(
         coroutineScope: CoroutineScope,
         callType: CallType,
         roleType: CallRoleType,
         onAddStream: ((MediaStream) -> Unit)? = null,
+        onRemoteTrack: ((RtpTransceiver) -> Unit)?={},
         onNegotiationNeeded: ((P2PPeerConnection, CallRoleType) -> Unit)? = null,
         onIceCandidate: ((IceCandidate, CallRoleType) -> Unit)? = null,
         onDataChannel: ((DataChannel) -> Unit)? = null
@@ -108,10 +109,8 @@ class P2PPeerConnectionFactory(private val context: Context, private val callTyp
             coroutineScope,
             callType,
             roleType,
-            {
-                remoteMediaStream = it
-                onAddStream?.invoke(it)
-            },
+            onAddStream,
+            onRemoteTrack,
             onNegotiationNeeded,
             onIceCandidate,
             onDataChannel
@@ -151,8 +150,6 @@ class P2PPeerConnectionFactory(private val context: Context, private val callTyp
             localVideoSource.dispose()
             localVideoTrack.dispose()
         }
-
-        remoteMediaStream?.dispose()
 
         eglBase.release()
         factory.dispose()

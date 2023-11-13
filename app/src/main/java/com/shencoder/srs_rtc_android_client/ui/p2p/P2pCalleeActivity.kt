@@ -49,7 +49,7 @@ class P2pCalleeActivity : BaseActivity<P2pCalleeViewModel, ActivityP2pCalleeBind
             }
 
             override fun acceptCall() {
-                mViewModel.reqP2pRejectCall {
+                mViewModel.reqP2pAcceptCall {
 
                 }
             }
@@ -87,13 +87,10 @@ class P2pCalleeActivity : BaseActivity<P2pCalleeViewModel, ActivityP2pCalleeBind
                 this,
                 peerConnectionFactory,
                 callType,
-                CallRoleType.CALLER
+                CallRoleType.CALLEE
             ).apply {
-                onAddStream = { stream ->
-                    val videoTracks = stream.videoTracks
-                    if (videoTracks.isNotEmpty()) {
-                        mBinding.callLayout.setRemoteVideoTrack(videoTracks[0])
-                    }
+                onRemoteVideoTrack = { track ->
+                    mBinding.callLayout.setRemoteVideoTrack(track)
                 }
                 onIceCandidate = {
                     mViewModel.reqP2pSendIce(
@@ -132,6 +129,9 @@ class P2pCalleeActivity : BaseActivity<P2pCalleeViewModel, ActivityP2pCalleeBind
             }
 
             mViewModel.setRoomId(requestCallBean.roomId)
+            sessionManager.startCapture { _, videoTrack ->
+                mBinding.callLayout.setLocalVideoTrack(videoTrack)
+            }
         }
     }
 

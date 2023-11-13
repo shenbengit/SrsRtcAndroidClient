@@ -76,11 +76,8 @@ class P2pCallerActivity : BaseActivity<P2pCallerViewModel, ActivityP2pCallerBind
         val peerConnectionFactory = P2PPeerConnectionFactory(this, callType)
         sessionManager =
             P2PSessionManager(this, peerConnectionFactory, callType, CallRoleType.CALLER).apply {
-                onAddStream = { stream ->
-                    val videoTracks = stream.videoTracks
-                    if (videoTracks.isNotEmpty()) {
-                        mBinding.callLayout.setRemoteVideoTrack(videoTracks[0])
-                    }
+                onRemoteVideoTrack = { track ->
+                    mBinding.callLayout.setRemoteVideoTrack(track)
                 }
                 onIceCandidate = {
                     mViewModel.reqP2pSendIce(
