@@ -14,7 +14,6 @@ import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
 import com.shencoder.srs_rtc_android_client.helper.call.SignalEventCallback
 import com.shencoder.srs_rtc_android_client.helper.call.SocketIoConnectionStatusCallback
 import com.shencoder.srs_rtc_android_client.helper.call.bean.*
-import kotlinx.coroutines.delay
 import org.koin.core.component.inject
 
 /**
@@ -75,6 +74,11 @@ class CallerChatViewModel(
 
         override fun rejectCall(bean: RejectCallBean) {
             toastInfo("[${bean.userInfo.username}]${getString(R.string.reject_call)}")
+
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.stop()
+            }
+
             rejectCallLiveData.value = bean
         }
 

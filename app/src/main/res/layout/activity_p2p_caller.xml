@@ -10,10 +10,11 @@
             type="com.shencoder.srs_rtc_android_client.ui.p2p.P2pCallerViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.shencoder.srs_rtc_android_client.webrtc.widget.P2PCallLayout
+        android:id="@+id/callLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.p2p.P2pCallerActivity">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.shencoder.srs_rtc_android_client.webrtc.widget.P2PCallLayout>
 </layout>

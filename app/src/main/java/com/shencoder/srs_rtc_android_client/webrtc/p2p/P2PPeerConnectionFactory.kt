@@ -3,6 +3,7 @@ package com.shencoder.srs_rtc_android_client.webrtc.p2p
 import android.content.Context
 import com.shencoder.srs_rtc_android_client.constant.CallRoleType
 import com.shencoder.srs_rtc_android_client.constant.CallType
+import com.shencoder.srs_rtc_android_client.constant.isVideo
 import kotlinx.coroutines.CoroutineScope
 import org.webrtc.AudioTrack
 import org.webrtc.Camera1Enumerator
@@ -31,7 +32,7 @@ import java.util.UUID
  * @description
  * @since
  */
-class P2PPeerConnectionFactory(private val context: Context) {
+class P2PPeerConnectionFactory(private val context: Context, private val callType: CallType) {
 
     private val eglBase by lazy { EglBase.create() }
     val eglBaseContext: EglBase.Context by lazy { eglBase.eglBaseContext }
@@ -92,6 +93,8 @@ class P2PPeerConnectionFactory(private val context: Context) {
         factory.createAudioTrack("AudioTrack: ${UUID.randomUUID()}", localAudioSource)
     }
 
+    private var remoteMediaStream: MediaStream? = null
+
     fun createPeerConnection(
         coroutineScope: CoroutineScope,
         callType: CallType,
@@ -105,32 +108,52 @@ class P2PPeerConnectionFactory(private val context: Context) {
             coroutineScope,
             callType,
             roleType,
-            onAddStream,
+            {
+                remoteMediaStream = it
+                onAddStream?.invoke(it)
+            },
             onNegotiationNeeded,
             onIceCandidate,
             onDataChannel
         )
-       val connection = requireNotNull(factory.createPeerConnection(rtcConfig, peerConnection))
+        val connection = requireNotNull(factory.createPeerConnection(rtcConfig, peerConnection))
         return peerConnection.apply { initialize(connection) }
     }
 
-    fun startCapture(connection: PeerConnection,callback: ((AudioTrack, VideoTrack) -> Unit)? = null) {
+    fun startCapture(
+        connection: PeerConnection,
+        callback: ((AudioTrack, VideoTrack?) -> Unit)? = null
+    ) {
         connection.addTrack(localAudioTrack)
-        connection.addTrack(localVideoTrack)
 
-        callback?.invoke(localAudioTrack, localVideoTrack)
+        val videoTrack = if (callType.isVideo()) {
+            connection.addTrack(localVideoTrack)
+            localVideoTrack
+        } else {
+            null
+        }
+
+        callback?.invoke(localAudioTrack, videoTrack)
+    }
+
+    fun switchCamera() {
+        videoCapturer.switchCamera(null)
     }
 
     fun release() {
         audioDeviceModule.release()
-        localVideoSource.dispose()
         localAudioSource.dispose()
-
-        localVideoTrack.dispose()
         localAudioTrack.dispose()
 
-        videoCapturer.dispose()
-        surfaceTextureHelper.dispose()
+        if (callType.isVideo()) {
+            videoCapturer.dispose()
+            surfaceTextureHelper.dispose()
+            localVideoSource.dispose()
+            localVideoTrack.dispose()
+        }
+
+        remoteMediaStream?.dispose()
+
         eglBase.release()
         factory.dispose()
     }

@@ -30,7 +30,6 @@
         android:layout_height="100dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="20dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -40,6 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="260dp"
         android:layout_gravity="bottom"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

@@ -86,7 +86,17 @@ interface SignalEventCallback {
     /**
      * 通话时，有人离线了，这个方法不适用与聊天室，聊天室会走[leaveChatRoom]
      */
-    fun offlineDuringCall(bean: OfflineDuringCallBean) {
+    fun offlineDuringCall(bean: OfflineDuringCallBean) {}
 
-    }
+    //<editor-fold desc="P2P">
+    fun p2pRequestCall(bean: P2pRequestCallBean) {}
+    fun p2pRejectCall(bean: RejectCallBean) {}
+    fun p2pAcceptCall(bean: AcceptCallBean) {}
+    fun p2pReceiveOffer(bean: P2pReceiveSdpBean) {}
+    fun p2pReceiveAnswer(bean: P2pReceiveSdpBean) {}
+    fun p2pReceiveIce(bean: P2pReceiveIceBean) {}
+    fun p2pHangUp(bean: HangUpBean) {}
+
+    fun p2pOfflineDuringCall(bean: OfflineDuringCallBean) {}
+    //</editor-fold>
 }

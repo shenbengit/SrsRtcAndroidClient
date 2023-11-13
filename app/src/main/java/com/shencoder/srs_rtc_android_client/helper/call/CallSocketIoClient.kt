@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.util.MoshiUtil
+import com.shencoder.srs_rtc_android_client.constant.CallType
 import com.shencoder.srs_rtc_android_client.constant.SIGNAL
 import com.shencoder.srs_rtc_android_client.helper.call.bean.*
 import com.shencoder.srs_rtc_android_client.util.ignoreCertificate
@@ -160,28 +161,28 @@ class CallSocketIoClient private constructor() {
 
             /*P2P*/
             onEvent(P2PClientNotifyCmd.NOTIFY_P2P_REQUEST_CALL) { json ->
-
+                notifyP2pRequestCall(json)
             }
             onEvent(P2PClientNotifyCmd.NOTIFY_P2P_REJECT_CALL) { json ->
-
+                notifyP2pRejectCall(json)
             }
             onEvent(P2PClientNotifyCmd.NOTIFY_P2P_ACCEPT_CALL) { json ->
-
+                notifyP2pAcceptCall(json)
             }
             onEvent(P2PClientNotifyCmd.NOTIFY_P2P_RECEIVE_OFFER) { json ->
-
+                notifyP2pReceiveOffer(json)
             }
             onEvent(P2PClientNotifyCmd.NOTIFY_P2P_RECEIVE_ANSWER) { json ->
-
+                notifyP2pReceiveAnswer(json)
             }
             onEvent(P2PClientNotifyCmd.NOTIFY_P2P_RECEIVE_ICE) { json ->
-
+                notifyP2pReceiveIce(json)
             }
             onEvent(P2PClientNotifyCmd.NOTIFY_P2P_HANG_UP) { json ->
-
+                notifyP2pHangUp(json)
             }
             onEvent(P2PClientNotifyCmd.NOTIFY_P2P_OFFLINE_DURING_CALL) { json ->
-
+                notifyP2pOfflineDuringCall(json)
             }
         }
         socket.connect()
@@ -545,6 +546,267 @@ class CallSocketIoClient private constructor() {
         socket.emit(SfuClientReqCmd.REQ_RESET_STATUS)
     }
 
+    /*************************************P2P*******************************************/
+
+    //<editor-fold desc="P2P">
+    fun reqP2pInviteSomeone(
+        userId: String,
+        callType: CallType,
+        success: ((ResInviteeInfoBean) -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
+    ) {
+        //{"userId" : "123", "callType" : 1}
+        val jsonObject = JSONObject()
+        jsonObject.put("userId", userId)
+        jsonObject.put("callType", callType.type)
+        socket.emitEvent(P2PClientReqCmd.REQ_P2P_INVITE_SOMEONE, arrayOf(jsonObject)) { json ->
+            val type =
+                Types.newParameterizedType(
+                    BaseResponseBean::class.java,
+                    ResInviteeInfoBean::class.java
+                )
+            val bean: BaseResponseBean<ResInviteeInfoBean>? = MoshiUtil.fromJson(json, type)
+            post {
+                bean?.run {
+                    if (isSuccess()) {
+                        success?.invoke(data!!)
+                    } else {
+                        failure?.invoke(code, msg)
+                    }
+                }
+            }
+        }
+    }
+
+    fun reqP2pRejectCall(
+        roomId: String,
+        success: (() -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
+    ) {
+        // roomId="123456"
+        socket.emitEvent(P2PClientReqCmd.REQ_P2P_REJECT_CALL, arrayOf(roomId)) { json ->
+            val type =
+                Types.newParameterizedType(
+                    BaseResponseBean::class.java,
+                    Any::class.java
+                )
+            val bean: BaseResponseBean<Any>? = MoshiUtil.fromJson(json, type)
+            post {
+                bean?.run {
+                    if (isSuccess()) {
+                        success?.invoke()
+                    } else {
+                        failure?.invoke(code, msg)
+                    }
+                }
+            }
+        }
+    }
+
+    fun reqP2pAcceptCall(
+        roomId: String,
+        success: ((ResAlreadyInRoomBean) -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
+    ) {
+        //roomId="123456"
+        socket.emitEvent(P2PClientReqCmd.REQ_P2P_ACCEPT_CALL, arrayOf(roomId)) { json ->
+            val type =
+                Types.newParameterizedType(
+                    BaseResponseBean::class.java,
+                    ResAlreadyInRoomBean::class.java
+                )
+            val bean: BaseResponseBean<ResAlreadyInRoomBean>? = MoshiUtil.fromJson(json, type)
+            post {
+                bean?.run {
+                    if (isSuccess()) {
+                        success?.invoke(data!!)
+                    } else {
+                        failure?.invoke(code, msg)
+                    }
+                }
+            }
+        }
+    }
+
+    fun reqP2pSendOffer(
+        roomId: String,
+        sdp: String,
+        success: (() -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
+    ) {
+        socket.emitEvent(P2PClientReqCmd.REQ_P2P_SEND_OFFER, arrayOf(roomId, sdp)) { json ->
+            val type =
+                Types.newParameterizedType(
+                    BaseResponseBean::class.java,
+                    ResAlreadyInRoomBean::class.java
+                )
+            val bean: BaseResponseBean<ResAlreadyInRoomBean>? = MoshiUtil.fromJson(json, type)
+            post {
+                bean?.run {
+                    if (isSuccess()) {
+                        success?.invoke()
+                    } else {
+                        failure?.invoke(code, msg)
+                    }
+                }
+            }
+        }
+    }
+
+    fun reqP2pSendAnswer(
+        roomId: String,
+        sdp: String,
+        success: (() -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
+    ) {
+        socket.emitEvent(P2PClientReqCmd.REQ_P2P_SEND_ANSWER, arrayOf(roomId, sdp)) { json ->
+            val type =
+                Types.newParameterizedType(
+                    BaseResponseBean::class.java,
+                    ResAlreadyInRoomBean::class.java
+                )
+            val bean: BaseResponseBean<ResAlreadyInRoomBean>? = MoshiUtil.fromJson(json, type)
+            post {
+                bean?.run {
+                    if (isSuccess()) {
+                        success?.invoke()
+                    } else {
+                        failure?.invoke(code, msg)
+                    }
+                }
+            }
+        }
+    }
+
+    fun reqP2pSendIce(
+        roomId: String,
+        ice: P2pReceiveIceBean.Ice,
+        success: (() -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
+    ) {
+        val iceObject = JSONObject().apply {
+            put("sdpMid", ice.sdpMid)
+            put("sdpMLineIndex", ice.sdpMLineIndex)
+            put("sdp", ice.sdp)
+        }
+        socket.emitEvent(P2PClientReqCmd.REQ_P2P_SEND_ICE, arrayOf(roomId, iceObject)) { json ->
+            val type =
+                Types.newParameterizedType(
+                    BaseResponseBean::class.java,
+                    ResAlreadyInRoomBean::class.java
+                )
+            val bean: BaseResponseBean<ResAlreadyInRoomBean>? = MoshiUtil.fromJson(json, type)
+            post {
+                bean?.run {
+                    if (isSuccess()) {
+                        success?.invoke()
+                    } else {
+                        failure?.invoke(code, msg)
+                    }
+                }
+            }
+        }
+    }
+
+    fun reqP2pHangUp(
+        roomId: String,
+        success: (() -> Unit)? = null,
+        failure: ((code: Int, reason: String) -> Unit)? = null
+    ) {
+        socket.emitEvent(P2PClientReqCmd.REQ_P2P_HANG_UP, arrayOf(roomId)) { json ->
+            val type =
+                Types.newParameterizedType(
+                    BaseResponseBean::class.java,
+                    ResAlreadyInRoomBean::class.java
+                )
+            val bean: BaseResponseBean<ResAlreadyInRoomBean>? = MoshiUtil.fromJson(json, type)
+            post {
+                bean?.run {
+                    if (isSuccess()) {
+                        success?.invoke()
+                    } else {
+                        failure?.invoke(code, msg)
+                    }
+                }
+            }
+        }
+    }
+
+    fun reqP2pResetStatus() {
+        socket.emit(P2PClientReqCmd.REQ_P2P_RESET_STATUS)
+    }
+
+    private fun notifyP2pRequestCall(json: String) {
+        val bean = MoshiUtil.fromJson(json, P2pRequestCallBean::class.java)
+        bean?.let {
+            postDispatchSignalEventCallback { callback ->
+                callback.p2pRequestCall(bean)
+            }
+        }
+    }
+
+    private fun notifyP2pRejectCall(json: String) {
+        val bean = MoshiUtil.fromJson(json, RejectCallBean::class.java)
+        bean?.let {
+            postDispatchSignalEventCallback { callback ->
+                callback.p2pRejectCall(it)
+            }
+        }
+    }
+
+    private fun notifyP2pAcceptCall(json: String) {
+        val bean = MoshiUtil.fromJson(json, AcceptCallBean::class.java)
+        bean?.let {
+            postDispatchSignalEventCallback { callback ->
+                callback.p2pAcceptCall(it)
+            }
+        }
+    }
+
+    private fun notifyP2pReceiveOffer(json: String) {
+        val bean = MoshiUtil.fromJson(json, P2pReceiveSdpBean::class.java)
+        bean?.let {
+            postDispatchSignalEventCallback { callback ->
+                callback.p2pReceiveOffer(it)
+            }
+        }
+    }
+
+    private fun notifyP2pReceiveAnswer(json: String) {
+        val bean = MoshiUtil.fromJson(json, P2pReceiveSdpBean::class.java)
+        bean?.let {
+            postDispatchSignalEventCallback { callback ->
+                callback.p2pReceiveAnswer(it)
+            }
+        }
+    }
+    private fun notifyP2pReceiveIce(json: String) {
+        val bean = MoshiUtil.fromJson(json, P2pReceiveIceBean::class.java)
+        bean?.let {
+            postDispatchSignalEventCallback { callback ->
+                callback.p2pReceiveIce(it)
+            }
+        }
+    }
+    private fun notifyP2pHangUp(json: String) {
+        val bean = MoshiUtil.fromJson(json, HangUpBean::class.java)
+        bean?.let {
+            postDispatchSignalEventCallback { callback ->
+                callback.p2pHangUp(it)
+            }
+        }
+    }
+
+    private fun notifyP2pOfflineDuringCall(json: String){
+        val bean = MoshiUtil.fromJson(json, OfflineDuringCallBean::class.java)
+        bean?.let {
+            postDispatchSignalEventCallback { callback ->
+                callback.p2pOfflineDuringCall(it)
+            }
+        }
+    }
+
+    //</editor-fold>
 
     /**
      * 断开连接

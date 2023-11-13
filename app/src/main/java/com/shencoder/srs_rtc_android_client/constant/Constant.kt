@@ -45,7 +45,7 @@ object SIGNAL {
      * 信令服务地址
      * ip或域名
      */
-    const val SERVER_ADDRESS = "shencoder.work"
+    const val SERVER_ADDRESS = "192.168.2.2"
 
     /**
      * api请求http端口
@@ -95,7 +95,7 @@ object SRS {
      * SRS服务地址
      * ip或域名
      */
-    const val SERVER_ADDRESS = "shencoder.work"
+    const val SERVER_ADDRESS = "192.168.2.2"
 
     /**
      * SRS服务api请求http端口

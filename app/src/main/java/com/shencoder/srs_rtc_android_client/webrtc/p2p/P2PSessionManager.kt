@@ -4,7 +4,6 @@ import android.content.Context
 import android.media.AudioManager
 import com.shencoder.srs_rtc_android_client.constant.CallRoleType
 import com.shencoder.srs_rtc_android_client.constant.CallType
-import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -26,7 +25,6 @@ import org.webrtc.VideoTrack
  */
 class P2PSessionManager(
     private val context: Context,
-    private val signalingClient: CallSocketIoClient,
     private val peerConnectionFactory: P2PPeerConnectionFactory,
     private val callType: CallType,
     private val callRoleType: CallRoleType
@@ -63,7 +61,7 @@ class P2PSessionManager(
         return peerConnection.createDataChannel(label, init)
     }
 
-    fun startCapture(callback: ((AudioTrack, VideoTrack) -> Unit)? = null) {
+    fun startCapture(callback: ((AudioTrack, VideoTrack?) -> Unit)? = null) {
         peerConnectionFactory.startCapture(peerConnection.connection, callback)
     }
 
@@ -114,14 +112,18 @@ class P2PSessionManager(
         }
     }
 
-    private fun setMicrophoneMute(mute: Boolean) {
+    fun setMicrophoneMute(mute: Boolean) {
         peerConnectionFactory.audioDeviceModule.setMicrophoneMute(mute)
+    }
+
+    fun switchCamera() {
+        peerConnectionFactory.switchCamera()
     }
 
     /**
      * 操作扬声器
      */
-    private fun operateSpeakerphone(isSpeakerphone: Boolean) {
+    fun operateSpeakerphone(isSpeakerphone: Boolean) {
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
         if (isSpeakerphone) {
             //之前打开的，关闭
@@ -144,9 +146,9 @@ class P2PSessionManager(
     }
 
     fun release() {
+        operateSpeakerphone(originSpeakerphoneOn)
         peerConnection.release()
         peerConnectionFactory.release()
-
     }
 
 }

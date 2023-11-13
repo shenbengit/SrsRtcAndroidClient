@@ -2,6 +2,7 @@ package com.shencoder.srs_rtc_android_client.webrtc.p2p
 
 import com.shencoder.srs_rtc_android_client.constant.CallRoleType
 import com.shencoder.srs_rtc_android_client.constant.CallType
+import com.shencoder.srs_rtc_android_client.constant.isVideo
 import com.shencoder.webrtcextension.ext.createSessionDescription
 import com.shencoder.webrtcextension.ext.suspendSdpObserver
 import kotlinx.coroutines.CoroutineScope
@@ -47,7 +48,7 @@ class P2PPeerConnection(
                 MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"),
                 MediaConstraints.KeyValuePair(
                     "OfferToReceiveVideo",
-                    if (callType == CallType.Video) "true" else "false"
+                    callType.isVideo().toString()
                 ),
             ),
         )

@@ -12,6 +12,10 @@ import kotlinx.parcelize.Parcelize
  * @description
  * @since
  */
+
+fun CallType.isVideo() = this == CallType.Video
+fun CallType.isAudio() = this == CallType.Audio
+
 sealed class CallType(val type: Int) : Parcelable {
     /**
      * 音频通话

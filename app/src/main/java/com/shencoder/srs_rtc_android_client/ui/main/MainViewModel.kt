@@ -14,11 +14,13 @@ import com.shencoder.srs_rtc_android_client.constant.SocketIoConnectionStatus
 import com.shencoder.srs_rtc_android_client.helper.call.CallSocketIoClient
 import com.shencoder.srs_rtc_android_client.helper.call.SignalEventCallback
 import com.shencoder.srs_rtc_android_client.helper.call.SocketIoConnectionStatusCallback
+import com.shencoder.srs_rtc_android_client.helper.call.bean.P2pRequestCallBean
 import com.shencoder.srs_rtc_android_client.helper.call.bean.RequestCallBean
 import com.shencoder.srs_rtc_android_client.http.bean.UserInfoBean
 import com.shencoder.srs_rtc_android_client.ui.callee_chat.CalleeChatActivity
 import com.shencoder.srs_rtc_android_client.ui.chat_room.EnterRoomIdActivity
 import com.shencoder.srs_rtc_android_client.ui.check_user.CheckUserActivity
+import com.shencoder.srs_rtc_android_client.ui.p2p.P2pCalleeActivity
 import org.koin.core.component.inject
 
 /**
@@ -73,6 +75,12 @@ class MainViewModel(
             //跳转到被叫页面
             val intent = Intent(applicationContext, CalleeChatActivity::class.java)
             intent.putExtra(CalleeChatActivity.REQUEST_CALL, bean)
+            startActivity(intent)
+        }
+
+        override fun p2pRequestCall(bean: P2pRequestCallBean) {
+            val intent = Intent(applicationContext, P2pCalleeActivity::class.java)
+            intent.putExtra(P2pCalleeActivity.REQUEST_CALL, bean)
             startActivity(intent)
         }
     }
