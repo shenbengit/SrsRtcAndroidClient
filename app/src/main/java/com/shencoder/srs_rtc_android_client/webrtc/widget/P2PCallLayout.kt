@@ -1,14 +1,19 @@
 package com.shencoder.srs_rtc_android_client.webrtc.widget
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.constant.CallRoleType
 import com.shencoder.srs_rtc_android_client.constant.CallType
+import com.shencoder.srs_rtc_android_client.constant.isAudio
 import com.shencoder.srs_rtc_android_client.constant.isVideo
 import com.shencoder.webrtcextension.TextureViewRenderer
 import kotlinx.coroutines.CoroutineScope
@@ -32,6 +37,9 @@ class P2PCallLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) :
     FrameLayout(context, attrs, defStyleAttr), CoroutineScope {
+    companion object {
+        private const val TIME_TAG = 101
+    }
 
     private val textureRemote: TextureViewRenderer
     private val textureSelf: TextureViewRenderer
@@ -40,6 +48,7 @@ class P2PCallLayout @JvmOverloads constructor(
     private val clCallingAction: ConstraintLayout
     private lateinit var tvTime: TextView
     private val tvMicrophoneMute: TextView
+    private val tvSwitchCamera: TextView
     private val tvSpeakerphone: TextView
 
     private var callType: CallType = CallType.Video
@@ -66,6 +75,22 @@ class P2PCallLayout @JvmOverloads constructor(
 
     private var localVideoTrack: VideoTrack? = null
     private var remoteVideoTrack: VideoTrack? = null
+
+    /**
+     * 通话时长，单位：秒
+     */
+    private var callDuration = 0
+    private val mHandler = object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            when (msg.what) {
+                TIME_TAG -> {
+                    ++callDuration
+                    tvTime.text = changeTimeFormat(callDuration)
+                    sendEmptyMessageDelayed(TIME_TAG, 1000L)
+                }
+            }
+        }
+    }
 
     init {
         val typedArray =
@@ -99,13 +124,13 @@ class P2PCallLayout @JvmOverloads constructor(
         tvMicrophoneMute.setOnClickListener {
             setMicrophoneMute(isMicrophoneMute.not())
         }
-        clCallingAction.findViewById<TextView>(R.id.tvSwitchCamera).setOnClickListener {
+        tvSwitchCamera = clCallingAction.findViewById(R.id.tvSwitchCamera)
+        tvSwitchCamera.setOnClickListener {
             switchCamera()
         }
         tvSpeakerphone = clCallingAction.findViewById(R.id.tvSpeakerphone)
         tvSpeakerphone.setOnClickListener {
-            this.isSpeakerphone = isSpeakerphone.not()
-
+            operateSpeakerphone(isSpeakerphone.not())
         }
         //挂断
         clCallingAction.findViewById<TextView>(R.id.tvHangUp).setOnClickListener {
@@ -115,6 +140,7 @@ class P2PCallLayout @JvmOverloads constructor(
         clBeforeCall.isVisible = true
         clCallingAction.isVisible = false
 
+        tvTime.text = changeTimeFormat(callDuration)
     }
 
     /**
@@ -125,6 +151,7 @@ class P2PCallLayout @JvmOverloads constructor(
         textureSelf.init(context)
 
         this.callType = callType
+        tvSwitchCamera.isInvisible = callType.isAudio()
         textureRemote.isVisible = callType.isVideo()
         textureSelf.isVisible = callType.isVideo()
 
@@ -167,6 +194,8 @@ class P2PCallLayout @JvmOverloads constructor(
 
             videoTrack.addSink(textureSelf)
         }
+
+        mHandler.sendEmptyMessage(TIME_TAG)
     }
 
     fun setRemoteVideoTrack(videoTrack: VideoTrack?) {
@@ -181,12 +210,14 @@ class P2PCallLayout @JvmOverloads constructor(
         remoteVideoTrack = null
         textureRemote.release()
         textureSelf.release()
+        mHandler.removeCallbacksAndMessages(null)
     }
 
     /**
      * 音频输入是否静音，即：麦克风输入是否静音
      */
     private fun setMicrophoneMute(mute: Boolean) {
+        isMicrophoneMute = mute
         tvMicrophoneMute.isSelected = mute
         actionCallback?.setMicrophoneMute(mute)
     }
@@ -195,6 +226,7 @@ class P2PCallLayout @JvmOverloads constructor(
      * 操作扬声器
      */
     private fun operateSpeakerphone(isSpeakerphone: Boolean) {
+        this.isSpeakerphone = isSpeakerphone
         tvSpeakerphone.isSelected = isSpeakerphone
         actionCallback?.operateSpeakerphone(isSpeakerphone)
     }
@@ -202,6 +234,17 @@ class P2PCallLayout @JvmOverloads constructor(
     private fun switchCamera() {
         actionCallback?.switchCamera()
     }
+
+    /**
+     * 秒转为HH:mm:ss
+     */
+    private fun changeTimeFormat(second: Int): String {
+        val hour = second / 60 / 60
+        val minute = second / 60 % 60
+        val surplusSecond = second % 60
+        return String.format("%02d:%02d:%02d", hour, minute, surplusSecond)
+    }
+
 
     interface CallActionCallback {
         /**

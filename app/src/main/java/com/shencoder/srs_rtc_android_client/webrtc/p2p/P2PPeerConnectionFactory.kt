@@ -78,7 +78,7 @@ class P2PPeerConnectionFactory(private val context: Context, private val callTyp
     private val localVideoSource by lazy {
         factory.createVideoSource(videoCapturer.isScreencast).apply {
             videoCapturer.initialize(surfaceTextureHelper, context, this.capturerObserver)
-            videoCapturer.startCapture(640, 480, 25)
+            videoCapturer.startCapture(1920, 1080, 30)
         }
     }
 

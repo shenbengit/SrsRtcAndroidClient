@@ -85,6 +85,8 @@ class P2pCalleeViewModel(
     }
 
     override fun onCreate(owner: LifecycleOwner) {
+        mediaPlayer.start()
+
         callSocketIoClient.addConnectionStatusCallback(connectionStatusCallback)
         callSocketIoClient.addSignalEventCallback(signalEventCallback)
     }
@@ -104,7 +106,6 @@ class P2pCalleeViewModel(
 
     fun setRoomId(roomId: String) {
         this.roomId = roomId
-        mediaPlayer.start()
     }
 
     fun reqP2pRejectCall() {
