@@ -16,5 +16,15 @@
         android:layout_height="match_parent"
         tools:context=".ui.p2p.P2pCalleeActivity">
 
+        <TextView
+            android:id="@+id/tvPrompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawablePadding="@dimen/dp_10"
+            android:textColor="@color/white"
+            app:drawableTopCompat="@drawable/ic_avatar01"
+            tools:text="某人邀请你进行通话" />
+
     </com.shencoder.srs_rtc_android_client.webrtc.widget.P2PCallLayout>
 </layout>

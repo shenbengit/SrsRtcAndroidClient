@@ -15,6 +15,7 @@ import org.webrtc.MediaStream
 import org.webrtc.MediaStreamTrack
 import org.webrtc.SessionDescription
 import org.webrtc.VideoTrack
+import java.nio.ByteBuffer
 
 
 /**
@@ -65,6 +66,23 @@ class P2PSessionManager(
 
     fun createDataChannel(label: String, init: DataChannel.Init): DataChannel {
         return peerConnection.createDataChannel(label, init)
+    }
+
+    fun dataChannelSendMsg(dataChannel: DataChannel, msg: String) {
+        dataChannel.send(DataChannel.Buffer(ByteBuffer.wrap(msg.toByteArray()), false))
+    }
+
+    fun dataChannelSendBinary(dataChannel: DataChannel, byteBuffer: ByteArray) {
+        dataChannel.send(DataChannel.Buffer(ByteBuffer.wrap(byteBuffer), true))
+    }
+
+    fun getMsgFromDataChannelBuffer(buffer: DataChannel.Buffer): String {
+        return if (!buffer.binary) {
+            val data = buffer.data
+            val byteArray = ByteArray(data.capacity())
+            data.get(byteArray)
+            String(byteArray)
+        } else "binary data"
     }
 
     fun startCapture(callback: ((AudioTrack, VideoTrack?) -> Unit)? = null) {

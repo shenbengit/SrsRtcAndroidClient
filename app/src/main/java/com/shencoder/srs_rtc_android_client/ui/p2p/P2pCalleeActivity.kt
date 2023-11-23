@@ -1,12 +1,17 @@
 package com.shencoder.srs_rtc_android_client.ui.p2p
 
 import android.os.Bundle
+import android.widget.Toast
+import androidx.core.view.isGone
+import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.util.toastError
+import com.shencoder.mvvmkit.util.toastInfo
 import com.shencoder.mvvmkit.util.toastWarning
 import com.shencoder.srs_rtc_android_client.BR
 import com.shencoder.srs_rtc_android_client.R
 import com.shencoder.srs_rtc_android_client.base.BaseActivity
 import com.shencoder.srs_rtc_android_client.constant.CallRoleType
+import com.shencoder.srs_rtc_android_client.constant.isVideo
 import com.shencoder.srs_rtc_android_client.databinding.ActivityP2pCalleeBinding
 import com.shencoder.srs_rtc_android_client.helper.call.bean.P2pReceiveIceBean
 import com.shencoder.srs_rtc_android_client.helper.call.bean.P2pRequestCallBean
@@ -16,6 +21,7 @@ import com.shencoder.srs_rtc_android_client.webrtc.p2p.P2PPeerConnectionFactory
 import com.shencoder.srs_rtc_android_client.webrtc.p2p.P2PSessionManager
 import com.shencoder.srs_rtc_android_client.webrtc.widget.P2PCallLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.webrtc.DataChannel
 
 /**
  * P2P聊天 被叫页面
@@ -29,6 +35,8 @@ class P2pCalleeActivity : BaseActivity<P2pCalleeViewModel, ActivityP2pCalleeBind
     }
 
     private lateinit var sessionManager: P2PSessionManager
+
+    private var dataChannel: DataChannel? = null
 
     override fun getLayoutId(): Int {
         return R.layout.activity_p2p_callee
@@ -49,6 +57,7 @@ class P2pCalleeActivity : BaseActivity<P2pCalleeViewModel, ActivityP2pCalleeBind
             }
 
             override fun acceptCall() {
+                mBinding.tvPrompt.isGone = true
                 mViewModel.reqP2pAcceptCall {
 
                 }
@@ -81,6 +90,8 @@ class P2pCalleeActivity : BaseActivity<P2pCalleeViewModel, ActivityP2pCalleeBind
             return
         }
         val callType = requestCallBean.callType
+        mBinding.tvPrompt.text =
+            "${requestCallBean.inviteInfo.username}邀请你进行${if (callType.isVideo()) "视频" else "音频"}通话"
         val peerConnectionFactory = P2PPeerConnectionFactory(this, callType)
         sessionManager =
             P2PSessionManager(
@@ -100,6 +111,28 @@ class P2pCalleeActivity : BaseActivity<P2pCalleeViewModel, ActivityP2pCalleeBind
                             it.sdp
                         )
                     )
+                }
+
+                onDataChannel = { dataChannel ->
+                    this@P2pCalleeActivity.dataChannel = dataChannel
+                    dataChannel.registerObserver(object : DataChannel.Observer {
+
+                        override fun onBufferedAmountChange(previousAmount: Long) {
+
+                        }
+
+                        override fun onStateChange() {
+                            val state = dataChannel.state()
+                            XLog.i("Callee - DataChannel onStateChange: $state")
+                        }
+
+                        override fun onMessage(buffer: DataChannel.Buffer) {
+                            val msg = getMsgFromDataChannelBuffer(buffer)
+                            XLog.i("Callee - DataChannel onMessage: $msg")
+                            runOnUiThread { toastInfo(msg, Toast.LENGTH_LONG) }
+                        }
+
+                    })
                 }
             }
 
@@ -136,6 +169,7 @@ class P2pCalleeActivity : BaseActivity<P2pCalleeViewModel, ActivityP2pCalleeBind
     }
 
     override fun onDestroy() {
+//        dataChannel?.dispose()
         mBinding.callLayout.release()
         if (this::sessionManager.isInitialized) {
             sessionManager.release()

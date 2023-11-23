@@ -140,6 +140,7 @@ class P2PPeerConnectionFactory(private val context: Context, private val callTyp
     }
 
     fun release() {
+        eglBase.release()
         audioDeviceModule.release()
         localAudioSource.dispose()
         localAudioTrack.dispose()
@@ -150,8 +151,6 @@ class P2PPeerConnectionFactory(private val context: Context, private val callTyp
             localVideoSource.dispose()
             localVideoTrack.dispose()
         }
-
-        eglBase.release()
         factory.dispose()
     }
 
@@ -206,7 +205,8 @@ class P2PPeerConnectionFactory(private val context: Context, private val callTyp
 
         return mediaConstraints.apply {
             with(optional) {
-                add(MediaConstraints.KeyValuePair("DtlsSrtpKeyAgreement", "true"))
+//                add(MediaConstraints.KeyValuePair("RtpDataChannels", "false"))
+//                add(MediaConstraints.KeyValuePair("DtlsSrtpKeyAgreement", "true"))
                 addAll(items)
             }
         }

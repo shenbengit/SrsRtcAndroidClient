@@ -1,6 +1,8 @@
 package com.shencoder.srs_rtc_android_client.ui.p2p
 
 import android.os.Bundle
+import androidx.core.view.isGone
+import com.elvishew.xlog.XLog
 import com.shencoder.mvvmkit.util.toastWarning
 import com.shencoder.srs_rtc_android_client.BR
 import com.shencoder.srs_rtc_android_client.R
@@ -15,6 +17,7 @@ import com.shencoder.srs_rtc_android_client.webrtc.p2p.P2PPeerConnectionFactory
 import com.shencoder.srs_rtc_android_client.webrtc.p2p.P2PSessionManager
 import com.shencoder.srs_rtc_android_client.webrtc.widget.P2PCallLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.webrtc.DataChannel
 
 /**
  * P2P聊天，主叫页面
@@ -36,6 +39,9 @@ class P2pCallerActivity : BaseActivity<P2pCallerViewModel, ActivityP2pCallerBind
     }
 
     private lateinit var sessionManager: P2PSessionManager
+
+    private var dataChannel: DataChannel? = null
+
     override fun getLayoutId(): Int {
         return R.layout.activity_p2p_caller
     }
@@ -99,6 +105,7 @@ class P2pCallerActivity : BaseActivity<P2pCallerViewModel, ActivityP2pCallerBind
         mViewModel.run {
             acceptCallLiveData.observe(this@P2pCallerActivity) {
                 mBinding.callLayout.setInCallStatus()
+                mBinding.tvPrompt.isGone = true
                 sessionManager.createOffer {
                     reqP2pSendOffer(it.description)
                 }
@@ -119,6 +126,7 @@ class P2pCallerActivity : BaseActivity<P2pCallerViewModel, ActivityP2pCallerBind
             }
             if (list.size == 1) {
                 val calleeUserInfo = list[0]
+                mBinding.tvPrompt.text = calleeUserInfo.username
                 mViewModel.reqP2pInviteSomeone(calleeUserInfo.userId, callType) {
 
                 }
@@ -129,10 +137,37 @@ class P2pCallerActivity : BaseActivity<P2pCallerViewModel, ActivityP2pCallerBind
             sessionManager.startCapture { _, videoTrack ->
                 mBinding.callLayout.setLocalVideoTrack(videoTrack)
             }
+
+            dataChannel = sessionManager.createDataChannel("dataChannel", DataChannel.Init()).also {
+                it.registerObserver(object : DataChannel.Observer {
+                    override fun onBufferedAmountChange(previousAmount: Long) {
+
+                    }
+
+                    override fun onStateChange() {
+                        val state = it.state()
+                        XLog.i("Caller - DataChannel onStateChange: $state")
+                        if (state == DataChannel.State.OPEN) {
+                            sessionManager.dataChannelSendMsg(
+                                it,
+                                "这是主叫通过DataChannel发过来的消息@@!@@!@"
+                            )
+                        }
+                    }
+
+                    override fun onMessage(buffer: DataChannel.Buffer) {
+                        if (buffer.binary) {
+
+                        }
+                    }
+
+                })
+            }
         }
     }
 
     override fun onDestroy() {
+//        dataChannel?.dispose()
         mBinding.callLayout.release()
         sessionManager.release()
         super.onDestroy()
